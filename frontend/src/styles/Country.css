@@ -1,0 +1,31 @@
+.country-page {
+  text-align: center;
+  padding: 40px 20px;
+  background: linear-gradient(to left, #FFD700, #6A0DAD);
+  min-height: 100vh;
+  color: white;
+}
+
+.flag {
+  width: 100px;
+  margin-bottom: 20px;
+}
+
+.main-img {
+  width: 300px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.country-page h2 {
+  margin: 20px 0;
+}
+
+.back-btn {
+  background: #FFD700;
+  color: #3b0146;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}

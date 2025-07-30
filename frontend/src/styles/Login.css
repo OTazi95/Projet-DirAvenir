@@ -1,0 +1,133 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    /*background: linear-gradient(to right, #6A0DAD, #FFD700);*/
+}
+
+/* Container split en 2 mais centré */
+.login-container {
+    display: flex;
+    width: 900px;
+    height: 500px;
+    margin: 100px auto; /* <-- Centre verticalement sans cacher le Navbar */
+    border: 3px solid white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    background-color: white;
+}
+
+/* Partie gauche avec image */
+.login-left {
+    flex: 1;
+    background-image: url('../assets/stock.png');
+    background-size: cover;
+    background-position: center;
+}
+
+/* Partie droite formulaire */
+.login-right {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+}
+
+/* Boîte du formulaire */
+.form-box {
+    width: 100%;
+    max-width: 350px;
+    text-align: center;
+}
+
+/* Logo */
+.form-logo {
+    width: 120px;
+    margin-bottom: 20px;
+}
+
+/* Titre */
+.form-title {
+    font-size: 26px;
+    color: #6A0DAD;
+    margin-bottom: 25px;
+}
+
+/* Champs du formulaire */
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+}
+
+/* Wrapper pour mot de passe avec œil */
+.password-wrapper {
+    position: relative;
+}
+
+.toggle-pass {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+/* Bouton principal */
+.form-btn {
+    background-color: #FFD700;
+    color: #6A0DAD;
+    font-weight: bold;
+    padding: 12px 20px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+    transition: background 0.3s ease;
+}
+
+.form-btn:hover {
+    background-color: #e6be00;
+}
+
+/* Lien inscription */
+.switch-text {
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.switch-link {
+    color: #6A0DAD;
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+/* Responsive Adaptation */
+@media screen and (max-width: 768px) {
+    .login-container {
+        flex-direction: column;
+        width: 90%;
+        height: auto;
+        margin: 50px auto; /* réduit la marge sur mobile */
+    }
+
+    .login-left {
+        height: 200px;
+    }
+
+    .login-right {
+        padding: 20px;
+    }
+}

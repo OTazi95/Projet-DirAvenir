@@ -1,0 +1,18 @@
+/* notification sur les action effectuer sur le profil de l'utilisateur*/
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #6A0DAD;
+  color: white;
+  padding: 15px 25px;
+  border-radius: 8px;
+  z-index: 9999;
+  animation: fadeOut 3s forwards;
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; display: none; }
+}

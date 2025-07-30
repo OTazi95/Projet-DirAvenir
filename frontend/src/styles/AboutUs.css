@@ -1,0 +1,96 @@
+.about-container {
+    padding: 60px 20px;
+    max-width: 1200px;
+    margin: auto;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.about-container h1 {
+    text-align: center;
+    font-size: 36px;
+    margin-bottom: 50px;
+}
+
+.highlight-purple {
+    color: #6A0DAD;
+}
+
+.highlight-yellow {
+    color: #FFD700;
+}
+
+.about-section {
+    display: flex;
+    align-items: center;
+    margin-bottom: 60px;
+    gap: 30px;
+}
+
+.about-section.reverse {
+    flex-direction: row-reverse;
+}
+
+.about-image img {
+    width: 100%;
+    max-width: 500px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+}
+
+.about-image img:hover{
+    transform:  scale(1.05);
+}
+
+.about-text {
+    flex: 1;
+}
+
+.about-text h2 {
+    font-size: 28px;
+    color: #6A0DAD;
+    margin-bottom: 15px;
+}
+
+.about-text p {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #333;
+}
+
+.about-image-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.about-image-center img {
+    width: 80%;
+    max-width: 400px;
+    border-radius: 20px;
+    box-shadow: 0px 5px 15px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+}
+
+.about-image-center img:hover{
+    transform:  scale(1.05);
+}
+
+
+/* Responsive */
+@media screen and (max-width: 900px) {
+    .about-section {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .about-section.reverse {
+        flex-direction: column;
+    }
+
+    .about-image img {
+        max-width: 90%;
+    }
+}
