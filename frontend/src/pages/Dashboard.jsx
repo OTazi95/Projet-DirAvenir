@@ -28,6 +28,7 @@ function Dashboard() {
         <p>Nous ouvrons de nouveaux horizons aux jeunes, en leur offrant la possibilité de construire leurs bases académiques à l’étranger.</p>
       </div>
 
+
          <div className="participation-container">
       <div className="participation-left">
         <h4 className="section-subtitle">QUI PEUT NOUS REJOINDRE</h4>
@@ -71,6 +72,48 @@ function Dashboard() {
       </div>
     </div>
 
+    <div className="how-it-works-section">
+  <h2 className="section-title">Comment ça marche ?</h2>
+  <div className="how-it-works-container">
+    <div className="how-box">
+      <img src="/images/program-seeker.png" alt="Program Seeker" />
+      <p className="label">Chercheur de programme</p>
+    </div>
+
+    <div className="how-steps">
+      <div className="how-step">
+        <div className="step-number">01</div>
+        <p>Tests et diagrammes d'aptitude à l'orientation</p>
+      </div>
+      <div className="how-step">
+        <div className="step-number">02</div>
+        <p>Les programmes les plus correspondants à votre profil</p>
+      </div>
+      <div className="how-step">
+        <div className="step-number">03</div>
+        <p>Sélection des opportunités dans les universités</p>
+      </div>
+      <div className="how-step">
+        <div className="step-number">04</div>
+        <p>Candidature à l'opportunité choisie</p>
+      </div>
+      <div className="how-step">
+        <div className="step-number">05</div>
+        <p>Suivi en temps réel de votre admission</p>
+      </div>
+      <div className="how-step">
+        <div className="step-number">06</div>
+        <p>Orientation et suivi des candidatures</p>
+      </div>
+    </div>
+
+    <div className="how-box">
+      <img src="/images/diravenir-scholar.png" alt="Diravenir Scholar" />
+      <p className="label">Diravenir Scholar</p>
+    </div>
+  </div>
+</div>
+
 <div className="achievements-section">
   <h2><span className="highlight-purple">Nos</span> <span className="highlight-yellow">Accomplissements</span></h2>
   <div className="achievements-content">
@@ -94,11 +137,15 @@ function Dashboard() {
   </div>
 </div>
 
-<div className="reviews-section">
+<div className="reviews-section" id='review'>
   <h2>
     <span className="highlight-purple">Avis</span>{' '}
     <span className="highlight-yellow">des étudiants</span>
-  </h2>
+  </h2><br></br>
+  <h3>
+    <span className="highlight-purple">Ils étaient des réveurs</span>{' '}<br></br>
+    <span className="highlight-yellow">Ils sont désormais des accomplisseurs et acteurs</span>
+  </h3>
   <div className="reviews-container">
     <div className="review-card">
       <p>"DirAvenir m'a vraiment aidé à trouver la bonne université à l'étranger. Merci à toute l'équipe !"</p>

@@ -32,7 +32,7 @@ function Navbar() {
         <li><a href="#">Nos packs</a></li>
         <li><a href="#partners-section">Nos partenaires</a></li>
         <li><Link to="/about">About us</Link></li>
-        <li><a href="#">Avis des étudiants</a></li>
+        <li><a href="#review">Avis des étudiants</a></li>
         <li><Link to="/contact">Nous contacter</Link></li>
       </ul>
 
