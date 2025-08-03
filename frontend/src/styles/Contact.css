@@ -10,7 +10,7 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
- /*background: linear-gradient(to left, #6A0DAD, #FFD700);*/
+  background: linear-gradient(to left, #6A0DAD, #FFD700);
 }
 
 
@@ -75,4 +75,108 @@ body {
   }
 }
 
+.form-wrapper {
+  background: #fff;
+  padding: 40px 30px;
+  margin-bottom: 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
 
+.form-title {
+  font-size: 30px;
+  color: #5e2a84;
+  text-align: center;
+  margin-bottom: 30px;
+  font-weight: bold;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-form label {
+  margin-bottom: 12px; /* ✅ plus d’espace entre le label et l’input */
+  color: #333;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.contact-form input,
+.contact-form select,
+.contact-form textarea {
+  padding: 14px 20px; /* ✅ plus d'espace intérieur à gauche et à droite */
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 15px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background-color: #fafafa;
+  color: #333;
+  outline: none;
+  width: 100%; /* ✅ s’assure qu’ils n’empiètent pas sur d'autres champs */
+  box-sizing: border-box; /* ✅ évite les débordements */
+}
+
+
+.contact-form input:focus,
+.contact-form select:focus,
+.contact-form textarea:focus {
+  border-color: #5e2a84;
+  box-shadow: 0 0 0 4px rgba(94, 42, 132, 0.15);
+  background-color: #fff;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.send-btn {
+  width: 150px;
+  align-self: center;
+  padding: 14px 20px;
+  background-color: #5e2a84;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.send-btn:hover {
+  background-color: #e9b200;
+  color: #5e2a84;
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+  }
+
+  .send-btn {
+    width: 100%;
+  }
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  margin-bottom: 10px;
+}

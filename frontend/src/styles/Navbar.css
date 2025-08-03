@@ -31,6 +31,22 @@ html {
   flex-wrap: wrap;
 }
 
+.navbar-links .active-link {
+  color: #FFD700; /* jaune doré */
+  font-weight: bold;
+  position: relative;
+}
+
+.navbar-links .active-link::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background-color: #FFD700;
+  bottom: -4px;
+  left: 0;
+}
+
 
 .navbar-links li a {
   color: white;

@@ -1,5 +1,7 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
+
 import Layout from './components/Layout';
 import Register from './pages/Register';
 import Login from './pages/Login';
@@ -12,25 +14,54 @@ import PartnerFinal from './pages/PartnerFinal';
 import PartnerCyprus from './pages/PartnerCyprus';
 import PartnerBAU from './pages/PartnerBAU';
 import AboutUs from './pages/AboutUs';
+import Faq from './pages/faq';
 
+// Animation wrapper pour transition fluide
+function PageTransition({ children }) {
+  return (
+    <motion.div
+      initial={{ x: 100, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={{ x: -100, opacity: 0 }}
+      transition={{ duration: 0.4, ease: 'easeInOut' }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+// Routes avec animation
+function AnimatedRoutes() {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<PageTransition><Dashboard /></PageTransition>} />
+          <Route path="register" element={<PageTransition><Register /></PageTransition>} />
+          <Route path="login" element={<PageTransition><Login /></PageTransition>} />
+          <Route path="contact" element={<PageTransition><Contact /></PageTransition>} />
+          <Route path="dashboard" element={<PageTransition><Dashboard /></PageTransition>} />
+          <Route path="/destination/chine" element={<PageTransition><Chine /></PageTransition>} />
+          <Route path="/destination/roumanie" element={<PageTransition><Roumanie /></PageTransition>} />
+          <Route path="/destination/chypre" element={<PageTransition><Chypre /></PageTransition>} />
+          <Route path="/partner/final" element={<PageTransition><PartnerFinal /></PageTransition>} />
+          <Route path="/partner/cyprus" element={<PageTransition><PartnerCyprus /></PageTransition>} />
+          <Route path="/partner/bau" element={<PageTransition><PartnerBAU /></PageTransition>} />
+          <Route path="/about" element={<PageTransition><AboutUs /></PageTransition>} />
+          <Route path="/faq" element={<PageTransition><Faq /></PageTransition>} />
+        </Route>
+      </Routes>
+    </AnimatePresence>
+  );
+}
+
+// App principal
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-          <Route path="/" element={<Layout />}>
-          <Route index element={<Dashboard />} /> 
-          <Route path="register" element={<Register />} />
-          <Route path="login" element={<Login />} />
-          <Route path="contact" element={<Contact />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="/destination/chine" element={<Chine />} />
-          <Route path="/destination/roumanie" element={<Roumanie />} />
-          <Route path="/destination/chypre" element={<Chypre />} />
-          <Route path="/partner/final" element={<PartnerFinal />} />
-          <Route path="/partner/cyprus" element={<PartnerCyprus />} />
-          <Route path="/partner/bau" element={<PartnerBAU />} />
-          <Route path="/about" element={<AboutUs />} />        </Route>
-      </Routes>
+      <AnimatedRoutes />
     </BrowserRouter>
   );
 }

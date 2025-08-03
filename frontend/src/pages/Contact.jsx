@@ -6,11 +6,53 @@ import { FaFacebook, FaInstagram, FaLinkedin, FaTiktok, FaYoutube } from 'react-
 function Contact() {
   return (
     <div className="contact-container">
-      <div className="contact-header">
+
+   <div className="contact-header">
         <img src={logo} alt="Logo DirAvenir" className="contact-logo" />
-        <h1>Contactez-nous</h1>
-        <p className="subtext">Nous sommes là pour vous aider à bâtir votre avenir !</p>
+        <h3 className="subtext">Nous sommes là pour vous aider à bâtir votre avenir !</h3><br />
       </div>
+
+<div className="form-wrapper">
+  <h2 className="form-title">Notre équipe est à votre écoute</h2>
+  <form className="contact-form">
+    <div className="form-row">
+      <div className="form-group">
+        <label htmlFor="name">Nom complet*</label>
+        <input type="text" id="name" placeholder="Veuillez saisir votre Nom et Prénom" required />
+      </div>
+      <div className="form-group">
+        <label htmlFor="email">Adresse email*</label>
+        <input type="email" id="email" placeholder="Veuillez saisir votre adresse mail" required />
+      </div>
+    </div>
+
+    <div className="form-row">
+      <div className="form-group">
+        <label htmlFor="phone">Numéro téléphone*</label>
+        <input type="text" id="phone" placeholder="Veuillez saisir votre numéro de téléphone" required />
+      </div>
+      <div className="form-group">
+        <label htmlFor="subject">À propos*</label>
+        <select id="subject" required>
+          <option>Séléction le sujet de votre contact</option>
+          <option>Orientation</option>
+          <option>Payment Failure</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+
+    <div className="form-group full-width">
+      <label htmlFor="message">Votre message*</label>
+      <textarea id="message" rows="5" placeholder="Tapez votre message...." required></textarea>
+    </div>
+   <p>En envoyant ce formumaire vous acceptez nos termes, conditons et politique de confidentialité 
+    qui explique comment nous pouvons collecter, utiliser et divulguer vos informations personnelles, 
+    y compris à des tiers.
+   </p>
+    <button type="submit" className="send-btn">Envoyé</button>
+  </form>
+</div>
 
       <div className="contact-content">
         <div className="contact-info">

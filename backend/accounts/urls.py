@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import UpdateProfileView, DeleteAccountView
+from .views import verify_password
+from .views import get_programmes_universites
 
 urlpatterns = [
-    path('update-profile/', UpdateProfileView.as_view(), name='update-profile'),
-    path('delete-account/', DeleteAccountView.as_view(), name='delete-account'),
+    path('verify-password/', verify_password),
+    path('get-programmes-universites/', get_programmes_universites),
 ]

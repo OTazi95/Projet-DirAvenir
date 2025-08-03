@@ -1,40 +1,58 @@
-from rest_framework.views import APIView
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from django.contrib.auth import authenticate
-from django.contrib.auth.models import User
-from .serializers import UpdateProfileSerializer
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.db import connection
 
-class UpdateProfileView(APIView):
-    permission_classes = [AllowAny]
 
-    def post(self, request):
-        data = request.data
-        user = authenticate(username=request.user.username, password=data.get('current_password'))
-        if user is None:
-            return Response({'error': 'Mot de passe actuel incorrect'}, status=400)
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def verify_password(request):
+    current_password = request.data.get('current_password')
 
-        if 'prenom' in data:
-            user.first_name = data['prenom']
-        if 'nom' in data:
-            user.last_name = data['nom']
-        if 'email' in data:
-            user.email = data['email']
-            user.username = data['email']
-        if 'password' in data and data['password']:
-            user.set_password(data['password'])
-        user.save()
+    if not current_password:
+        return Response({'error': 'Mot de passe manquant.'}, status=400)
 
-        return Response({'message': 'Profil mis à jour'})
+    user = request.user
 
-class DeleteAccountView(APIView):
-    permission_classes = [AllowAny]
+    if not user.check_password(current_password):
+        return Response({'error': 'Mot de passe incorrect.'}, status=400)
 
-    def post(self, request):
-        data = request.data
-        user = authenticate(username=request.user.username, password=data.get('current_password'))
-        if user is None:
-            return Response({'error': 'Mot de passe actuel incorrect'}, status=400)
+    return Response({'message': 'Mot de passe vérifié avec succès.'})
 
-        user.delete()
-        return Response({'message': 'Compte supprimé'})
+
+@csrf_exempt
+def get_programmes_universites(request):
+    if request.method == 'GET':
+        filiere = request.GET.get('filiere', None)
+        pays = request.GET.get('pays', None)
+
+        query = "SELECT * FROM programmes_universites WHERE 1=1"
+        params = []
+
+        if filiere:
+            query += " AND filiere = %s"
+            params.append(filiere)
+
+        if pays:
+            query += " AND pays = %s"
+            params.append(pays)
+
+        with connection.cursor() as cursor:
+            cursor.execute(query, params)
+            rows = cursor.fetchall()
+
+        result = []
+        for row in rows:
+            result.append({
+                'id': row[0],
+                'filiere': row[1],
+                'universite': row[2],
+                'description': row[3],
+                'pays': row[4]
+            })
+
+        return JsonResponse(result, safe=False)

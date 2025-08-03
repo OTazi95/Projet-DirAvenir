@@ -26,6 +26,7 @@ function Login() {
       login(response.data.token);  // mis à jour du Navbar dynamiquement
       localStorage.setItem('prenom', response.data.prenom);
       localStorage.setItem('nom', response.data.nom);
+      localStorage.setItem('token', response.data.token);
 
       alert('Connexion réussie !');
       navigate('/dashboard');

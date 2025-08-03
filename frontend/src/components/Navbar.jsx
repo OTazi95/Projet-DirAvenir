@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate,  NavLink } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import { FaUserCircle, FaCog } from 'react-icons/fa';
 import { AuthContext } from '../context/AuthContext';
@@ -26,14 +26,13 @@ function Navbar() {
         <img src={logo} alt="DirAvenir Logo" className="navbar-logo" />
       </div>
       <ul className="navbar-links">
-        <li><Link to="/dashboard">Accueil</Link></li>
-        <li><a href="#">Chercher une université</a></li>
+        <li><NavLink to="/dashboard" className={({ isActive }) => isActive ? "active-link" : ""}>Accueil</NavLink></li>
         <li><a href="#">Orientation</a></li>
+        <li><a href="#">Programmes</a></li>
         <li><a href="#">Nos packs</a></li>
-        <li><a href="#partners-section">Nos partenaires</a></li>
-        <li><Link to="/about">About us</Link></li>
-        <li><a href="#review">Avis des étudiants</a></li>
-        <li><Link to="/contact">Nous contacter</Link></li>
+        <li><NavLink to="/about" className={({ isActive }) => isActive ? "active-link" : ""}>About us</NavLink></li>
+        <li><NavLink to="/faq" className={({ isActive }) => isActive ? "active-link" : ""}>FAQ</NavLink></li>
+        <li><NavLink to="/contact" className={({ isActive }) => isActive ? "active-link" : ""}>Nous contacter</NavLink></li>
       </ul>
 
       <div className="navbar-right">
