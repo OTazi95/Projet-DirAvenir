@@ -161,7 +161,7 @@ const scrollTeam = (direction) => {
             <FaChevronLeft />
           </button>
           <div className="team-container" ref={scrollRef}>
-            {[ // liste des membres (utilise map plus tard si tu veux optimiser)
+            {[ 
               { img: meryemderni, name: 'Meryem Derni', role: 'Co-fondatrice' },
               { img: nadiaboukdir, name: 'Nadia Boukdir', role: 'Co-fondatrice' },
               { img: wiamfarih, name: 'Ikbal Mountassir', role: 'Responsable marketing' },
