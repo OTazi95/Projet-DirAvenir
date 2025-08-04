@@ -9,10 +9,15 @@ import photo2 from '../assets/aboutus1.jpg';
 import photo3 from '../assets/aboutus2.jpg';
 import photo4 from '../assets/aboutus3.jpg';
 import photo5 from '../assets/aboutus4.jpg';
-import nadiaboukdir from '../assets/NadiaBoukdir.jpeg';
-import bouchralyass from '../assets/BouchyaLyass.jpg';
-import hamzaaomari from '../assets/HamzaAomari.jpg';
-import wiamfarih from '../assets/WiamFarih.jpg';
+import nadiaboukdir from '../assets/Photo_equipe/NadiaBoukdir.jpeg';
+import bouchralyass from '../assets/Photo_equipe/BouchyaLyass.jpg';
+import hamzaaomari from '../assets/Photo_equipe/HamzaAomari.jpg';
+import wiamfarih from '../assets/Photo_equipe/WiamFarih.jpg';
+import abdellahlouadi from '../assets/Photo_equipe/AbdellahLouadi.jpg';
+import marouanezahid from '../assets/Photo_equipe/MarouaneZahid.jpg';
+import meryemderni from '../assets/Photo_equipe/MeryemDerni.jpg';
+import raniajamaudi from '../assets/Photo_equipe/RaniaJamaudi.jpg';
+
 
 function AboutUs() {
 
@@ -157,15 +162,16 @@ const scrollTeam = (direction) => {
           </button>
           <div className="team-container" ref={scrollRef}>
             {[ // liste des membres (utilise map plus tard si tu veux optimiser)
-              { img: wiamfarih, name: 'Wiam Farih', role: 'Conseillère pédagogique' },
+              { img: meryemderni, name: 'Meryem Derni', role: 'Co-fondatrice' },
               { img: nadiaboukdir, name: 'Nadia Boukdir', role: 'Co-fondatrice' },
+              { img: wiamfarih, name: 'Ikbal Mountassir', role: 'Responsable marketing' },
               { img: bouchralyass, name: 'Bouchra Lyass', role: 'Coordinatrice marketing' },
+              { img: raniajamaudi, name: 'Rania Jamaudi', role: 'Coordinnatrice des admissions' },
+              { img: wiamfarih, name: 'Hafsah Alioui ', role: 'Coordinnatrice d\'orientation' },
               { img: hamzaaomari, name: 'Hamza Aomari', role: 'Conseiller pédagogique' },
               { img: wiamfarih, name: 'Wiam Farih', role: 'Conseillère pédagogique' },
-              { img: wiamfarih, name: 'Wiam Farih', role: 'Conseillère pédagogique' },
-              { img: wiamfarih, name: 'Wiam Farih', role: 'Conseillère pédagogique' },
-              { img: wiamfarih, name: 'Wiam Farih', role: 'Conseillère pédagogique' },
-              { img: wiamfarih, name: 'Wiam Farih', role: 'Conseillère pédagogique' },
+              { img: abdellahlouadi, name: 'Abdellah Louadi', role: 'Conseiller pédagogique' },
+              { img: marouanezahid, name: 'Marouane Zahid', role: 'Conseiller pédagogique' },
             ].map((member, index) => (
               <div className="team-card" key={index}>
                 <img src={member.img} alt={member.name} />
