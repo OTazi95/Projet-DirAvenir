@@ -10,7 +10,7 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  background: linear-gradient(to left, #6A0DAD, #FFD700);
+  /*background: linear-gradient(to left, #6A0DAD, #FFD700);*/
 }
 
 

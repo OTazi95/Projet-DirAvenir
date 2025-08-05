@@ -15,6 +15,7 @@ import PartnerCyprus from './pages/PartnerCyprus';
 import PartnerBAU from './pages/PartnerBAU';
 import AboutUs from './pages/AboutUs';
 import Faq from './pages/faq';
+import Programs from './pages/Programs';
 
 // Animation wrapper pour transition fluide
 function PageTransition({ children }) {
@@ -51,6 +52,7 @@ function AnimatedRoutes() {
           <Route path="/partner/bau" element={<PageTransition><PartnerBAU /></PageTransition>} />
           <Route path="/about" element={<PageTransition><AboutUs /></PageTransition>} />
           <Route path="/faq" element={<PageTransition><Faq /></PageTransition>} />
+          <Route path="/programs" element={<PageTransition><Programs /></PageTransition>} />
         </Route>
       </Routes>
     </AnimatePresence>

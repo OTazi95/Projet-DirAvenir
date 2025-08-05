@@ -6,5 +6,5 @@ class ProgrammesUniversites(models.Model):
     description = models.TextField()
     pays = models.CharField(max_length=100)
 
-    def __str__(self):
-        return f"{self.universite} - {self.filiere}"
+class Meta:
+        db_table = 'programmes_universites'

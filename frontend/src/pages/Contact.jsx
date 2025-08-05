@@ -13,7 +13,7 @@ function Contact() {
       </div>
 
 <div className="form-wrapper">
-  <h2 className="form-title">Notre équipe est à votre écoute</h2>
+  <h2 className="form-title">Notre équipe<span className='highlight-yellow'> est à votre écoute</span></h2>
   <form className="contact-form">
     <div className="form-row">
       <div className="form-group">
