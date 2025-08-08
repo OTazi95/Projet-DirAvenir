@@ -1,6 +1,6 @@
 import React from 'react';
 import '../styles/Contact.css';
-import logo from '../assets/logo.png';
+import logo from '../assets/logoj.png';
 import { FaFacebook, FaInstagram, FaLinkedin, FaTiktok, FaYoutube } from 'react-icons/fa';
 
 function Contact() {

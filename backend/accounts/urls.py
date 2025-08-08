@@ -1,7 +1,5 @@
 from django.urls import path
-from .views import verify_password
-from .views import get_programmes_universites
-from .views import list_programmes
+from .views import verify_password, get_programmes_universites, list_programmes
 
 urlpatterns = [
     path('verify-password/', verify_password),

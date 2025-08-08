@@ -9,10 +9,11 @@ function Programs() {
   const [totalPages, setTotalPages] = useState(1);
   const [searchFiliere, setSearchFiliere] = useState('');
   const [selectedCountry, setSelectedCountry] = useState('');
+  const [filters, setFilters] = useState({ filiere: '', pays: '' });
 
-  useEffect(() => {
-    fetchPrograms(currentPage, searchFiliere, selectedCountry);
-  }, [currentPage, searchFiliere, selectedCountry]);
+useEffect(() => {
+  fetchPrograms(currentPage, filters.filiere, filters.pays);
+}, [currentPage, filters]);
 
 
   const fetchPrograms = async (page, filiere = '', pays = '') => {
@@ -30,6 +31,14 @@ function Programs() {
       console.error('Erreur lors du chargement des programmes', error);
     }
   };
+
+  const applyFilters = () => {
+  setFilters({
+    filiere: searchFiliere,
+    pays: selectedCountry
+  });
+  setCurrentPage(1);  // Remettre à la page 1 à chaque recherche
+};
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -64,22 +73,30 @@ function Programs() {
           <option value="Chypre">Chypre</option>
           <option value="Roumanie">Roumanie</option>
         </select>
+         <button className="search-button" onClick={applyFilters}>
+          Rechercher
+        </button>
       </div>
        {/* PROGRAMMES */}
       <div className="programs-grid">
         {programs.map((program, index) => (
-          <motion.div
-            key={index}
-            className="program-card"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: index * 0.05 }}
-          >
-            <span className="program-filiere">{program.filiere}</span>
-            <h3>{program.universite}</h3>
-            <p className="program-description">{program.description}</p>
-          </motion.div>
-        ))}
+  <motion.div
+    key={index}
+    className="program-card"
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.4, delay: index * 0.05 }}
+  >
+    <img 
+      src={`http://localhost:8000${program.logo}`} 
+      alt={`${program.universite} logo`} 
+      className="program-logo"
+    />
+    <span className="program-filiere">{program.filiere}</span>
+    <h3>{program.universite}</h3>
+    <p className="program-description">{program.description}</p>
+  </motion.div>
+))}
       </div>
 
       <div className="pagination">

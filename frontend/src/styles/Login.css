@@ -1,133 +1,274 @@
-html, body {
-    height: 100%;
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    /*background: linear-gradient(to right, #6A0DAD, #FFD700);*/
-}
-
-/* Container split en 2 mais centré */
 .login-container {
-    display: flex;
-    width: 900px;
-    height: 500px;
-    margin: 100px auto; /* <-- Centre verticalement sans cacher le Navbar */
-    border: 3px solid white;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 0 20px rgba(0,0,0,0.2);
-    background-color: white;
+  display: flex;
+    align-items: flex-start;
+  justify-content: flex-start; /* ✅ Aligne à gauche */
+  height: 100vh;
+  background-color: #f2f2f2;
+  padding-left: 60px; /* un peu d’espace à gauche */
+  gap: 60px; /* espace entre le form et l’image */
 }
 
-/* Partie gauche avec image */
-.login-left {
-    flex: 1;
-    background-image: url('../assets/stock.png');
-    background-size: cover;
-    background-position: center;
+
+.login-form {
+  width: 350px; /* plus étroit */
+  height: auto; /* s’ajuste au contenu */
+  background-color: #FDFDFD;
+  border-radius: 23px;
+  box-shadow: 3px 4px 7px 6px rgba(0, 0, 0, 0.09);
+  padding: 10px 20px;
+  margin-right: 40px;
+  margin-left: 120px; 
+  max-width: 100;
+  padding-bottom: 20px;
+  margin-top: 40px;
 }
 
-/* Partie droite formulaire */
-.login-right {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px;
+h2 {
+  margin-bottom: 25px;
+  color: #541652;
+  font-weight: 600;
+  text-align: center;      /* centre le texte */
+  font-family: 'Arial', sans-serif; /* change la police, exemple Arial */
 }
 
-/* Boîte du formulaire */
-.form-box {
-    width: 100%;
-    max-width: 350px;
-    text-align: center;
+
+.social-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 25px;
+  align-items: center; /* ✅ Centre les boutons horizontalement */
 }
 
-/* Logo */
-.form-logo {
-    width: 120px;
-    margin-bottom: 20px;
+.social-buttons button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 14px;
+  width: 250px; /* largeur fixe plus courte */
+  max-width: 100%; /* responsive */
 }
 
-/* Titre */
-.form-title {
-    font-size: 26px;
-    color: #6A0DAD;
-    margin-bottom: 25px;
+.google {
+   background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  color: #444;
 }
 
-/* Champs du formulaire */
-input[type="email"],
-input[type="password"] {
-    width: 100%;
-    padding: 12px 15px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 15px;
+.facebook {
+  background-color: #3575DC;
+  color: white;
 }
 
-/* Wrapper pour mot de passe avec œil */
-.password-wrapper {
-    position: relative;
+.apple {
+  background-color: black;
+  color: white;
 }
 
-.toggle-pass {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 18px;
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
-/* Bouton principal */
-.form-btn {
-    background-color: #FFD700;
-    color: #6A0DAD;
-    font-weight: bold;
-    padding: 12px 20px;
-    margin-top: 20px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    width: 100%;
-    font-size: 16px;
-    transition: background 0.3s ease;
+.input-group input {
+  border: none;
+  outline: none;
+  font-size: 16px;
+  background: transparent;
+  padding: 4px 0;
+  font-family: 'Poppins', sans-serif; /* <-- Ajouté ici */
+  color: #000; /* optionnel, pour la couleur du texte */
 }
 
-.form-btn:hover {
-    background-color: #e6be00;
+.input-group input::placeholder {
+  font-family:'Poppins', sans-serif; /* <-- placeholder aussi */
+  color: #B1B1B1; /* couleur placeholder, à ajuster si tu veux */
+  font-size: 15.4px; /* si tu veux respecter ta taille spécifique */
+  line-height: 31px;    /* idem */
+  font-weight: 400;
+  font-style: normal;
 }
 
-/* Lien inscription */
-.switch-text {
-    margin-top: 20px;
-    font-size: 14px;
+.line-input {
+  width: 100%;
+  height: 0.5px;
+  background-color: #ccc;
+  margin-top: 1px;
+  border: 0.5px solid rgba(177, 177, 177, 0.4);
+  margin-right: 10px;
 }
 
-.switch-link {
-    color: #6A0DAD;
-    cursor: pointer;
-    text-decoration: underline;
-    font-weight: bold;
+.login-button {
+  padding: 12px;
+  border: none;
+  background-color: #541652;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 175px;
+  height: 40px;
+  left: 304px;
+  top: 647px;
+  display: block;         /* pour que margin auto fonctionne */
+  margin: 0 auto; 
 }
 
-/* Responsive Adaptation */
-@media screen and (max-width: 768px) {
-    .login-container {
-        flex-direction: column;
-        width: 90%;
-        height: auto;
-        margin: 50px auto; /* réduit la marge sur mobile */
-    }
+.login-button:hover {
+  background-color: #541652;
+}
 
-    .login-left {
-        height: 200px;
-    }
+.login-footer {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #555;
+}
 
-    .login-right {
-        padding: 20px;
-    }
+.login-footer a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.login-footer a:hover {
+  text-decoration: underline;
+}
+
+.login-image {
+  margin-left: 600px;
+  position: absolute;
+  top: 230px;
+}
+
+.login-image img {
+  width: 630px;
+  height: auto;
+  border-radius: 25px;
+}
+
+.already-text {
+  font-size: 14px;
+  color: gray;
+  margin-bottom: 20px;
+  text-align: center;  /* CENTRAGE */
+}
+
+.already-text a {
+  text-decoration: none; /* Enlève le soulignement */
+  color: #555; /* Tu peux garder la couleur que tu veux */
+}
+
+.already-text a:hover {
+  text-decoration: underline; /* Optionnel : souligne au survol */
+}
+
+.separator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.separator .line {
+  flex: 0 0 100px; /* réduit la taille, par exemple 60px au lieu de 100% */
+  height: 0.5px;
+  background-color: #ccc;
+  margin: 0 10px;
+}
+
+.separator span {
+  color: #999;
+  font-weight: 500;
+}
+.remember-me {
+  position: relative;
+  padding-left: 28px;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  user-select: none;
+ font-size: 14.4266px;
+ color: #B1B1B1;
+  margin-bottom: 20px;
+  display: inline-block;
+  margin-top: 10px;
+  font-style: normal;
+}
+
+/* Cacher la checkbox native */
+.remember-me input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 16px;
+  width: 16px;
+  left: 0;
+  top: 0;
+  margin: 0;
+  padding: 0;
+  z-index: 2;
+}
+
+/* Style du carré personnalisé */
+.remember-me span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 16px;
+  width: 16px;
+  border: 2px solid #B1B1B1;
+  border-radius: 4px;
+  box-sizing: border-box;
+  background-color: white;
+  transition: background-color 0.3s ease;
+  z-index: 1;
+}
+
+/* Fond gris clair si coché */
+.remember-me input:checked + span {
+  background-color: #6A0DAD; /* couleur violet par exemple */
+  border-color: #6A0DAD;
+}
+
+/* La coche blanche */
+.remember-me input:checked + span:after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+
+.terms-text {
+  font-family: 'Poppins', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 13.75px;
+  line-height: 138%;
+  text-align: center;
+  color: #B1B1B1;
+  margin-top: 15px;       /* espace au dessus */
+  max-width: 300px;       /* largeur max */
+  margin-left: auto;      /* centrage horizontal */
+  margin-right: auto;
+}
+
+.terms-yellow {
+  color: #FFD700; /* Jaune (or) */
+}
+
+.terms-orange {
+  color: #FFA500; /* Orange */
 }

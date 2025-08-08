@@ -108,3 +108,28 @@ background-color: #e9b200;
   border-radius: 8px;
   width: 200px;
 }
+
+.search-button {
+  padding: 10px 20px;
+  background-color: #5e2ca5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-button:hover {
+background-color: #e9b200;
+}
+
+.program-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 10px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}

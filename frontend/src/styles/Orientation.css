@@ -1,0 +1,138 @@
+.orientation-wrapper {
+  padding: 40px 60px;
+  min-height: 100vh;
+  background-color: #f9f9f9;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.orientation-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 38px;
+  color: #541652;
+  text-align: center;
+  margin-bottom: 40px;
+  margin-top: -10px;
+}
+
+.highlight {
+  color: #f5B400;;
+}
+
+/* CONTENEUR FLEX POUR FORM + IMAGE */
+.orientation-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 60px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* FORMULAIRE */
+.orientation-form {
+  background-color: white;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  width: 400px;
+  height: 455px;
+}
+
+/* IMAGE */
+.orientation-image img {
+  width: 500px;
+  height: auto;
+  border-radius: 25px;
+}
+/* SECTION "OK, LET ME HELP YOU" */
+.help-section {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.help-text {
+  font-size: 24px;
+  font-weight:600 ;
+  color: #541652;
+  margin-bottom: 40px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: nowrap;
+}
+/* BOUTONS */
+.btn-primary, .btn-secondary {
+  height: 300px;
+  width: 250px;
+  border-radius: 40px; /* même que le formulaire */
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column; /* empiler les mots verticalement */
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.1); /* même effet que le formulaire */
+  transition: all 0.3s ease;
+  border: none;
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+}
+
+/* BOUTON START THE TEST */
+.btn-primary {
+  background-color: #f5B400;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #e0a100;
+}
+
+/* Texte du bouton divisé en 2 lignes */
+.btn-primary span:first-child {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.btn-primary span:last-child {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1;
+  margin-top: 4px;
+}
+
+.btn-secondary span:first-child {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.btn-secondary span:last-child {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1;
+  margin-top: 4px;
+}
+/* BOUTON READ ABOUT PROGRAMS */
+.btn-secondary {
+  background-color: white;
+  color: #541652;
+  border: 4px solid #541652;
+}
+
+.btn-secondary:hover {
+  background-color: #f1e8fc;
+  color: #541652;
+  border-color: #541652;
+}

@@ -9,6 +9,8 @@ from django.db import connection
 from .models import ProgrammesUniversites
 from .serializers import ProgrammesUniversitesSerializer  
 
+
+
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -78,7 +80,8 @@ def list_programmes(request):
             'filiere': prog.filiere,
             'universite': prog.universite,
             'description': prog.description,
-            'pays': prog.pays
+            'pays': prog.pays,
+            'logo': '/media/' + str(prog.logo)
         }
         for prog in result_page
     ]

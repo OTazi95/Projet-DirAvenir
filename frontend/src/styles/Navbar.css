@@ -6,10 +6,12 @@ html {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #4B0082;
+  background-color: transparent;/* fond transparent */
   padding: 10px 20px;
   color: white;
   flex-wrap: wrap;
+  position: relative; /* pour gérer positionnement des ::after */
+  z-index: 1000; /* pour rester au-dessus si besoin */
 }
 
 .navbar-logo {
@@ -31,8 +33,23 @@ html {
   flex-wrap: wrap;
 }
 
-.navbar-links .active-link {
+.navbar-links li a {
+  color: #999999; /* gris clair */
+  text-decoration: none;
+  font-weight: 500;
+  padding: 6px 10px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  background-color: transparent;
+  font-family:'Poppins', sans-serif;
+}
+
+.navbar-links li a:hover {
   color: #FFD700; /* jaune doré */
+  background-color: transparent;
+}
+
+.navbar-links .active-link {
+  color: #FFD700;
   font-weight: bold;
   position: relative;
 }
@@ -45,20 +62,6 @@ html {
   background-color: #FFD700;
   bottom: -4px;
   left: 0;
-}
-
-
-.navbar-links li a {
-  color: white;
-  text-decoration: none;
-  font-weight: 500;
-  padding: 6px 10px;
-  transition: background-color 0.2s ease;
-}
-
-.navbar-links li a:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 5px;
 }
 
 .navbar-right {
@@ -112,13 +115,3 @@ html {
   color: white;
   cursor: pointer;
 }
-
-
-
-
-
-
-
-
-
-
