@@ -1,192 +1,195 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import AOS from 'aos';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import 'aos/dist/aos.css';
-import { useEffect } from 'react';
 import '../styles/AboutUs.css';
-import photo1 from '../assets/aboutus.jpg';
-import photo2 from '../assets/aboutus1.jpg';
-import photo3 from '../assets/aboutus2.jpg';
-import photo4 from '../assets/aboutus3.jpg';
-import photo5 from '../assets/aboutus4.jpg';
-import nadiaboukdir from '../assets/Photo_equipe/NadiaBoukdir.jpeg';
-import bouchralyass from '../assets/Photo_equipe/BouchyaLyass.jpg';
-import hamzaaomari from '../assets/Photo_equipe/HamzaAomari.jpg';
-import wiamfarih from '../assets/Photo_equipe/WiamFarih.jpg';
-import abdellahlouadi from '../assets/Photo_equipe/AbdellahLouadi.jpg';
-import marouanezahid from '../assets/Photo_equipe/MarouaneZahid.jpg';
-import meryemderni from '../assets/Photo_equipe/MeryemDerni.jpg';
-import raniajamaudi from '../assets/Photo_equipe/RaniaJamaudi.jpg';
 
+import photo2 from '../assets/aboutUS/aboutus1.jpg';
+import photo3 from '../assets/aboutUS/aboutus2.jpg';
+import photo5 from '../assets/aboutUS/aboutus4.jpg';
 
-function AboutUs() {
+import nadiaboukdir from '../assets/aboutUS/Photo_equipe/NadiaBoukdir.jpeg';
+import bouchralyass from '../assets/aboutUS/Photo_equipe/BouchraLyass.jpg';
+import hamzaaomari from '../assets/aboutUS/Photo_equipe/HamzaAomari.jpg';
+import wiamfarih from '../assets/aboutUS/Photo_equipe/WiamFarih.jpg';
+import abdellahlouadi from '../assets/aboutUS/Photo_equipe/AbdellahLouadi.jpg';
+import marouanezahid from '../assets/aboutUS/Photo_equipe/MarouaneZahid.jpg';
+import meryemderni from '../assets/aboutUS/Photo_equipe/MeryemDerni.jpg';
+import raniajamaudi from '../assets/aboutUS/Photo_equipe/RaniaJamaudi.jpg';
 
-    useEffect(() => {
-  AOS.init({
-    duration: 10000,  
-    once: true       
-  });
-}, []);
+import ourstory from '../assets/aboutUS/ourstory.png';
+import beleive from '../assets/aboutUS/beleive.png';
+import honesty from '../assets/aboutUS/honesty.png';
+import growthoriented from '../assets/aboutUS/growthoriented.png';
+import studentsfocus from '../assets/aboutUS/studentsfocus.png';
+import vision from '../assets/aboutUS/vision.png';
+import mission from '../assets/aboutUS/mission.png';
+import points from '../assets/aboutUS/points.png';
+import circle from '../assets/aboutUS/Ellipse.png';
 
-const scrollRef = useRef(null);
+const teamMembers = [
+  { img: meryemderni, name: 'Meryem Derni', role: 'Co-Founder' },
+  { img: nadiaboukdir, name: 'Nadia Boukdir', role: 'Co-Founder' },
+  { img: bouchralyass, name: 'Bouchra Lyass', role: 'Marketing Coordinator ' },
+  { img: raniajamaudi, name: 'Rania Jamoudi', role: 'Admission Coordinator'  },
+  { img: abdellahlouadi, name: 'Abdellah Louadi ', role: 'Educational Consultant'},
+  { img: hamzaaomari, name: 'Hamza Aomari', role: 'Educational Consultant' },
+  { img: wiamfarih, name: 'Wiam Farih', role: 'Educational Consultant' },
+  { img: marouanezahid, name: 'Marouane Zahid', role: 'Educational Consultant' },
+ 
+  // ajoute les autres membres ici si besoin
+];
 
-const scrollTeam = (direction) => {
-  const { current } = scrollRef;
-  if (current) {
-    const scrollAmount = direction === 'left' ? -300 : 300;
-    current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+const AboutUs = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    AOS.init({ duration: 1000 });
+  }, []);
+
+  const prevMember = () => {
+    setCurrentIndex((prev) => (prev === 0 ? teamMembers.length - 3 : prev - 3));
+  };
+
+  const nextMember = () => {
+    setCurrentIndex((prev) => (prev === teamMembers.length - 3 ? 0 : prev + 3));
+  };
+
+  const visibleMembers = [];
+  for (let i = 0; i < 3; i++) {
+    visibleMembers.push(teamMembers[(currentIndex + i) % teamMembers.length]);
   }
-};
-
   return (
-    <div className="about-container">
-      <h1><span className="highlight-purple">À Propos</span> <span className="highlight-yellow">de DirAvenir</span></h1>
-
-      <div className="about-section" data-aos="fade-right">
-        <div className="about-image">
-          <img src={photo4} alt="L’Aventure d’une Vision Partagée" />
-        </div>
-        <div className="about-text" data-aos="fade-right" id="spe_box">
-          <h2><span className="highlight-purple"></span>L’Aventure <span className="highlight-yellow">d’une Vision Partagée</span></h2>
-          <p>
-            Notre entreprise est le fruit de mois de dévouement et de travail d'équipe 
-            indéfectibles entre deux amis qui ont osé rêver. De la naissance de cette 
-            idée à sa concrétisation, notre parcours a été jalonné de visions communes, 
-            de collaborations nocturnes et d'une quête incessante de l'excellence. 
-            Ensemble, nous avons bâti non seulement une entreprise, mais aussi un témoignage de la force de l'amitié,
-            du travail acharné et d'un rêve commun devenu réalité.
+    <div className="about-us">
+      {/* Banner */}
+      <section className="banner">
+        <div className="banner-text">
+          <h2 className="about-title">A&nbsp;B&nbsp;O&nbsp;U&nbsp;T&nbsp;&nbsp;&nbsp;U&nbsp;S</h2>
+          <h1 className="main-title">
+            The Platform <br />
+            <span className="subtitle">
+              For The Next <br />
+              <span className="future-makers">Future Makers</span>
+            </span>
+          </h1>
+          <p className="banner-texts">
+            <span className="trans">
+              Transforming education for the<br />
+              <span className="next">next generation of students & learners</span>
+            </span>
           </p>
-        </div>
-      </div>
-
-      <div className="about-section reverse" data-aos="fade-left">
-        <div className="about-image">
-          <img src={photo3} alt="Nos Valeurs" />
-        </div>
-        <div className="about-text" data-aos="fade-right" id="spe_box">
-          <h2><span className="highlight-purple"></span>Pourquoi <span className="highlight-yellow">Nous Choisir ?</span></h2>
-          <p>
-            Plus qu’un simple accompagnement, DirAvenir offre une expérience humaine et chaleureuse.
-            Nous travaillons en partenariat avec des universités de renommée mondiale, garantissant des formations de qualité,
-            des destinations sûres, et un coût de vie maîtrisé pour nos étudiants.
-          </p>
-        </div>
-      </div>
-        <div className="about-section" data-aos="fade-right">
-        <div className="about-image">
-          <img src={photo2} alt="Innovation Pédagogique" />
-        </div>
-        <div className="about-text" data-aos="fade-left" id="spe_box">
-          <h2><span className="highlight-purple"></span>Innovation <span className="highlight-yellow">Pédagogique</span></h2>
-          <p>
-            Engagés dans l'innovation pédagogique, nous sommes une nouvelle figure du secteur. Notre passion est d'ouvrir de nouveaux
-            horizons aux jeunes, en leur offrant des opportunités inédites pour construire leurs bases académiques à l'étranger et explorer
-            les possibilités transformatrices de l'apprentissage international.
-          </p>
-        </div>
-      </div>
-
-       <div className="about-section reverse" data-aos="fade-left">
-        <div className="about-image">
-          <img src={photo5} alt="Horizons Académiques" />
-        </div>
-        <div className="about-text" data-aos="fade-right" id="spe_box">
-          <h2><span className="highlight-purple"></span>Horizons <span className="highlight-yellow">Académiques</span></h2>
-          <p>
-            Diravenir n'est pas seulement un service, c'est une invitation à nous rejoindre pour façonner l'avenir de l'éducation. 
-            Nous envisageons un monde où l'éducation transcende les frontières, offrant des opportunités infinies à chacun. 
-            Notre vision est celle d'une communauté mondiale où la diversité des perspectives, enrichie par des expériences internationales, 
-            est porteuse de changements positifs. Nous aspirons à être le catalyseur d'un avenir où l'éducation responsabilise, connecte et 
-            ouvre la voie vers un monde meilleur.  
-          </p>
-        </div>
-      </div>
-      <div className="about-image-center" data-aos="zoom-in">
-        <img src={photo1} alt="Final Image" />
-      </div>
-
-<div className="about-mission-vision-values">
-  <div className="mission-vision-row">
-    <div className="mission-box">
-      <h2 className="highlight-purple">Notre <span className="highlight-yellow">Mission</span></h2>
-      <p>
-        Nous aspirons à donner aux étudiants les moyens de réussir dans la vie, en leur offrant 
-        non seulement une orientation académique, mais aussi l'espoir et l'inspiration pour réaliser 
-        leurs rêves à l'étranger grâce à des bourses internationales, des stages internationaux, 
-        des opportunités de bénévolat et bien plus encore.
-      </p>
-    </div>
-    <div className="vision-box">
-      <h2 className="highlight-purple">Notre <span className="highlight-yellow"> Vision</span></h2>
-      <p>
-        Nous construisons l'avenir des étudiants en leur fournissant une orientation académique 
-        complète et des bourses internationales, en leur garantissant le soutien et les ressources 
-        nécessaires pour réussir et réaliser leurs rêves à l'étranger
-      </p>
-    </div>
-  </div>
-
-  <div className="values-box">
-    <h2 className="highlight-purple">Nos <span className='highlight-yellow'> Valeurs</span></h2>
-    <div className="values-grid">
-      <div className="value-card">
-        <span role="img" aria-label="engagement">🤝🏻</span>
-        <h3>Honnêteté</h3>
-        <p>Nous tenons nos promesses envers les étudiants avec intégrité, transparence et un véritable engagement envers leur réussite.</p>
-      </div>
-      <div className="value-card">
-        <span role="img" aria-label="diversité">💪🏻</span>
-        <h3>Croiyance et confiance</h3>
-        <p>Nous croyons en nos étudiants, quels que soient leurs résultats scolaires, leurs compétences ou leurs difficultés passées</p>
-      </div>
-      <div className="value-card">
-        <span role="img" aria-label="intégrité">📈</span>
-        <h3>Orienté vers la croissance</h3>
-        <p>Nous aspirons à former une génération marocaine qui valorise l'éducation à l'échelle mondiale.</p>
-      </div>
-      <div className="value-card">
-        <span role="img" aria-label="innovation">👨🏻‍🎓</span>
-        <h3>Priorité aux étudiants</h3>
-        <p>Nous plaçons les étudiants au cœur de tout ce que nous faisons, car leur réussite est ce qui compte le plus.</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-        <div className="team-section" data-aos="fade-up">
-        <h2 className="team-title">Notre <span className='highlight-yellow'>Équipe</span></h2>
-        <div className="team-wrapper">
-          <button className="scroll-btn left" onClick={() => scrollTeam('left')}>
-            <FaChevronLeft />
-          </button>
-          <div className="team-container" ref={scrollRef}>
-            {[ 
-              { img: meryemderni, name: 'Meryem Derni', role: 'Co-fondatrice' },
-              { img: nadiaboukdir, name: 'Nadia Boukdir', role: 'Co-fondatrice' },
-              { img: wiamfarih, name: 'Ikbal Mountassir', role: 'Responsable marketing' },
-              { img: bouchralyass, name: 'Bouchra Lyass', role: 'Coordinatrice marketing' },
-              { img: raniajamaudi, name: 'Rania Jamaudi', role: 'Coordinnatrice des admissions' },
-              { img: wiamfarih, name: 'Hafsah Alioui ', role: 'Coordinnatrice d\'orientation' },
-              { img: hamzaaomari, name: 'Hamza Aomari', role: 'Conseiller pédagogique' },
-              { img: wiamfarih, name: 'Wiam Farih', role: 'Conseillère pédagogique' },
-              { img: abdellahlouadi, name: 'Abdellah Louadi', role: 'Conseiller pédagogique' },
-              { img: marouanezahid, name: 'Marouane Zahid', role: 'Conseiller pédagogique' },
-            ].map((member, index) => (
-              <div className="team-card" key={index}>
-                <img src={member.img} alt={member.name} />
-                <h3>{member.name}</h3>
-                <p>{member.role}</p>
-              </div>
-            ))}
+          <div className="parent-container">
+            <img src={points} alt="dots" className="dots" />
+            <img src={points} alt="dots" className="dots" />
           </div>
-          <button className="scroll-btn right" onClick={() => scrollTeam('right')}>
-            <FaChevronRight />
-          </button>
         </div>
+
+        <div className="banner-images">
+          <img src={circle} alt="Circle" className="circle" />
+          <img src={photo3} alt="Banner 1" className="img-top" />
+          <img src={photo5} alt="Banner 2" className="img-middle" />
+          <img src={photo2} alt="Banner 3" className="img-bottom" />
+        </div>
+      </section>
+
+      {/* Our Story */}
+      <section className="our-story">
+        <div className="story-image">
+          <img src={ourstory} alt="Story" />
+        </div>
+        <div className="story-text">
+          <h3>O&nbsp;U&nbsp;R&nbsp;&nbsp;&nbsp;S&nbsp;T&nbsp;O&nbsp;R&nbsp;Y</h3>
+          <h2 className="headline">
+            Innovating new <br />
+            ways to guide <br />
+            <span className="highlighted-word">students</span>
+          </h2>
+          <p>
+            We believe in the power of purpose-driven learning and bold imagination. We see no limits to what we can build when curiosity meets community, when dreams are backed by action.
+            <br /><br />
+            We are not just educating the next generation, we are co-creating the future with them. Each scholar is a builder, a thinker, a doer. Together, we are shaping futures that matter.
+            <br /><br />
+            This is more than a platform. This is a movement for those who dare to dream and work to build.
+          </p>
+        </div>
+      </section>
+
+      {/* Mission and Vision */}
+      <section className="mission-vision">
+        <div className="mission">
+          <img src={mission} alt="Mission" />
+          <h3><span className="our-text">Our </span><span className="highlight-yellow">Mission</span></h3>
+          <p className="mission-text">
+            We aspire to empower students to succeed in life, offering not only academic orientation but also the hope and inspiration to realize their dreams abroad through international scholarships, global internships, volunteering opportunities & many more.
+          </p>
+        </div>
+        <div className="vision">
+          <img src={vision} alt="Vision" />
+          <h3><span className="our-text">Our </span><span className="highlight-yellow">Vision</span></h3>
+          <p className="vision-text">
+            We build students' futures by providing comprehensive academic guidance, international scholarships ensuring they have the support and resources needed to succeed and realize their<br /> dreams abroad.
+          </p>
+        </div>
+      </section>
+
+      {/* Values */}
+      <section className="values">
+        <h2>
+          <span className="text-purple">Our </span>
+          <span className="text-yellow">Values</span>
+        </h2>
+        <div className="values-list">
+          <div className="value">
+            <img src={honesty} alt="Honesty" />
+            <h4>Honesty</h4>
+            <p>We deliver on our promises to students with integrity, transparency, and a genuine commitment to their success.</p>
+          </div>
+          <div className="value">
+            <img src={studentsfocus} alt="Student Focus" />
+            <h4>Students Focus</h4>
+            <p>
+              We keep students at the heart of everything we do because their success is what&nbsp;matters <br />most.
+            </p>
+          </div>
+          <div className="value">
+            <img src={growthoriented} alt="Growth" />
+            <h4>Growth Oriented</h4>
+            <p>We aspire to cultivate a Moroccan generation that values education on a&nbsp;global <br />scale.</p>
+          </div>
+          <div className="value">
+            <img src={beleive} alt="Believe" />
+            <h4>Believe</h4>
+            <p>We believe in our students, regardless of their academic grades, skills, or&nbsp;past <br />challenges.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Team */}
+     <section className="team">
+      <h2>Our <span className="highlight-yellow">Team</span></h2>
+
+      <div className="team-slider">
+        <button className="arrow left-arrow" onClick={prevMember}>
+          <FaChevronLeft size={30} />
+        </button>
+
+        <div className="team-members">
+          {visibleMembers.map((member, index) => (
+            <div className="team-member" key={index}>
+              <img className="team-photo" src={member.img} alt={member.name} />
+              <h4>{member.name}</h4>
+              <p>{member.role}</p>
+            </div>
+          ))}
+        </div>
+
+        <button className="arrow right-arrow" onClick={nextMember}>
+          <FaChevronRight size={30} />
+        </button>
       </div>
+    </section>
     </div>
   );
-}
+};
 
 export default AboutUs;

@@ -16,7 +16,10 @@ import PartnerBAU from './pages/PartnerBAU';
 import AboutUs from './pages/AboutUs';
 import Faq from './pages/faq';
 import Programs from './pages/Programs';
-import Orientation from './pages/Orientation';
+import Orientation from './components/Orientation';
+import OrientationTest from './components/OrientationTest';
+
+
 
 // Animation wrapper pour transition fluide
 function PageTransition({ children }) {
@@ -55,6 +58,7 @@ function AnimatedRoutes() {
           <Route path="/faq" element={<PageTransition><Faq /></PageTransition>} />
           <Route path="/programs" element={<PageTransition><Programs /></PageTransition>} />
           <Route path="/orientation" element={<PageTransition><Orientation /></PageTransition>} />
+          <Route path="/orientation/test" element={<PageTransition><OrientationTest /></PageTransition>} />
         </Route>
       </Routes>
     </AnimatePresence>
