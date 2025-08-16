@@ -13,11 +13,12 @@ function Dashboard() {
   const [prenom, setPrenom] = useState('');
   const [nom, setNom] = useState('');
 
-const [filieres, setFilieres] = useState([]);
-const [selectedFiliere, setSelectedFiliere] = useState('');
-const [selectedCountry, setSelectedCountry] = useState('');
-const [universites, setUniversites] = useState([]);
+  const [filieres, setFilieres] = useState([]);
+  const [selectedFiliere, setSelectedFiliere] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState('');
+  const [universites, setUniversites] = useState([]);
 
+  // Charger prénom et nom depuis localStorage
   useEffect(() => {
     const prenomLocal = localStorage.getItem('prenom');
     const nomLocal = localStorage.getItem('nom');
@@ -27,22 +28,28 @@ const [universites, setUniversites] = useState([]);
     }
   }, []);
 
+  // Charger toutes les filières uniques et les 5 premiers programmes
   useEffect(() => {
-  // Charger toutes les filières uniques
-  axios.get('http://localhost:8000/api/get-programmes-universites/')
-    .then(response => {
-      const uniqueFilieres = [...new Set(response.data.map(item => item.filiere))];
-      setFilieres(uniqueFilieres);
-    });
-}, []);
+    axios.get('http://localhost:8000/api/get-programmes-universites/')
+      .then(response => {
+        const data = response.data;
+        const uniqueFilieres = [...new Set(data.map(item => item.filiere))];
+        setFilieres(uniqueFilieres);
+        setUniversites(data.slice(0, 5)); // Afficher seulement 5 au démarrage
+      })
+      .catch(err => console.error('Erreur chargement filières', err));
+  }, []);
 
-const handleSearch = () => {
-  axios.get('http://localhost:8000/api/get-programmes-universites/', {
-    params: { filiere: selectedFiliere, pays: selectedCountry }
-  }).then(response => {
-    setUniversites(response.data);
-  });
-};
+  // Filtrer programmes
+  const handleSearch = () => {
+    axios.get('http://localhost:8000/api/get-programmes-universites/', {
+      params: { filiere: selectedFiliere, pays: selectedCountry }
+    })
+      .then(response => {
+        setUniversites(response.data); // Affiche tout après filtrage
+      })
+      .catch(err => console.error('Erreur filtrage programmes', err));
+  };
 
   return (
     <div className="dashboard-container">
@@ -51,36 +58,44 @@ const handleSearch = () => {
         <p>Nous ouvrons de nouveaux horizons aux jeunes, en leur offrant la possibilité de construire leurs bases académiques à l’étranger.</p>
       </div>
 
-<div className="search-program-section">
-  <h2>Trouvez le programme qui vous convient le plus !</h2>
-  <div className="search-bar">
-    <select value={selectedFiliere} onChange={e => setSelectedFiliere(e.target.value)}>
-      <option value="">Sélectionner une filière</option>
-      {filieres.map((filiere, index) => (
-        <option key={index} value={filiere}>{filiere}</option>
-      ))}
-    </select>
+      <div className="search-program-section">
+        <h2>Trouvez le programme qui vous convient le plus !</h2>
+        <div className="search-bar">
+          <select value={selectedFiliere} onChange={e => setSelectedFiliere(e.target.value)}>
+            <option value="">Sélectionner une filière</option>
+            {filieres.map((filiere, index) => (
+              <option key={index} value={filiere}>{filiere}</option>
+            ))}
+          </select>
 
-    <select value={selectedCountry} onChange={e => setSelectedCountry(e.target.value)}>
-      <option value="">Sélectionner un pays</option>
-      <option value="China">Chine</option>
-      <option value="Cyprus">Chypre</option>
-      <option value="Romania">Roumanie</option>
-    </select>
+          <select value={selectedCountry} onChange={e => setSelectedCountry(e.target.value)}>
+            <option value="">Sélectionner un pays</option>
+            <option value="China">Chine</option>
+            <option value="Cyprus">Chypre</option>
+            <option value="Romania">Roumanie</option>
+          </select>
 
-    <button onClick={handleSearch}>Chercher</button>
-  </div>
+          <button onClick={handleSearch}>Chercher</button>
+        </div>
 
-  <div className="universities-grid">
-    {universites.map((uni, index) => (
-      <div key={index} className="university-card">
-        <h3>{uni.universite}</h3>
-        <p>{uni.description}</p>
-        <button>Postuler</button>
+        <div className="universities-grid">
+          {universites.map((uni, index) => (
+            <div key={index} className="university-card">
+              {uni.logo && (
+                <img
+                  src={`http://localhost:8000${uni.logo}`}
+                  alt={`${uni.universite} logo`}
+                  className="university-logo"
+                />
+              )}
+              <span className="program-filiere">{uni.filiere}</span>
+              <h3>{uni.universite}</h3>
+              <p>{uni.description}</p>
+              <button>Postuler</button>
+            </div>
+          ))}
+        </div>
       </div>
-    ))}
-  </div>
-</div>
 
 
          <div className="participation-container">

@@ -47,7 +47,12 @@ function Navbar() {
             <a href="/Orientation">Orientation</a>
           </li>
           <li>
-            <a href="#">Programmes</a>
+            <NavLink
+              to="/programs"
+              className={({ isActive }) => (isActive ? 'active-link' : '')}
+            >
+              Programmes
+            </NavLink>
           </li>
           <li>
             <a href="#">Nos packs</a>

@@ -112,3 +112,51 @@ class TestResult(models.Model):
         verbose_name = "Résultat de Test"
         verbose_name_plural = "Résultats de Test"
         ordering = ['rank']
+
+
+
+
+# Ajoute ce nouveau modèle à ton accounts/models.py
+
+class ProgrammesUniversitesV2(models.Model):
+    """Nouvelle base de données des programmes universitaires"""
+    
+    # Champs principaux
+    campus_city = models.CharField(max_length=255, verbose_name="Campus/Ville")
+    universities = models.CharField(max_length=255, verbose_name="Université")
+    apply_before = models.CharField(max_length=100, verbose_name="Date limite candidature")
+    university_ranking = models.CharField(max_length=100, verbose_name="Classement université")
+    category = models.CharField(max_length=255, verbose_name="Catégorie")
+    program = models.CharField(max_length=255, verbose_name="Programme")
+    degree_type = models.CharField(max_length=100, verbose_name="Type de diplôme")
+    tuition_fees = models.CharField(max_length=255, verbose_name="Frais de scolarité")
+    duration = models.CharField(max_length=100, verbose_name="Durée")
+    language = models.CharField(max_length=100, verbose_name="Langue")
+    scholarship = models.CharField(max_length=255, verbose_name="Bourse")
+    description = models.TextField(verbose_name="Description")
+    about_program = models.TextField(verbose_name="À propos du programme")
+    why_program = models.TextField(verbose_name="Pourquoi ce programme")
+    about_university = models.TextField(verbose_name="À propos de l'université")
+    
+    # Métadonnées
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True, verbose_name="Actif")
+
+    class Meta:
+        db_table = 'programmes_universites_v2'
+        verbose_name = "Programme Universitaire V2"
+        verbose_name_plural = "Programmes Universitaires V2"
+        indexes = [
+            models.Index(fields=['universities', 'category']),    # ✅ Utilise 'universities' au lieu de 'university'
+            models.Index(fields=['campus_city']),                # ✅ Utilise 'campus_city' au lieu de 'city'
+            models.Index(fields=['degree_type']),                # ✅ OK
+            models.Index(fields=['is_active']),                  # ✅ OK
+        ]
+
+    def __str__(self):
+        return f"{self.program} - {self.universities} ({self.campus_city})"  # ✅ Corrigé les noms
+
+    @property
+    def has_scholarship(self):
+        return self.scholarship and self.scholarship.lower() not in ['no', 'none', 'n/a', 'non']

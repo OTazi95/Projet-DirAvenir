@@ -1737,6 +1737,27 @@ const MAJOR_DESCRIPTIONS = {
   }
 };
 
+  // Normaliser les scores sur 100
+  const maxScores = {
+    Interet_Scientifique_Tech: 25,
+    Interet_Artistique_Creatif: 21,
+    Interet_Social_Humain: 20,
+    Interet_Business_Gestion: 18,
+    Interet_Logique_Analytique: 20,
+    Competence_Resolution_Problemes: 15,
+    Competence_Communication: 16,
+    Competence_Organisation: 14,
+    Competence_Manuel_Technique: 12,
+    Valeur_Impact_Societal: 17,
+    Valeur_Innovation_Challenge: 17,
+    Valeur_Stabilite_Securite: 5,
+    Valeur_Autonomie: 14,
+    Pref_Travail_Equipe_Collab: 13,
+    Pref_Travail_Autonome: 14,
+    Pref_Pratique_Terrain: 8,
+    Pref_Theorie_Recherche: 10
+  };
+
 // Fonction de calcul du profil utilisateur
 const calculateProfile = (answers) => {
   const profile = {
@@ -1810,26 +1831,7 @@ const calculateProfile = (answers) => {
     }
   });
 
-  // Normaliser les scores sur 100
-  const maxScores = {
-    Interet_Scientifique_Tech: 25,
-    Interet_Artistique_Creatif: 21,
-    Interet_Social_Humain: 20,
-    Interet_Business_Gestion: 18,
-    Interet_Logique_Analytique: 20,
-    Competence_Resolution_Problemes: 15,
-    Competence_Communication: 16,
-    Competence_Organisation: 14,
-    Competence_Manuel_Technique: 12,
-    Valeur_Impact_Societal: 17,
-    Valeur_Innovation_Challenge: 17,
-    Valeur_Stabilite_Securite: 5,
-    Valeur_Autonomie: 14,
-    Pref_Travail_Equipe_Collab: 13,
-    Pref_Travail_Autonome: 14,
-    Pref_Pratique_Terrain: 8,
-    Pref_Theorie_Recherche: 10
-  };
+
 
   Object.keys(profile).forEach(pillar => {
     const maxScore = maxScores[pillar] || 20;

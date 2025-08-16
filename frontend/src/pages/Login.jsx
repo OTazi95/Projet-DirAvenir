@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import '../styles/Login.css';
-import loginImage from '../assets/login1.png';
+import loginImage from '../assets/register-illustration.png';
 import { FaGoogle, FaFacebookF, FaApple } from 'react-icons/fa';
 
 function Login() {
@@ -40,6 +40,26 @@ function Login() {
     } catch (err) {
       console.error(err);
       alert('Email ou mot de passe incorrect.');
+    }
+  };
+
+  // Fonction pour gérer la connexion sociale
+  const handleSocialLogin = (provider) => {
+    switch(provider) {
+      case 'Google':
+        // Redirection vers l'authentification Google
+        window.location.href = 'http://localhost:8000/api/auth/google/';
+        break;
+      case 'Facebook':
+        // Redirection vers l'authentification Facebook
+        window.location.href = 'http://localhost:8000/api/auth/facebook/';
+        break;
+      case 'Apple':
+        // Redirection vers l'authentification Apple
+        window.location.href = 'http://localhost:8000/api/auth/apple/';
+        break;
+      default:
+        console.log(`Connexion avec ${provider}`);
     }
   };
 
@@ -87,7 +107,7 @@ function Login() {
         </form>
            
         <p className="already-text">
-          Already created? <a href="/register">Login Here</a>
+          Don't have an account? <Link to="/register">Register Here</Link>
         </p>
          
         <div className="separator">
@@ -97,9 +117,27 @@ function Login() {
         </div>
 
         <div className="social-buttons">
-          <button className="google"><FaGoogle style={{ color: '#DB4437' }}/> Login with Google</button>
-          <button className="facebook"><FaFacebookF /> Login with Facebook</button>
-          <button className="apple"><FaApple /> Login with Apple</button>
+          <button 
+            type="button"
+            className="google"
+            onClick={() => handleSocialLogin('Google')}
+          >
+            <FaGoogle style={{ color: '#DB4437' }}/> Login with Google
+          </button>
+          <button 
+            type="button"
+            className="facebook"
+            onClick={() => handleSocialLogin('Facebook')}
+          >
+            <FaFacebookF /> Login with Facebook
+          </button>
+          <button 
+            type="button"
+            className="apple"
+            onClick={() => handleSocialLogin('Apple')}
+          >
+            <FaApple /> Login with Apple
+          </button>
         </div>
 
         <p className="terms-text">
