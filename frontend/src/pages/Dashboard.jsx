@@ -12,11 +12,10 @@ function Dashboard() {
   const navigate = useNavigate();
   const [prenom, setPrenom] = useState('');
   const [nom, setNom] = useState('');
-
-  const [filieres, setFilieres] = useState([]);
-  const [selectedFiliere, setSelectedFiliere] = useState('');
-  const [selectedCountry, setSelectedCountry] = useState('');
-  const [universites, setUniversites] = useState([]);
+  const [topPrograms, setTopPrograms] = useState([]);
+  const [searchCategory, setSearchCategory] = useState('');
+  const [searchCountry, setSearchCountry] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
 
   // Charger prénom et nom depuis localStorage
   useEffect(() => {
@@ -30,26 +29,54 @@ function Dashboard() {
 
   // Charger toutes les filières uniques et les 5 premiers programmes
   useEffect(() => {
-    axios.get('http://localhost:8000/api/get-programmes-universites/')
-      .then(response => {
-        const data = response.data;
-        const uniqueFilieres = [...new Set(data.map(item => item.filiere))];
-        setFilieres(uniqueFilieres);
-        setUniversites(data.slice(0, 5)); // Afficher seulement 5 au démarrage
-      })
-      .catch(err => console.error('Erreur chargement filières', err));
+    const fetchTopPrograms = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/api/list-programmes-v2/', {
+          params: {
+            page: 1,
+            category: '',
+            country: ''
+          }
+        });
+        
+        // Prendre seulement les 8 premiers (ils sont déjà triés par ranking dans le backend)
+        setTopPrograms(response.data.results.slice(0, 8));
+      } catch (error) {
+        console.error('Erreur lors du chargement des programmes populaires', error);
+      }
+    };
+
+    fetchTopPrograms();
   }, []);
 
-  // Filtrer programmes
-  const handleSearch = () => {
-    axios.get('http://localhost:8000/api/get-programmes-universites/', {
-      params: { filiere: selectedFiliere, pays: selectedCountry }
-    })
-      .then(response => {
-        setUniversites(response.data); // Affiche tout après filtrage
-      })
-      .catch(err => console.error('Erreur filtrage programmes', err));
+   const handleCategoryChange = (e) => {
+    setSearchCategory(e.target.value);
   };
+
+  const applyNewFilters = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/api/list-programmes-v2/', {
+        params: {
+          page: 1,
+          category: searchCategory,
+          country: searchCountry
+        }
+      });
+      
+      setSearchResults(response.data.results);
+    } catch (error) {
+      console.error('Erreur lors de la recherche', error);
+      setSearchResults([]);
+    }
+  };
+
+  // Fonction pour réinitialiser la nouvelle recherche
+  const resetNewSearch = () => {
+    setSearchCategory('');
+    setSearchCountry('');
+    setSearchResults([]);
+  };
+
 
   return (
     <div className="dashboard-container">
@@ -58,44 +85,54 @@ function Dashboard() {
         <p>Nous ouvrons de nouveaux horizons aux jeunes, en leur offrant la possibilité de construire leurs bases académiques à l’étranger.</p>
       </div>
 
-      <div className="search-program-section">
-        <h2>Trouvez le programme qui vous convient le plus !</h2>
-        <div className="search-bar">
-          <select value={selectedFiliere} onChange={e => setSelectedFiliere(e.target.value)}>
-            <option value="">Sélectionner une filière</option>
-            {filieres.map((filiere, index) => (
-              <option key={index} value={filiere}>{filiere}</option>
-            ))}
-          </select>
-
-          <select value={selectedCountry} onChange={e => setSelectedCountry(e.target.value)}>
-            <option value="">Sélectionner un pays</option>
-            <option value="China">Chine</option>
-            <option value="Cyprus">Chypre</option>
-            <option value="Romania">Roumanie</option>
-          </select>
-
-          <button onClick={handleSearch}>Chercher</button>
+ {/* Nouvelle barre de recherche avec input (comme Programs.jsx) */}
+        <div className="filters-container">
+          <input
+            type="text"
+            placeholder="Rechercher par catégorie..."
+            value={searchCategory}
+            onChange={handleCategoryChange}
+            className="filter-input"
+          />
+          
+          <button className="search-button" onClick={applyNewFilters}>
+            Rechercher
+          </button>
+          
+          <button className="reset-button" onClick={resetNewSearch}>
+            Réinitialiser
+          </button>
         </div>
 
-        <div className="universities-grid">
-          {universites.map((uni, index) => (
-            <div key={index} className="university-card">
-              {uni.logo && (
-                <img
-                  src={`http://localhost:8000${uni.logo}`}
-                  alt={`${uni.universite} logo`}
-                  className="university-logo"
-                />
-              )}
-              <span className="program-filiere">{uni.filiere}</span>
-              <h3>{uni.universite}</h3>
-              <p>{uni.description}</p>
-              <button>Postuler</button>
+        {/* Résultats de la nouvelle recherche */}
+        {searchResults.length > 0 && (
+          <div className="search-results">
+            <h3>Résultats de recherche ({searchResults.length})</h3>
+            <div className="programs-grid">
+              {searchResults.map((program) => (
+                <div key={program.id} className="program-card">
+                  <img
+                    src={program.logo ? `http://localhost:8000/media/logo/${program.logo}` : '/default-logo.png'}
+                    alt={`${program.universities} logo`}
+                    className="program-logo"
+                  />
+                  <span className="program-filiere">{program.category}</span>
+                  <h3>{program.program}</h3>
+                  <p className="program-description">{program.description}</p>
+                  <button className="apply-button">Postuler</button>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
+        )}
+
+        {/* Message si pas de résultats */}
+        {searchResults.length === 0 && (searchCategory || searchCountry) && (
+          <div className="no-results">
+            <p>Aucun programme trouvé pour ces critères de recherche.</p>
+          </div>
+        )}
+
 
 
          <div className="participation-container">
@@ -182,6 +219,39 @@ function Dashboard() {
     </div>
   </div>
 </div>
+
+   {/* NOUVELLE SECTION PROGRAMMES POPULAIRES */}
+      <div className="popular-programs-section">
+        <h2>
+          Popular <span className="highlight-yellow">Programs</span>
+        </h2>
+        
+        <div className="programs-grid">
+          {topPrograms.map((program, index) => (
+            <div key={program.id} className="program-card">
+              <img
+                src={program.logo ? `http://localhost:8000/media/logo/${program.logo}` : '/default-logo.png'}
+                alt={`${program.universities} logo`}
+                className="program-logo"
+              />
+              <span className="program-filiere">{program.category}</span>
+              <h3>{program.program}</h3>
+              <p className="program-description">{program.description}</p>
+              <button className="apply-button">Postuler</button>
+            </div>
+          ))}
+        </div>
+
+        {/* BOUTON VOIR TOUS LES PROGRAMMES */}
+        <div className="view-all-container">
+          <button 
+            className="view-all-button"
+            onClick={() => navigate('/programs')}
+          >
+            View All Opportunities
+          </button>
+        </div>
+      </div>
 
 <div className="achievements-section">
   <h2><span className="highlight-purple">Nos</span> <span className="highlight-yellow">Accomplissements</span></h2>

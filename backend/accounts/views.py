@@ -26,64 +26,209 @@ def verify_password(request):
     return Response({'message': 'Mot de passe vérifié avec succès.'})
 
 
-@csrf_exempt
-def get_programmes_universites(request):
-    if request.method == 'GET':
-        filiere = request.GET.get('filiere', None)
-        pays = request.GET.get('pays', None)
+# accounts/views.py
 
-        query = "SELECT * FROM programmes_universites WHERE 1=1"
-        params = []
-
-        if filiere:
-            query += " AND filiere = %s"
-            params.append(filiere)
-
-        if pays:
-            query += " AND pays = %s"
-            params.append(pays)
-
-        with connection.cursor() as cursor:
-            cursor.execute(query, params)
-            rows = cursor.fetchall()
-
-        result = []
-        for row in rows:
-            result.append({
-                'id': row[0],
-                'filiere': row[1],
-                'universite': row[2],
-                'description': row[3],
-                'pays': row[4]
-            })
-
-        return JsonResponse(result, safe=False)
-    
-class ProgramPagination(PageNumberPagination):
-    page_size = 12  # Nombre de programmes par page (ajuste selon ton design)
-    page_size_query_param = 'page_size'
-    max_page_size = 100
+from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from django.core.paginator import Paginator
+from django.db.models import Q
+from .models import ProgrammesUniversitesV2
 
 @api_view(['GET'])
-@permission_classes([])
-def list_programmes(request):
-    paginator = PageNumberPagination()
-    paginator.page_size = 12
+@permission_classes([AllowAny])
+def list_programmes_v2(request):
+    """
+    API pour lister les programmes de la nouvelle table programmes_universites_v2
+    """
+    try:
+        # Récupération des paramètres de filtrage
+        category = request.GET.get('category', '')
+        country = request.GET.get('country', '')
+        page_number = request.GET.get('page', 1)
+        
+        # Construction de la requête de base
+        queryset = ProgrammesUniversitesV2.objects.filter(is_active=True).order_by('-university_ranking')
+        
+        # Application des filtres
+        if category:
+            queryset = queryset.filter(
+                Q(category__icontains=category) | 
+                Q(program__icontains=category)
+            )
+        
+        if country:
+            queryset = queryset.filter(campus_city__icontains=country)
+        
+        # Pagination
+        paginator = Paginator(queryset, 20)  # 6 programmes par page
+        page_obj = paginator.get_page(page_number)
+        
+        # Formatage des données pour le frontend
+        programs_data = []
+        for program in page_obj:
+            programs_data.append({
+                'id': program.id,
+                'universities': program.universities,
+                'campus_city': program.campus_city,
+                'category': program.category,
+                'program': program.program,
+                'degree_type': program.degree_type,
+                'duration': program.duration,
+                'language': program.language,
+                'tuition_fees': program.tuition_fees,
+                'scholarship': program.scholarship,
+                'description': program.description,
+                'apply_before': program.apply_before,
+                'university_ranking': program.university_ranking,
+                'logo': program.logo,
+                'about_program': program.about_program,
+                'why_program': program.why_program,
+                'about_university': program.about_university,
+            })
+        
+        return Response({
+            'results': programs_data,
+            'count': paginator.count,
+            'num_pages': paginator.num_pages,
+            'current_page': page_obj.number,
+            'has_next': page_obj.has_next(),
+            'has_previous': page_obj.has_previous(),
+        })
+        
+    except Exception as e:
+        return Response({
+            'error': f'Erreur serveur: {str(e)}',
+            'results': [],
+            'count': 0
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    programmes = ProgrammesUniversites.objects.all()
-    result_page = paginator.paginate_queryset(programmes, request)
-    data = [
-        {
-            'id': prog.id,
-            'filiere': prog.filiere,
-            'universite': prog.universite,
-            'description': prog.description,
-            'pays': prog.pays,
-            'logo': '/media/' + str(prog.logo)
+@api_view(['GET'])
+def get_program_detail_v2(request, program_id):
+    """
+    API pour récupérer les détails d'un programme spécifique
+    """
+    try:
+        program = ProgrammesUniversitesV2.objects.get(id=program_id, is_active=True)
+        
+        program_data = {
+            'id': program.id,
+            'universities': program.universities,
+            'campus_city': program.campus_city,
+            'category': program.category,
+            'program': program.program,
+            'degree_type': program.degree_type,
+            'duration': program.duration,
+            'language': program.language,
+            'tuition_fees': program.tuition_fees,
+            'scholarship': program.scholarship,
+            'description': program.description,
+            'apply_before': program.apply_before,
+            'university_ranking': program.university_ranking,
+            'logo': program.logo,
+            'about_program': program.about_program,
+            'why_program': program.why_program,
+            'about_university': program.about_university,
         }
-        for prog in result_page
-    ]
-    return paginator.get_paginated_response(data)
+        
+        return Response(program_data)
+        
+    except ProgrammesUniversitesV2.DoesNotExist:
+        return Response(
+            {'error': 'Programme non trouvé'}, 
+            status=status.HTTP_404_NOT_FOUND
+        )
+    except Exception as e:
+        return Response(
+            {'error': f'Erreur serveur: {str(e)}'}, 
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+# Gardez vos autres vues existantes ici...
+
+
+from django.db.models import Q, IntegerField
+from django.db.models.functions import Cast
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def list_programmes_v2(request):
+    """
+    API pour lister les programmes de la nouvelle table programmes_universites_v2
+    Triés par classement université (meilleur classement en premier)
+    """
+    try:
+        # Récupération des paramètres de filtrage
+        category = request.GET.get('category', '')
+        country = request.GET.get('country', '')
+        page_number = request.GET.get('page', 1)
+        
+        # Construction de la requête de base avec tri par classement
+        # Convertir university_ranking en entier pour un tri numérique correct
+        queryset = ProgrammesUniversitesV2.objects.filter(is_active=True)
+        
+        # Tri par classement (les plus petits chiffres = meilleur classement)
+        # On utilise Cast pour convertir en integer pour un tri numérique
+        from django.db.models import IntegerField
+        from django.db.models.functions import Cast
+        
+        queryset = queryset.annotate(
+            ranking_int=Cast('university_ranking', IntegerField())
+        ).order_by('ranking_int', 'universities')
+        
+        # Application des filtres
+        if category:
+            queryset = queryset.filter(
+                Q(category__icontains=category) | 
+                Q(program__icontains=category)
+            )
+        
+        if country:
+            queryset = queryset.filter(campus_city__icontains=country)
+        
+        # Pagination
+        paginator = Paginator(queryset, 20)  # 20 programmes par page
+        page_obj = paginator.get_page(page_number)
+        
+        # Formatage des données pour le frontend
+        programs_data = []
+        for program in page_obj:
+            programs_data.append({
+                'id': program.id,
+                'universities': program.universities,
+                'campus_city': program.campus_city,
+                'category': program.category,
+                'program': program.program,
+                'degree_type': program.degree_type,
+                'duration': program.duration,
+                'language': program.language,
+                'tuition_fees': program.tuition_fees,
+                'scholarship': program.scholarship,
+                'description': program.description,
+                'apply_before': program.apply_before,
+                'university_ranking': program.university_ranking,
+                'logo': program.logo,
+                'about_program': program.about_program,
+                'why_program': program.why_program,
+                'about_university': program.about_university,
+            })
+        
+        return Response({
+            'results': programs_data,
+            'count': paginator.count,
+            'num_pages': paginator.num_pages,
+            'current_page': page_obj.number,
+            'has_next': page_obj.has_next(),
+            'has_previous': page_obj.has_previous(),
+        })
+        
+    except Exception as e:
+        return Response({
+            'error': f'Erreur serveur: {str(e)}',
+            'results': [],
+            'count': 0
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
@@ -92,6 +237,67 @@ def list_programmes(request):
 
 
 
+
+# AJOUTEZ cette nouvelle vue à votre views.py existant :
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_program_detail_with_similar(request, program_id):
+    """
+    API pour récupérer les détails d'un programme avec programmes similaires
+    """
+    try:
+        # Récupérer le programme principal
+        program = ProgrammesUniversitesV2.objects.get(id=program_id, is_active=True)
+        
+        # Récupérer les programmes similaires
+        similar_programs = ProgrammesUniversitesV2.objects.filter(
+            category=program.category,
+            is_active=True
+        ).exclude(id=program_id)[:6]
+        
+        # Formatage identique à votre vue existante
+        program_data = {
+            'id': program.id,
+            'universities': program.universities,
+            'campus_city': program.campus_city,
+            'category': program.category,
+            'program': program.program,
+            'degree_type': program.degree_type,
+            'duration': program.duration,
+            'language': program.language,
+            'tuition_fees': program.tuition_fees,
+            'scholarship': program.scholarship,
+            'description': program.description,
+            'apply_before': program.apply_before,
+            'university_ranking': program.university_ranking,
+            'logo': program.logo,
+            'about_program': program.about_program,
+            'why_program': program.why_program,
+            'about_university': program.about_university,
+        }
+        
+        # Programmes similaires
+        similar_programs_data = []
+        for similar in similar_programs:
+            similar_programs_data.append({
+                'id': similar.id,
+                'universities': similar.universities,
+                'campus_city': similar.campus_city,
+                'category': similar.category,
+                'program': similar.program,
+                'logo': similar.logo,
+            })
+        
+        return Response({
+            'program': program_data,
+            'similar_programs': similar_programs_data
+        })
+        
+    except ProgrammesUniversitesV2.DoesNotExist:
+        return Response({'error': 'Programme non trouvé'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'error': f'Erreur serveur: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 

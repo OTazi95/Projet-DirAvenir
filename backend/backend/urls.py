@@ -26,7 +26,7 @@ def home(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('users.urls')),
-    path('api/', include('accounts.urls')),
+    path('', include('accounts.urls')),
 ]
 
 if settings.DEBUG:

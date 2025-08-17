@@ -137,6 +137,7 @@ class ProgrammesUniversitesV2(models.Model):
     about_program = models.TextField(verbose_name="À propos du programme")
     why_program = models.TextField(verbose_name="Pourquoi ce programme")
     about_university = models.TextField(verbose_name="À propos de l'université")
+    logo = models.CharField(max_length=255, null=True, blank=True, verbose_name="Logo")
     
     # Métadonnées
     created_at = models.DateTimeField(auto_now_add=True)

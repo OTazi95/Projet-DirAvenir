@@ -18,6 +18,7 @@ import Faq from './pages/faq';
 import Programs from './pages/Programs';
 import Orientation from './components/Orientation';
 import OrientationTest from './components/OrientationTest';
+import ProgramDetail from './pages/ProgramDetail'; 
 
 
 
@@ -59,6 +60,7 @@ function AnimatedRoutes() {
           <Route path="/programs" element={<PageTransition><Programs /></PageTransition>} />
           <Route path="/orientation" element={<PageTransition><Orientation /></PageTransition>} />
           <Route path="/orientation/test" element={<PageTransition><OrientationTest /></PageTransition>} />
+          <Route path="/program-detail/:programId" element={<ProgramDetail />} />
         </Route>
       </Routes>
     </AnimatePresence>
