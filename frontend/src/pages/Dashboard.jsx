@@ -53,6 +53,10 @@ function Dashboard() {
     setSearchCategory(e.target.value);
   };
 
+const handleProgramDetail = (programId) => {
+    navigate(`/program-detail/${programId}`);
+  };
+
   const applyNewFilters = async () => {
     try {
       const response = await axios.get('http://localhost:8000/api/list-programmes-v2/', {
@@ -237,6 +241,12 @@ function Dashboard() {
               <span className="program-filiere">{program.category}</span>
               <h3>{program.program}</h3>
               <p className="program-description">{program.description}</p>
+              <button 
+                  className="apply-button"
+                  onClick={() => handleProgramDetail(program.id)}
+                >
+                  En savoir plus
+                </button>
               <button className="apply-button">Postuler</button>
             </div>
           ))}
