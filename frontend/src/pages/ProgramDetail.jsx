@@ -80,7 +80,7 @@ function ProgramDetail() {
           
           <div className="program-main-info">
             <div className="program-category-badge">{program.category}</div>
-            <h1 className="program-main-title">{program.program}</h1>
+            <h1 className="program-main-title">{program.degree_type} in {program.program} :</h1>
             <p className="program-subtitle">Offered by {program.universities}</p>
             
             {/* Informations rapides */}
