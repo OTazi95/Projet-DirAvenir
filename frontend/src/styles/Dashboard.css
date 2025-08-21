@@ -1,670 +1,819 @@
-html {
-  scroll-behavior: smooth;
+/* Variables de couleurs */
+:root {
+  --primary-color: #541652; /* Violet */
+  --secondary-color: #f5B400; /* Jaune */
+  --text-color: #333;
+  --light-gray: #f4f4f4;
 }
 
-.dashboard-container {
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #f8f9fa;
-  min-height: 100vh;
+.hero-section .search-bar select {
+  padding: 5px 15px;
+  border: 1px solid #ccc;
+  border-radius: 15px;
+  font-size: 1rem;
+  color: #777;  
 }
 
-.dashboard-content {
-  padding: 40px 20px;
-  text-align: center;
+/* Rendre les options sélectionnées en noir */
+.search-bar select:not(:invalid) {
+  color: #777;
 }
 
-/* Nos Destignations*/
-.destinations {
-  margin-top: 40px;
-  text-align: center;
-  color: #333;
+.dashboard-page {
+  font-family: Arial, sans-serif;
+  color: #f2f2f2;
+  background-color: #f2f2f2;
 }
 
-.destinations h2 {
-  font-size: 24px;
-  margin-bottom: 20px;
-  color: #6A0DAD;
-}
-
-.destination-cards {
+.hero-section {
+  /* Retirez la couleur de fond pour enlever l'encadrement */
   display: flex;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: 50px 0; /* Gardez le padding vertical mais retirez l'horizontal */
+  position: relative;
+  overflow: hidden;
 }
 
-.card {
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  cursor: pointer;
-  width: 250px;
-  transition: transform 0.2s;
-}
-
-.card:hover {
-  transform: scale(1.05);
-}
-
-.card img {
+.hero-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
-  height: 150px;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px; /* Ajoutez un padding horizontal pour l'espacement */
 }
 
-.card h3 {
-  margin: 10px 0;
-  color: #FFD700;
+.hero-text {
+  flex: 1;
+  padding-right: 200px;
+   font-family: 'Poppins', sans-serif;
 }
 
-/* Nos Partenaires */
-
-.partners-section {
-  text-align: center;
-  margin-top: 40px;
+.hero-text h1 {
+  font-size: 3rem;
+  color: #541652;
+  font-weight: bold;
 }
 
-.partners-logos {
+.hero-text p {
+  font-size: 1.2rem;
+  color: #555;
+  margin-top: 10px;
+}
+
+.search-bar {
   display: flex;
-  justify-content: center;
-  gap: 50px;
-  flex-wrap: wrap;
   margin-top: 20px;
 }
 
-.partners-logos img {
-  width: 150px;
+.search-bar select,
+.search-bar button {
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.search-bar select {
+  margin-right: 10px;
+  flex: 1;
+}
+
+.search-bar button {
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
+  border: none;
   cursor: pointer;
-  transition: transform 0.3s ease;
 }
 
-.partners-logos img:hover {
-  transform: scale(1.1);
+.hero-image-container {
+  position: relative;
 }
 
-/* Nos Acommplicements */
-
-.achievements-section {
-  text-align: center;
-  padding: 50px 20px;
+.hero-image {
+  width: 400px; /* Ajustez selon vos besoins */
+  height: auto;
+  margin-right: -10px;
 }
-
-.highlight-purple {
-  color: #6A0DAD;
-}
-
-.highlight-yellow {
-  color: #FFD700;
-}
-
-.achievements-content {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 40px;
-  margin-top: 30px;
-}
-
-.achievement-image img {
-  width: 100%;
-  max-width: 600px;
-  transition: transform 0.3s ease;
-  border-radius: 20px;
-  box-shadow: 0px 5px 15px rgba(0,0,0,0.2);
-}
-
-.achievement-image img:hover {
-transform: scale(1.1);
-}
-
-.achievement-stats {
+.platform-description {
+  /* Supprimez les styles de mise en page qui pourraient encadrer les cartes */
   display: flex;
   flex-direction: column;
-  gap: 20px;
-}
-
-.stat-card {
-  background: #fff;
-  border-radius: 15px;
-  padding: 20px 30px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  text-align: center;
-  min-width: 200px;
-  transition: transform 0.3s ease;
-}
-
-.stat-card h3 {
-  font-size: 2.5rem;
-  margin: 0;
-  color: #FFD700;
-}
-
-.stat-card.large h3 {
-  color: #6A0DAD;
-}
-
-.stat-card:hover{
-  transform:  scale(1.05);
-}
-
-.stat-card p {
-  margin: 10px 0 0;
-  color: #333;
-  font-weight: 500;
-}
-
-/* Avis Etudiant */
-
-.reviews-section {
   padding: 50px 20px;
-  text-align: center;
-  background: #f9f9f9;
 }
 
-.reviews-section h2 {
-  font-size: 2rem;
-  margin-bottom: 30px;
-}
-
-.reviews-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-}
-
-.review-card {
-  background: white;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  max-width: 300px;
-  flex: 1 1 250px;
-  transition: transform 0.3s ease;
-}
-
-.review-card:hover {
-  transform:  scale(1.05);
-}
-
-.review-card p {
-  font-style: italic;
-  margin-bottom: 10px;
-}
-
-.review-card h4 {
-  color: #6A0DAD;
-}
-
-
-/*Pour un design responsive adapter pour mobile et tablette */
-.partners-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-  padding: 20px;
-}
-
-.partner-card {
-  width: 20%;
-  min-width: 150px;
-  display: flex;
-  justify-content: center;
+.platform-content {
+  display: flex; /* Utilise Flexbox pour aligner le texte et les images */
   align-items: center;
+  gap: 50px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.partner-card img {
-  width: 100%;
+.description-text {
+  flex: 1; /* Permet au texte de prendre l'espace disponible */
+   font-family: 'Poppins', sans-serif;
+  
+}
+
+.description-text h2 {
+  text-align: left;
+  margin-left: 20px;
+  font-size: 2.5rem;
+  color: #541652;
+  font-weight: bold; /* Assurez-vous que le texte en noir est en gras */
+  line-height: 1.2; /* Ajustez l'espacement entre les lignes */
+  font-family: 'Poppins', sans-serif;
+  margin-left: 0;
+}
+
+.yellow-text {
+  color: #f5B400 /* Applique la couleur jaune à cette classe */
+}
+
+/* Styles pour les points décoratifs */
+.decorative-dots {
+  position: absolute;
+  top: 133%; /* Positionne l'image juste en dessous du texte */
+  left: 0;
+  transform: translateY(10px); /* Ajoute un petit espace */
+  width: 160px; /* Ajustez la largeur de votre image */
   height: auto;
-  object-fit: contain;
+  margin-left: 55px;
+}
+
+/* Styles pour le carrousel d'images */
+.service-images-container {
+  display: flex;
+  overflow-x: auto; /* Permet toujours le défilement */
+  gap: 20px;
+  padding: 20px 0;
+  /* Nouveau : Définir une largeur pour n'afficher que deux images */
+  /* La largeur est calculée pour 2 images (250px * 2) + l'espace (20px) */
+  width: 800px; 
+  
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+}
+
+.service-images-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Style des images à l'intérieur du conteneur */
+.service-images-container img {
+  flex-shrink: 0;
+  width: 370px; /* Taille de l'image (vous pouvez l'ajuster) */
+  height: auto;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   transition: transform 0.3s ease;
 }
 
-.partner-card img:hover {
-  transform: scale(1.05);
+.service-images-container img:hover {
+  transform: translateY(-5px);
 }
 
-/* Qui peut nous joindre */
-
-.participation-container {
+/* Les points de navigation sous le carrousel */
+.carousel-nav-dots {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 60px 10%;
-  background: #fff;
-  flex-wrap: wrap;
+  justify-content: center; /* Pour centrer les points */
+  gap: 10px;
+  margin-top: 20px;
 }
 
-.participation-left {
-  flex: 1;
-  min-width: 300px;
+.dot {
+  width: 10px;
+  height: 10px;
+  background-color: #ddd;
+  border-radius: 50%;
+  cursor: pointer;
 }
 
-.participation-right {
-  flex: 1;
+.dot.active {
+  background-color: var(--secondary-color);
+  width: 25px;
+  border-radius: 5px;
+}
+
+
+/* 3. Who Can Join */
+.who-can-join {
+  padding: 50px 20px;
+  background-color: #f2f2f2;
+}
+
+.join-content {
   display: flex;
-  justify-content: center;
   align-items: center;
-  min-width: 300px;
+  gap: 50px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.participation-right img {
-  width: 100%;
-  max-width: 500px;
-}
-
-.section-subtitle {
-  color: #FFD700;
-  font-weight: bold;
-  font-size: 14px;
-  letter-spacing: 2px;
-  margin-bottom: 10px;
-}
-
-.section-title {
-  font-size: 35px;
-  color: #4B0082;
-  margin-bottom: 40px;
-}
-
-.participation-grid {
+.join-list {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 30px 20px;
+  gap: 50px; /* Augmentez le gap pour plus d'espace entre les éléments */
+  flex-grow: 1; /* Permet à la liste de s'étendre et de pousser l'image de droite */
 }
 
-.participation-item {
+.join-text {
+  flex: 1;
+}
+
+.join-text h4 {
+  font-size: 1.2rem;
+  color: #f5B400;
+  margin-bottom: 5px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+
+}
+
+.join-text h2 {
+  font-size: 2.7rem;
+  color: var(--primary-color);
+  margin-bottom: 30px;
+  margin-left: -20px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+   text-align: left; 
+}
+
+.join-item .item-text h4 {
+  /* Rendre les titres "Colleges/Universities", "Students", etc. en gris */
+  color: #000; /* Utiliser une couleur grise */
+  font-size: 1.03rem;
+  font-weight: bold;
+
+}
+
+.join-item {
   display: flex;
   align-items: center;
   gap: 15px;
 }
 
-.icon-number {
-  background: #FFD700;
-  color: #4B0082;
+.join-item  img:hover{
+  transform: translateY(-10px);
+}
+
+.item-number {
+  font-size: 1.4rem;
   font-weight: bold;
-  padding: 10px 15px;
-  border-radius: 50%;
-  font-size: 16px;
+  color: var(--primary-color);
 }
 
-.participation-item h3 {
-  font-size: 16px;
-  margin: 0;
-  color: #333;
-}
-
-/* Comment ca marche */
-.how-it-works-section {
-  background: #4B0082;
-  color: white;
-  padding: 60px 20px;
-  border-radius: 20px;
-  margin: 50px auto;
-  max-width: 1200px;
-  text-align: center;
-}
-
-/* Titre de section */
-.how-it-works-section .section-title {
-  font-size: 32px;
-  margin-bottom: 40px;
-}
-.how-it-works-section .section-title {
-  color: #FFD700;
-}
-
-/* Wrapper horizontal des boxes et steps */
-.how-it-works-container {
+.item-text {
+  /* Changez la direction de la flexbox pour aligner les éléments verticalement */
   display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 30px;
-  flex-wrap: nowrap;    /* Tout en ligne */
-  overflow-x: auto;     /* Scroll horizontal si petit écran */
-  padding: 20px 40px;
-  box-sizing: border-box;
+  flex-direction: column; 
+  align-items: center; /* Centre le texte et l'image */
+  text-align: center; /* Centre le texte */
 }
 
-/* Box image (gauche et droite) */
-.how-box {
-  flex: 0 0 160px;           /* même largeur que les steps */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: white;
-  border: 3px solid #FFD700;
-  border-radius: 15px;
-  padding: 15px;
-}
-.how-box img {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 10px;
-  margin-bottom: 10px;
-}
-.how-box .label {
-  color: #4B0082;
-  font-weight: bold;
-  text-align: center;
+
+.item-text img {
+  /* Gardez la largeur de l'image et la marge */
+  width: 330px;
+  margin-right: 0; /* Enlevez la marge droite, car le texte est en dessous */
+  margin-bottom: 10px; /* Ajoutez un peu d'espace entre l'icône et le texte */
 }
 
-/* Les étapes centrales */
-.how-steps {
-  display: flex;
-  gap: 20px;
-  flex: 1;
-  justify-content: center;
-}
-.how-step {
-  flex: 0 0 160px;           /* même largeur que les boxes */
-  background: white;
-  color: #4B0082;
-  padding: 20px;
-  border-radius: 15px;
-  min-height: 140px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.step-number {
-  background: #FFD700;
-  color: #4B0082;
-  font-weight: bold;
-  padding: 10px 15px;
-  border-radius: 50%;
-  margin-bottom: 10px;
-  font-size: 16px;
+.institutions-icon {
+  margin-left: -90px; 
 }
 
-/* Scrollbar plus discrète (optionnel) */
-.how-it-works-container::-webkit-scrollbar {
-  height: 6px;
-}
-.how-it-works-container::-webkit-scrollbar-thumb {
-  background: rgba(255,215,0,0.8);
-  border-radius: 3px;
+.colleges{
+  margin-left: -70px; 
 }
 
-/* Responsive mobile/tablette */
-@media (max-width: 768px) {
-  .how-it-works-container {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-  }
-  .how-box, .how-step {
-    flex: 0 0 auto;
-  }
+.career{
+  margin-left: -30px; 
 }
 
-/* Ajouter ces styles à ton Dashboard.css */
+.join-image img {
+  width: 500px;
+  height: auto;
+  margin-top: 100px;
+}
+/* 4. How It Works Section */
 
+.how-it-works-illustration {
+  max-width: 96%; /* Augmente la largeur de l'image */
+  height: auto;
+  border-radius: 15px; 
+  margin-left: 4%;
+}
+
+
+/* 5. Popular Programs Section */
 .popular-programs-section {
-  padding: 80px 20px;
-  max-width: 1400px;
-  margin: 0 auto;
-  text-align: center;
-  background: #F8F9FA;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px 20px;
+  background-color: #f2f2f2;
 }
 
 .popular-programs-section h2 {
-  font-size: 2.5rem;
-  color: #2C3E50;
-  margin-bottom: 50px;
-  font-weight: 700;
-}
-
-.highlight-yellow {
-  color: #F8B400;
+  font-size: 2rem;
+  color: #541652;
+  margin-bottom: 40px;
 }
 
 .programs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 25px;
-  padding: 0 20px;
-  margin-bottom: 50px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
 }
 
 .program-card {
-  background: linear-gradient(135deg, #5e2ca5 0%, #7b4bc7 100%);
-  border-radius: 20px;
-  padding: 25px 20px;
+  background-color: #541652; /* Fond violet */
+  color: #fff;
+  border-radius: 10px;
+  padding-top: 20px; /* Laisse de l'espace en haut pour le logo */
   text-align: center;
-  transition: all 0.3s ease;
-  position: relative;
-  height: auto;
-  min-height: 380px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  box-shadow: 0 8px 30px rgba(94, 44, 165, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+  padding-bottom: 20px; /* Ajoute un espace en bas */
 }
 
 .program-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 15px 40px rgba(94, 44, 165, 0.4);
+  transform: translateY(-5px); /* Effet de survol */
 }
 
-.program-logo {
+.program-card img {
   width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin: 0 auto 15px auto;
-  background: white;
-  padding: 8px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-}
-
-.program-filiere {
-  background: rgba(255, 255, 255, 0.25);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 25px;
-  font-size: 0.85rem;
-  font-weight: 600;
+  height: auto;
   margin-bottom: 15px;
-  display: inline-block;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
 }
 
-.program-card h3 {
-  color: white;
-  font-size: 1.4rem;
-  font-weight: 700;
-  margin: 15px 0;
-  line-height: 1.3;
-  min-height: 60px;
+/* Style de la partie blanche avec les détails */
+.program-details-card {
+  background-color: #fff;
+  border-radius: 15px; /* Arrondit les coins */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 0 10px; /* Ajoute un espace sur les côtés pour faire ressortir le fond violet */
+  margin-top: 15px; /* Écarte le contenu blanc du logo */
+}
+
+/* Styles du texte dans la carte blanche */
+.program-details-card h3 {
+  color: #541652; /* Le titre est violet */
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.program-details-card p {
+  color: #777; /* La description est grise */
+  font-size: 0.9rem;
+  line-height: 1.4;
+  min-height: 40px;
+}
+
+/* Conteneur des boutons */
+.program-actions {
   display: flex;
-  align-items: center;
+  flex-wrap: wrap; /* Permet aux boutons de passer à la ligne sur de petits écrans */
   justify-content: center;
-  text-align: center;
+  gap: 10px;
+  margin-top: 15px;
 }
 
-.program-description {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 0.85rem;
-  line-height: 1.5;
-  margin-bottom: 20px;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  line-clamp: 3; /* ✅ Ajout de la propriété standard */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  flex-grow: 1;
-  text-align: left;
-}
-
-.program-details {
-  margin-top: auto;
-  padding-top: 15px;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.program-details p {
-  color: rgba(255, 255, 255, 0.85);
+/* Style pour tous les boutons */
+.program-actions button {
+  padding: 8px 12px;
+  border-radius: 50px;
   font-size: 0.8rem;
-  margin: 8px 0;
-  text-align: left;
-  padding: 2px 0;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  
+  display: flex; /* Active Flexbox */
+  align-items: center; /* Centre verticalement les icônes et le texte */
+  justify-content: center;
+  
+  font-weight: 600; /* Le poids de la police a été modifié ici */
 }
 
-.program-details strong {
-  color: white;
-  font-weight: 600;
-  display: inline-block;
-  min-width: 80px;
+/* Style des boutons "More Info" et "Save This" */
+.program-actions .info-button,
+.program-actions .save-button {
+  background-color: #fff;
+  border: 1px solid #ffd700;
+  color: #777;
 }
 
-/* Bouton View All Opportunities */
-.view-all-container {
-  text-align: center;
-  margin-top: 40px;
+/* Style du bouton "Apply Now" */
+.program-actions .apply-button {
+  background-color: #ffd700;
+  border: none;
+  color: #541652;
+  font-weight: bold;
 }
 
 .view-all-button {
-  background: linear-gradient(135deg, #2C3E50 0%, #34495E 100%);
-  color: white;
-  padding: 15px 40px;
-  font-size: 1.1rem;
-  font-weight: 600;
+  margin-top: 40px;
+  padding: 15px 30px;
   border: none;
   border-radius: 30px;
+  background-color: #541652;
+  color: #fff;
+  font-size: 1rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 6px 20px rgba(44, 62, 80, 0.3);
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  font-weight: bold;
 }
 
-.view-all-button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(44, 62, 80, 0.4);
-  background: linear-gradient(135deg, #34495E 0%, #2C3E50 100%);
-}
-
-/* Responsive Design */
-@media (max-width: 1200px) {
-  .programs-grid {
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
-  }
-}
-
-@media (max-width: 992px) {
-  .popular-programs-section {
-    padding: 60px 15px;
-  }
-  
-  .programs-grid {
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 20px;
-  }
-  
-  .program-card {
-    min-height: 350px;
-    padding: 20px 15px;
-  }
-}
-
-@media (max-width: 768px) {
-  .popular-programs-section h2 {
-    font-size: 2rem;
-    margin-bottom: 30px;
-  }
-  
-  .programs-grid {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-    padding: 0 10px;
-  }
-  
-  .program-card {
-    min-height: 320px;
-    padding: 18px 12px;
-  }
-  
-  .program-logo {
-    width: 60px;
-    height: 60px;
-    margin-bottom: 10px;
-  }
-  
-  .program-card h3 {
-    font-size: 1.2rem;
-    min-height: 50px;
-  }
-  
-  .view-all-button {
-    padding: 12px 30px;
-    font-size: 1rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .programs-grid {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-  
-  .program-card {
-    min-height: 300px;
-    margin: 0 5px;
-  }
-  
-  .program-logo {
-    width: 50px;
-    height: 50px;
-  }
-  
-  .program-card h3 {
-    font-size: 1.1rem;
-  }
-  
-  .program-description {
-    font-size: 0.85rem;
-    -webkit-line-clamp: 2;
-    line-clamp: 2; /* ✅ Ajout de la propriété standard */
-  }
-}
-
-
-.filters-container {
+/* 6. Section des réalisations */
+.achievements-section {
   display: flex;
-  gap: 15px;
-  margin: 20px 0;
-  flex-wrap: wrap;
+  flex-direction: column;
   align-items: center;
-  padding: 20px;
-  background-color: #f8f9fa;
+  padding: 50px 20px;
+  background-color: #e6e6e6;
+  position: relative;
+  overflow: hidden;
+}
+
+.achievements-title {
+  font-size: 3rem;
+  color: #541652;
+  margin-bottom: 40px;
+  text-align: center;
+  font-weight: bold;
+  margin-top: -20px;
+}
+
+.achievements-content {
+  display: flex;
+  align-items: center;
+  /* Retirez flex-wrap si vous ne voulez pas qu'ils aillent à la ligne */
+  /* flex-wrap: wrap; */ 
+  justify-content: center;
+  max-width: 1200px;
+  width: 100%;
+}
+
+.achievements-grid {
+  display: flex;
+  /* Changez la direction pour les aligner en colonne */
+  flex-direction: column; 
+  gap: 20px;
+  margin-left: 50px;
+}
+
+.achievements-image-container {
+  width: 500px;
+  height: 350px;
+  background-image: url(../assets/home_pictures/achivement.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-right: 175px;
+}
+
+
+.achievement-card {
+  width: 250px;
+  background-color: #f2f2f2;
   border-radius: 10px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  animation: move-up-down 4s ease-in-out infinite;
+  margin-right: 90px;
+  /* Utilisation de Flexbox pour organiser le contenu de la carte */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  height: 200px; /* Hauteur fixe pour un alignement cohérent */
 }
 
-.filter-input {
-  padding: 12px;
-  border: 2px solid #ddd;
-  border-radius: 8px;
-  min-width: 250px;
-  font-size: 16px;
+.wide-card {
+  width: 450px;
+  height: 70px;
+  /* Centrer le contenu du 90% */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Réinitialise les marges pour cette carte */
+  margin-right: 0;
+  margin-left: 0;
 }
 
-.filter-select {
-  padding: 12px;
-  border: 2px solid #ddd;
-  border-radius: 8px;
-  min-width: 200px;
-  font-size: 16px;
+/* On alterne l'animation pour les cartes */
+.achievement-card:nth-child(even) {
+  animation-delay: -2s;
+}
+
+.achievement-number {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #541652;
+  /* Pas de marge sur le conteneur, l'espacement est géré par le parent */
+}
+
+/* Style spécifique au nombre de la première carte (200) */
+.achievement-number .yellow-text {
+  color: #FFD700;
+  position: relative;
+  top: 15px; /* Déplace le nombre 200 vers le bas */
+}
+
+.achievement-text {
+  font-size: 1.3rem;
+  font-family: 'Poppins', sans-serif;
+  color: black;
+  /* Le positionnement est géré par Flexbox du parent et les marges */
+  margin-top: 15px; /* Espacement entre le nombre et le texte */
+}
+
+.achievement-icon {
+  width: 50px;
+  height: 50px;
+  /* Espacement et alignement gérés par Flexbox */
+}
+
+.text-wrapper {
+  /* Conteneur pour le texte qui se met en dessous */
+  line-height: 1.2;
+}
+
+/* Animation de flottement */
+@keyframes move-up-down {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+/* 7. Section des témoignages */
+.testimonials-section {
+  padding: 80px 20px;
+  background-color: #f8f8f8;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.testimonials-section::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -200px;
+  transform: translateY(-50%);
+  width: 400px;
+  height: 400px;
+  background-color: #FFDB58;
+  border-radius: 50%;
+  opacity: 0.2;
+}
+
+.testimonials-title {
+  position: relative;
+  top: -100px;
+  left: -250px;
+  font-size: 2.8rem;
+  font-weight: bold;
+  font-family: 'Poppins', sans-serif;
+}
+
+.yellow-text {
+  color: #FCBE1C;
+}
+
+.purple-text {
+  color: #541652;
+}
+
+.testimonials-container {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+.testimonial-card {
+  background-color: #fff;
+  border-radius: 50px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  width: 350px;
+  text-align: left;
+  position: relative;
+  transition: transform 0.4s ease-out, box-shadow 0.4s ease-out; /* Transition plus longue pour un effet plus doux */
+}
+
+.testimonial-card::before {
+  content: '';
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 30px;
+  background-color: #FFDB58;
+  border-radius: 50px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.profile-pic {
+  width: 100px; /* Taille ajustée pour les icônes de profil */
+  height: 100px;
+  border-radius: 50%;
+  border: 2px solid #541652;
+  object-fit: cover;
+}
+
+.profile-info h3 {
+  font-size: 1.2rem;
+  color: #541652;
+  margin: 0;
+  font-weight: bold;
+}
+
+.profile-info p {
+  font-size: 0.9rem;
+  color: #888;
+  margin: 5px 0;
+  font-weight: bold;
+}
+
+.star-rating {
+  color: #FFDB58; /* Couleur jaune moutarde pour les étoiles */
+}
+
+.star-rating .star {
+  color: #ccc;
+  font-size: 24px;
+}
+
+.star-rating .star.filled {
+  color: #FFDB58; /* Couleur jaune moutarde pour les étoiles remplies */
+}
+
+.star-rating .duration {
+  margin-left: 10px;
+}
+
+.star {
+  font-size: 1.2rem;
+  margin-right: 2px;
+}
+
+.testimonial-card .profile-info .yellow-role-text {
+  color: #FFDB58 !important;
+  font-weight: 500 !important;
+  font-family: 'Poppins', sans-serif;
+}
+.duration, .sponsor-tag {
+  font-size: 0.8rem;
+  color: #888;
+  display: inline-block;
+  margin-top: 5px;
+  margin-right: 10px;
+}
+
+.testimonial-body p {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.5;
+}
+
+/* Nouvelles règles pour l'animation de survol */
+.testimonial-card:hover {
+  transform: translateY(-10px); /* Soulève la carte de 10px */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); /* Ombre plus forte */
+  animation: shimmer 1s infinite linear; /* Nouvelle animation */
+}
+
+@keyframes shimmer {
+  0% {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2), 0 0 50px rgba(255, 219, 88, 0.5); /* Ajoute un éclat jaune autour de la carte */
+  }
+  100% {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+}
+
+
+/*
+  ========================================
+  8. Section "Our Destinations"
+  ========================================
+*/
+.destinations-section,
+.partners-section {
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 2.8rem;
+  font-weight: bold;
+  font-family: 'Poppins', sans-serif;
+  margin-bottom: 50px;
+}
+
+.destinations-container {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.destination-item {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.destination-item:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.destination-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease-in-out;
+}
+
+.destination-item:hover .destination-image {
+  transform: scale(1.1);
+}
+
+.destination-name {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+
+/*
+  ========================================
+  9. Section "Our Partners"
+  ========================================
+*/
+.partners-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 50px;
+}
+
+.partner-item {
+  width: 200px;
+  height: auto;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.partner-item:hover {
+  transform: scale(1.05);
+  opacity: 0.8;
+}
+
+.partner-logo {
+  max-width: 100%;
+  height: auto;
+}
+
+.reset-button {
+  background-color: #f5B400;
+  color: white;
 }
 
 .search-button, .reset-button {
@@ -675,53 +824,3 @@ transform: scale(1.1);
   font-weight: bold;
   transition: background-color 0.3s;
 }
-
-.search-button {
-  background-color: #007bff;
-  color: white;
-}
-
-.reset-button {
-  background-color: #f5B400;
-  color: white;
-}
-
-.search-results {
-  margin: 30px 0;
-}
-
-.search-results h3 {
-  color: #333;
-  margin-bottom: 20px;
-}
-
-.program-info {
-  margin: 10px 0;
-  font-size: 14px;
-  color: #666;
-}
-
-.program-info p {
-  margin: 5px 0;
-}
-
-.apply-button {
-  background-color: #f5B400;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 10px;
-}
-
-.no-results {
-  text-align: center;
-  padding: 40px;
-  color: #666;
-  font-size: 18px;
-  background-color: #f8f9fa;
-  border-radius: 10px;
-  margin: 20px 0;
-}
-

@@ -13,8 +13,11 @@ function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Détection si on est sur la page About
+  // Détection si on est sur la page About ou FAQ
   const isAboutPage = location.pathname === '/about';
+  // Ajout d'une nouvelle variable pour détecter la page FAQ
+  const isFaqPage = location.pathname === '/faq';
+  const isContactPage = location.pathname === '/contact';
 
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -24,13 +27,25 @@ function Navbar() {
     navigate('/');
   };
 
+  // Déterminez la classe de la barre de navigation
+  let navbarClass = '';
+  if (isAboutPage) {
+    navbarClass = 'navbar-mauve';
+  } else if (isFaqPage || isContactPage) {
+    navbarClass = 'navbar-yellow'; // Appliquez la classe jaune si c'est la page FAQ
+  }
+  
+  let logoSrc = logo; // Logo mauve par défaut
+  if (isAboutPage) {
+    logoSrc = logo2; // Logo jaune seulement pour About
+  }
+
   return (
     <>
-      <nav className={`navbar ${isAboutPage ? 'navbar-mauve' : ''}`}>
-
+      <nav className={`navbar ${navbarClass}`}>
         <div className="navbar-left">
           <img 
-          src={isAboutPage ? logo2 : logo} 
+            src={logoSrc} 
             alt="DirAvenir Logo" 
             className="navbar-logo" />
         </div>
@@ -115,8 +130,8 @@ function Navbar() {
             </>
           )}
         </div>
-     </nav>
-<AccountSettingsModal
+      </nav>
+      <AccountSettingsModal
         isOpen={showSettingsModal}
         onClose={() => setShowSettingsModal(false)}
       />

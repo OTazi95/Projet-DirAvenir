@@ -115,7 +115,7 @@ const handleProgramDetail = (programId) => {
       </div>
 
       <div className="pagination">
-        {[...Array(Math.min(totalPages, 100))].map((_, index) => (
+        {[...Array(Math.min(totalPages, 77))].map((_, index) => (
           <button
             key={index}
             className={currentPage === index + 1 ? 'active' : ''}

@@ -1,12 +1,128 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../styles/Country.css';
+import { IoIosInformationCircleOutline } from "react-icons/io";
+import { BsBookmark } from "react-icons/bs";
 import '../styles/Dashboard.css';
-import partner1 from '../assets/Final-logo.png';
-import partner2 from '../assets/Cyprus-logo.png';
-import partner3 from '../assets/BAU-logo.png';
-import participationImg from '../assets/participation-illustration.png';
+import guide from '../assets/home_pictures/guide.png';
+import ai1 from '../assets/home_pictures/AI1.png';
+import ai2 from '../assets/home_pictures/AI2.png';
+import ai3 from '../assets/home_pictures/AI3.png'; 
+import ai4 from '../assets/home_pictures/AI4.png';
+import career2 from '../assets/home_pictures/career2.png';
+import students from '../assets/home_pictures/student.png';
+import colleges from '../assets/home_pictures/colleges.png';
+import institu from '../assets/home_pictures/institu.png';
+import career from '../assets/home_pictures/career.png';
+import point from '../assets/home_pictures/point.png';
+import howitworks from '../assets/home_pictures/how_it_works.png';
+import itemicon from '../assets/home_pictures/itemicon.png';
+import profile1 from '../assets/home_pictures/profile1.png';
+import profile2 from '../assets/home_pictures/profile2.png';
+import profile3 from '../assets/home_pictures/profile3.png';
+import trophy from '../assets/home_pictures/trophy.png';
+// Importations d'images corrigées pour les destinations et les partenaires
+import finalUni from '../assets/Final-logo.png';
+import cyprusUni from '../assets/Cyprus-logo.png';
+import bauUni from '../assets/BAU-logo.png';
+import chinaDest from '../assets/home_pictures/china.png';
+import cyprusDest from '../assets/home_pictures/cyprus.png';
+import romaniaDest from '../assets/home_pictures/romania.png';
+// Importation d'icônes spécifiques
+import { FaGraduationCap, FaMedal } from 'react-icons/fa'; 
+
+const testimonials = [
+  {
+    id: 1,
+    name: 'Anir chentre',
+    role: 'Business Administration',
+    rating: 4,
+    duration: '6 Month Ago',
+    sponsor: 'Dravenir Scholar',
+    description: "I want to sincerely thank Dravenir for their professional, honest, and transparent service. Their integrity stood out and made the whole process smooth. I highly recommend them.",
+    profileIcon: <img src={profile1} alt="Anir Chentre" style={{ width: '84px', height: '84px', borderRadius: '10%' }} />,
+    badgeIcon: <FaMedal />,
+    degreeIcon: <FaGraduationCap />,
+    badgeText: 'Scholarship A',
+    degreeText: 'Bachelor',
+  },
+  {
+    id: 2,
+    name: 'Fatimazahra Naim',
+    role: 'Cyber Security',
+    rating: 4,
+    duration: '3 Month ago',
+    sponsor: 'Self-sponsor',
+    description: "I highly recommend Dravenir to anyone planning to study abroad, especially in China. The team is professional, responsive, and truly understanding.",
+    profileIcon: <img src={profile3} alt="Fatimazahra Naim" style={{ width: '84px', height: '84px', borderRadius: '10%' }} />,
+    badgeIcon: <FaMedal />,
+    degreeIcon: <FaGraduationCap />,
+    badgeText: 'Self-sponsor',
+    degreeText: 'Master',
+  },
+  {
+    id: 3,
+    name: 'El Abbadi Hind',
+    role: 'Architecture',
+    rating: 4,
+    duration: '6 Month ago',
+    sponsor: 'Scholarship',
+    description: "I would like to extend my heartfelt thanks and appreciation to Dravenir for their outstanding services. They have demonstrated a high level of professionalism and exceptional commitment to meeting my needs.",
+    profileIcon: <img src={profile2} alt="El Abbadi Hind" style={{ width: '84px', height: '84px', borderRadius: '10%' }} />,
+    badgeIcon: <FaMedal />,
+    degreeIcon: <FaGraduationCap />,
+    badgeText: 'Scholarship B',
+    degreeText: 'Language Year',
+  },
+  {
+    id: 4,
+    name: 'Sofia Alami',
+    role: 'Biotechnology',
+    rating: 5,
+    duration: '2 Month Ago',
+    sponsor: 'Dravenir Scholar',
+    description: "Thanks to Dravenir, I was able to realize my dream of studying abroad. The process was transparent, and their support was invaluable at every step.",
+    profileIcon: <img src={profile1} alt="Sofia Alami" style={{ width: '84px', height: '84px', borderRadius: '10%' }} />,
+    badgeIcon: <FaMedal />,
+    degreeIcon: <FaGraduationCap />,
+    badgeText: 'Scholarship C',
+    degreeText: 'Bachelor',
+  },
+];
+
+const achievements = [
+  { id: 1, number: '200', text: 'Students Abroad', icon: itemicon },
+  { id: 2, number: '90%', text: '', icon: null },
+];
+
+const destinations = [
+  { id: 1, name: 'China', image: chinaDest },
+  { id: 2, name: 'Cyprus', image: cyprusDest },
+  { id: 3, name: 'Romania', image: romaniaDest },
+];
+
+const partners = [
+  { id: 1, name: 'Final International University', logo: finalUni },
+  { id: 2, name: 'Cyprus International University', logo: cyprusUni },
+  { id: 3, name: 'BAU University', logo: bauUni },
+];
+
+const StarRating = ({ rating, duration }) => {
+  const stars = [];
+  for (let i = 0; i < 5; i++) {
+    stars.push(
+      <span key={i} className={`star ${i < rating ? 'filled' : ''}`}>
+        ★
+      </span>
+    );
+  }
+  return (
+    <div className="star-rating">
+      {stars}
+      <span className="duration">{duration}</span>
+    </div>
+  );
+};
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -17,7 +133,10 @@ function Dashboard() {
   const [searchCountry, setSearchCountry] = useState('');
   const [searchResults, setSearchResults] = useState([]);
 
-  // Charger prénom et nom depuis localStorage
+  const [activeDot, setActiveDot] = useState(0);
+  const containerRef = useRef(null);
+  const testimonialsTrackRef = useRef(null);
+
   useEffect(() => {
     const prenomLocal = localStorage.getItem('prenom');
     const nomLocal = localStorage.getItem('nom');
@@ -81,14 +200,56 @@ const handleProgramDetail = (programId) => {
     setSearchResults([]);
   };
 
+  const programs = [
+    { id: 1, image: "/images/civil-engineering.png", title: "Civil Engineering", description: "Build the world with innovation and precision.", alt: "Civil Engineering Logo" },
+    { id: 2, image: "/images/medicine.png", title: "Medicine", description: "Become a healer with advanced medical knowledge.", alt: "Medicine Logo" },
+    { id: 3, image: "/images/computer-science.png", title: "Computer Science", description: "Shape the future with cutting-edge technology.", alt: "Computer Science Logo" },
+    { id: 4, image: "/images/business.png", title: "Business Administration", description: "Lead with strategic thinking and innovation.", alt: "Business Logo" },
+    { id: 5, image: "/images/architecture.png", title: "Architecture", description: "Design spaces that inspire and transform.", alt: "Architecture Logo" },
+    { id: 6, image: "/images/law.png", title: "Law", description: "Champion justice with legal expertise.", alt: "Law Logo" },
+    { id: 7, image: "/images/psychology.png", title: "Psychology", description: "Understand minds and transform lives.", alt: "Psychology Logo" },
+    { id: 8, image: "/images/economics.png", title: "Economics", description: "Analyze markets and drive economic growth.", alt: "Economics Logo" }
+  ];
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const handleScroll = () => {
+      const scrollLeft = container.scrollLeft;
+      const cardWidth = 250 + 20;
+      const newIndex = Math.round(scrollLeft / cardWidth);
+      setActiveDot(newIndex);
+    };
+    container.addEventListener('scroll', handleScroll);
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  const handleDotClick = (index) => {
+    setActiveDot(index);
+    if (testimonialsTrackRef.current) {
+      const cardWidth = 350; 
+      const cardGap = 30;
+      const newPosition = index * (cardWidth + cardGap);
+      testimonialsTrackRef.current.style.transform = `translateX(-${newPosition}px)`;
+    }
+  };
+
+  const specialRoles = ['Cyber Security', 'Business Administration', 'Architecture', 'Biotechnology'];
 
   return (
-    <div className="dashboard-container">
-      <div className="dashboard-content">
-        <h1>Bienvenue {prenom} {nom} dans votre espace DirAvenir</h1>
-        <p>Nous ouvrons de nouveaux horizons aux jeunes, en leur offrant la possibilité de construire leurs bases académiques à l’étranger.</p>
-      </div>
-
+    <div className="dashboard-page">
+      {/* 1. Hero Section */}
+      <section className="hero-section">
+        <div className="hero-content">
+          <div className="hero-text">
+            <h1>
+              Guide Your Way <br />
+              Up To Success <br />
+              With Us
+            </h1>
+            <p>Get the guidance you need for the future of work.</p>
  {/* Nouvelle barre de recherche avec input (comme Programs.jsx) */}
         <div className="filters-container">
           <input
@@ -137,93 +298,92 @@ const handleProgramDetail = (programId) => {
           </div>
         )}
 
-
-
-         <div className="participation-container">
-      <div className="participation-left">
-        <h4 className="section-subtitle">QUI PEUT NOUS REJOINDRE</h4>
-        <h1 className="section-title">
-          Orientation professionnelle <br /> Des programmes pour tous
-        </h1>
-
-        <div className="participation-grid">
-          <div className="participation-item">
-            <div className="icon-number">01</div>
-            <div>
-              <h3>Collèges/Universités</h3>
-            </div>
           </div>
-
-          <div className="participation-item">
-            <div className="icon-number">02</div>
-            <div>
-              <h3>Étudiants</h3>
-            </div>
-          </div>
-
-          <div className="participation-item">
-            <div className="icon-number">03</div>
-            <div>
-              <h3>Changeurs de carrière</h3>
-            </div>
-          </div>
-
-          <div className="participation-item">
-            <div className="icon-number">04</div>
-            <div>
-              <h3>Établissements d'enseignement</h3>
-            </div>
+          <div className="hero-image-container">
+            <img src={guide} alt="Orientation" className="hero-image" />
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="participation-right">
-        <img src={participationImg} alt="Participation Illustration" />
-      </div>
-    </div>
+      {/* 2. Platform Description */}
+      <section className="platform-description">
+        <div className="platform-content">
+          <div className="description-text">
+            <h2>
+              Morocco's <br />
+              First AI Based <br />
+              <span className="yellow-text">Orientation Platform</span>
+            </h2>
+            <img src={point} alt="Decorative dots" className="decorative-dots" />
+          </div>
+          <div className="service-images-container" ref={containerRef}>
+            <img src={ai1} alt="AI Based Program Selector" />
+            <img src={ai2} alt="AI Based Scenarios" />
+            <img src={ai3} alt="AI Based Quizzes/Tests" />
+            <img src={ai4} alt="AI Based Gamification" />
+          </div>
+        </div>
+        <div className="carousel-nav-dots">
+          {[...Array(4)].map((_, index) => (
+            <span
+              key={index}
+              className={`dot ${index === activeDot ? 'active' : ''}`}
+              onClick={() => handleDotClick(index)}
+            ></span>
+          ))}
+        </div>
+      </section>
 
-    <div className="how-it-works-section">
-  <h2 className="section-title">Comment ça marche ?</h2>
-  <div className="how-it-works-container">
-    <div className="how-box">
-      <img src="/images/program-seeker.png" alt="Program Seeker" />
-      <p className="label">Chercheur de programme</p>
-    </div>
+      {/* 3. Who Can Join */}
+      <section className="who-can-join">
+        <div className="join-content">
+          <div className="join-text">
+            <h4>W&nbsp;H&nbsp;O&nbsp;&nbsp; C&nbsp;A&nbsp;N&nbsp;&nbsp; J&nbsp;O&nbsp;I&nbsp;N</h4>
+            <h2>
+              Career Orientation <br /> Schemes For All
+            </h2>
+            <div className="join-list">
+              <div className="join-item">
+                <div className="item-number">01</div>
+                <div className="item-text">
+                  <img src={colleges} alt="Universities icon" className="colleges" style={{ width: '40px', height: '40px' }}/>
+                  <h4>Colleges/Universities</h4>
+                </div>
+              </div>
+              <div className="join-item">
+                <div className="item-number">02</div>
+                <div className="item-text">
+                  <img src={students} alt="Students icon" style={{ width: '40px', height: '40px' }}/>
+                  <h4>Students</h4>
+                </div>
+              </div>
+              <div className="join-item">
+                <div className="item-number">03</div>
+                <div className="item-text">
+                  <img src={career} alt="Career Changers icon" className="career" style={{ width: '40px', height: '40px' }}/>
+                  <h4>Career Changers</h4>
+                </div>
+              </div>
+              <div className="join-item">
+                <div className="item-number">04</div>
+                <div className="item-text">
+                  <img src={institu} alt="Educational Institutions icon" className="institutions-icon" style={{ width: '40px', height: '40px' }}/>
+                  <h4>Educational Institutions</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="join-image">
+            <img src={career2} alt="Student illustration" />
+          </div>
+        </div>
+      </section>
 
-    <div className="how-steps">
-      <div className="how-step">
-        <div className="step-number">01</div>
-        <p>Tests et diagrammes d'aptitude à l'orientation</p>
-      </div>
-      <div className="how-step">
-        <div className="step-number">02</div>
-        <p>Les programmes les plus correspondants à votre profil</p>
-      </div>
-      <div className="how-step">
-        <div className="step-number">03</div>
-        <p>Sélection des opportunités dans les universités</p>
-      </div>
-      <div className="how-step">
-        <div className="step-number">04</div>
-        <p>Candidature à l'opportunité choisie</p>
-      </div>
-      <div className="how-step">
-        <div className="step-number">05</div>
-        <p>Suivi en temps réel de votre admission</p>
-      </div>
-      <div className="how-step">
-        <div className="step-number">06</div>
-        <p>Orientation et suivi des candidatures</p>
-      </div>
-    </div>
-
-    <div className="how-box">
-      <img src="/images/diravenir-scholar.png" alt="Diravenir Scholar" />
-      <p className="label">Diravenir Scholar</p>
-    </div>
-  </div>
-</div>
-
+      {/* 4. How It Works Section */}
+      <section className="how-it-works">
+        <img src={howitworks} alt="How it works illustration" className="how-it-works-illustration" />
+      </section>
+ 
    {/* NOUVELLE SECTION PROGRAMMES POPULAIRES */}
       <div className="popular-programs-section">
         <h2>
@@ -263,83 +423,150 @@ const handleProgramDetail = (programId) => {
         </div>
       </div>
 
-<div className="achievements-section">
-  <h2><span className="highlight-purple">Nos</span> <span className="highlight-yellow">Accomplissements</span></h2>
-  <div className="achievements-content">
-    <div className="achievement-image">
-      <img src="/images/succes2.jpg" alt="Achievements Illustration" />
-    </div>
-    <div className="achievement-stats">
-      <div className="stat-card">
-        <h3>200</h3>
-        <p>Étudiants à l'étranger</p>
-      </div>
-      <div className="stat-card large">
-        <h3>70</h3>
-        <p>Programmes disponibles</p>
-      </div>
-      <div className="stat-card">
-        <h3>90%</h3>
-        <p>Étudiants satisfaits <br />du programme choisi</p>
-      </div>
-    </div>
-  </div>
-</div>
 
-<div className="reviews-section" id='review'>
-  <h2>
-    <span className="highlight-purple">Avis</span>{' '}
-    <span className="highlight-yellow">des étudiants</span>
-  </h2><br></br>
-  <h3>
-    <span className="highlight-purple">Ils étaient des réveurs</span>{' '}<br></br>
-    <span className="highlight-yellow">Ils sont désormais des accomplisseurs et acteurs</span>
-  </h3>
-  <div className="reviews-container">
-    <div className="review-card">
-      <p>"DirAvenir m'a vraiment aidé à trouver la bonne université à l'étranger. Merci à toute l'équipe !"</p>
-      <h4>- Sarah B.</h4>
-    </div>
-    <div className="review-card">
-      <p>"Grâce à leurs conseils personnalisés, j'ai pu intégrer un programme qui me correspond parfaitement."</p>
-      <h4>- Mohamed A.</h4>
-    </div>
-    <div className="review-card">
-      <p>"Excellent accompagnement pour les démarches administratives et un suivi impeccable."</p>
-      <h4>- Yasmine K.</h4>
-    </div>
-  </div>
-</div>
+      {/* 7. Section de témoignages (DEPLACEE) */}
+      <section className="testimonials-section">
+        <h2 className="testimonials-title">
+          <span className="yellow-text">From</span> <span className="purple-text">Dreamers</span> <span className="yellow-text">to</span><br />
+          <span className="yellow-text">Achievers & doers</span>
+        </h2>
+        
+        <div className="testimonials-carousel-container">
+          <div className="testimonials-track" ref={testimonialsTrackRef}>
+            {testimonials.map(testimonial => (
+              <div className="testimonial-card" key={testimonial.id}>
+                {testimonial.id === 1 && (
+                  <div className="dravenir-scholar-badge" style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: '#FFD700',
+                    padding: '8px 12px',
+                    borderRadius: '50px',
+                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                    whiteSpace: 'nowrap',
+                    position: 'absolute',
+                    top: '-20px', 
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    zIndex: '10'
+                  }}>
+                    <img src={trophy} alt="Dravenir Scholar Trophy" style={{ width: '24px', height: '24px', marginRight: '8px' }} />
+                    <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#6A0DAD' }}>Dravenir Scholar</span>
+                  </div>
+                )}
+                <div className="profile-header">
+                  <div className="profile-image-container">
+                    {testimonial.profileIcon}
+                  </div>
+                  <div className="profile-info">
+                    <h3>{testimonial.name}</h3>
+                    <p className={specialRoles.includes(testimonial.role) ? 'yellow-role-text' : ''}>
+                      {testimonial.role}
+                    </p>
+                    <StarRating rating={testimonial.rating} duration={testimonial.duration} />
+                    <div className="testimonial-badges" style={{ marginTop: '10px', display: 'flex', flexWrap: 'nowrap', alignItems: 'center' }}>
+                      {testimonial.badgeText && (
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          {React.cloneElement(testimonial.badgeIcon, { style: { color: '#FFDB58', marginRight: '5px' } })}
+                          <span className="badge-text" style={{ color: '#777', whiteSpace: 'nowrap' }}>{testimonial.badgeText}</span>
+                        </div>
+                      )}
+                      {testimonial.degreeText && (
+                        <div style={{ display: 'flex', alignItems: 'center', marginLeft: '10px' }}>
+                          {React.cloneElement(testimonial.degreeIcon, { style: { color: '#FFDB58', marginRight: '5px' } })}
+                          <span className="badge-text" style={{ color: '#777', whiteSpace: 'nowrap' }}>{testimonial.degreeText}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="testimonial-body">
+                  <p>{testimonial.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="carousel-dots">
+          {[...Array(testimonials.length - 1)].map((_, index) => (
+            <span
+              key={index}
+              className={`dot ${index === activeDot ? 'active' : ''}`}
+              onClick={() => handleDotClick(index)}
+            ></span>
+          ))}
+        </div>
+      </section>
 
+      {/* 8. Our Achievements */}
+      <section className="achievements-section">
+        <h2 className="achievements-title">Our <span className="yellow-text">Achievements</span></h2>
+        <div className="achievements-content">
+          <div className="achievements-image-container">
+            {/* L'image de fond sera gérée par le CSS */}
+          </div>
+          <div className="achievements-grid">
+            {achievements.map(item => (
+              <div className={`achievement-card ${item.id === 2 ? 'wide-card' : ''}`} key={item.id}>
+                {item.id === 2 ? (
+                  /* Cas du 90% */
+                  <div className="achievement-number">
+                    <span className="purple-text">{item.number}</span>
+                  </div>
+                ) : (
+                  /* Cas du 200 Students Abroad */
+                  <>
+                    <div className="achievement-number">
+                      <span className="yellow-text">{item.number}</span>
+                    </div>
+                    <div className="achievement-text">
+                      {item.icon && 
+                        <img 
+                          src={item.icon} 
+                          alt="Students Abroad Icon" 
+                          className="achievement-icon" 
+                        />
+                      }
+                      <div className="text-wrapper">
+                        <span>Students</span>
+                        <br />
+                        <span>Abroad</span>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      
+      {/* 9. Our Destinations */}
+      <section className="destinations-section">
+        <h2 className="section-title">Our <span className="yellow-text">Destinations</span></h2>
+        <div className="destinations-container">
+          {destinations.map(dest => (
+            <div className="destination-item" key={dest.id}>
+              <img src={dest.image} alt={dest.name} className="destination-image" />
+              <h3 className="destination-name">{dest.name}</h3>
+            </div>
+          ))}
+        </div>
+      </section>
 
-      <div className="destinations">
-  <h2><span className="highlight-purple">Nos</span> <span className="highlight-yellow">Destignations</span></h2>
-  <div className="destination-cards">
-    <div className="card" onClick={() => navigate('/destination/chine')}>
-      <img src="/images/chine.jpg" alt="Chine" />
-      <h3>Chine</h3>
+      {/* 10. Our Partners */}
+      <section className="partners-section">
+        <h2 className="section-title">Our <span className="yellow-text">Partners</span></h2>
+        <div className="partners-container">
+          {partners.map(partner => (
+            <div className="partner-item" key={partner.id}>
+              <img src={partner.logo} alt={partner.name} className="partner-logo" />
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
-    <div className="card" onClick={() => navigate('/destination/Roumanie')}>
-      <img src="/images/roumanie.jpg" alt="Roumanie" />
-      <h3>Roumanie</h3>
-    </div>
-    <div className="card" onClick={() => navigate('/destination/Chypre')}>
-      <img src="/images/chypre.jpg" alt="Chypre" />
-      <h3>Chypre</h3>
-    </div>
-  </div>
-</div>
-
-<div id="partners-section" className="partners-section">
-  <h2><span className="highlight-purple">Nos</span> <span className="highlight-yellow">Partenaires</span></h2>
-  <div className="partners-logos">
-    <img src={partner1} alt="Final International University" onClick={() => navigate('/partner/final')} />
-    <img src={partner2} alt="Cyprus International University" onClick={() => navigate('/partner/cyprus')} />
-    <img src={partner3} alt="Bahcesehir University" onClick={() => navigate('/partner/bau')} />
-  </div>
-</div>
-    </div>
-
   );
 }
 

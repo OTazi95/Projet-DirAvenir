@@ -12,7 +12,7 @@
   align-items: center;
   position: relative;
   font-family: 'Poppins', sans-serif;
-  height:500px;
+  height:580px;
   top:-3px;
   overflow: visible;
   border-bottom-left-radius: 38px;
@@ -28,7 +28,7 @@
   color: #ffc107;
   margin-bottom: 10px;
   margin-right: 400px;
-  top: 100px;  
+  top: 80px;  
   position: absolute;
   font-family: 'Poppins';
   font-style: normal;
@@ -39,6 +39,7 @@
   font-size: 48px;
   font-weight: bold;
   margin-bottom: 20px;
+  top:150px;
 }
 
 .banner-texts {
@@ -104,7 +105,63 @@
   border-radius: 13px;
   width: 48%;
   z-index: 2;
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
 }
+
+.banner-images img:hover {
+  transform: scale(1.02) rotate(0.5deg);
+  box-shadow: 0 5px 10px rgba(75, 1, 78, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Animation fade-in */
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.fade-in.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Animation slide-in from left */
+.slide-in-left {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.slide-in-left.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Animation slide-in from right */
+.slide-in-right {
+  opacity: 0;
+  transform: translateX(50px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.slide-in-right.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Animation pour les images en pop */
+.pop-in {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.pop-in.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
 
 .circle {
   position: absolute;
@@ -164,9 +221,9 @@
 font-family: 'Poppins', sans-serif;
 font-style: normal;
 color: #575757;
- line-height: 1.8;
-  font-weight: 300;
-  max-width: 1000px;  
+line-height: 1.8;
+font-weight: 300;
+max-width: 1000px;  
 }
 
 .headline {
@@ -376,9 +433,9 @@ color: #575757;
 }
 
 .arrow:hover {
-  background-color: #ffc107;
-  border-color: #ffc107;
-  color: white;
+  background-color: #f1e8fc;
+  border-color: #4b014e;
+  color: #4b014e;
   transform: scale(1.1);
 }
 

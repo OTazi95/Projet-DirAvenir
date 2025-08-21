@@ -1,40 +1,45 @@
 import React from 'react';
 import '../styles/Contact.css';
-import logo from '../assets/logoj.png';
+import faq_points from '../assets/faq_points.png';
 import { FaFacebook, FaInstagram, FaLinkedin, FaTiktok, FaYoutube } from 'react-icons/fa';
 
 function Contact() {
   return (
     <div className="contact-container">
+      <div className="body-animation">
+  <div className="particle"></div>
+  <div className="particle"></div>
+  <div className="particle"></div>
+  <div className="particle"></div>
+  <div className="waves"></div>
+</div>
 
-   <div className="contact-header">
-        <img src={logo} alt="Logo DirAvenir" className="contact-logo" />
-        <h3 className="subtext">Nous sommes là pour vous aider à bâtir votre avenir !</h3><br />
+      <div className="contact-banner">
+          <h1>Contact Our Team</h1>
       </div>
 
 <div className="form-wrapper">
-  <h2 className="form-title">Notre équipe<span className='highlight-yellow'> est à votre écoute</span></h2>
+    <div className="form-circle"></div> 
   <form className="contact-form">
     <div className="form-row">
       <div className="form-group">
-        <label htmlFor="name">Nom complet*</label>
-        <input type="text" id="name" placeholder="Veuillez saisir votre Nom et Prénom" required />
+        <label htmlFor="name">Your name*</label>
+        <input type="text" id="name" placeholder="Enter your full name" required />
       </div>
       <div className="form-group">
-        <label htmlFor="email">Adresse email*</label>
-        <input type="email" id="email" placeholder="Veuillez saisir votre adresse mail" required />
+        <label htmlFor="email">Contact email*</label>
+        <input type="email" id="email" placeholder="contact@gmail.com" required />
       </div>
     </div>
 
     <div className="form-row">
       <div className="form-group">
-        <label htmlFor="phone">Numéro téléphone*</label>
-        <input type="text" id="phone" placeholder="Veuillez saisir votre numéro de téléphone" required />
+        <label htmlFor="phone">Phone number*</label>
+        <input type="text" id="phone" placeholder="Enter your phone number" required />
       </div>
       <div className="form-group">
-        <label htmlFor="subject">À propos*</label>
+        <label htmlFor="subject">Subject Related to*</label>
         <select id="subject" required>
-          <option>Séléction le sujet de votre contact</option>
           <option>Orientation</option>
           <option>Payment Failure</option>
           <option>Other</option>
@@ -43,27 +48,29 @@ function Contact() {
     </div>
 
     <div className="form-group full-width">
-      <label htmlFor="message">Votre message*</label>
-      <textarea id="message" rows="5" placeholder="Tapez votre message...." required></textarea>
+      <label htmlFor="message">Your message*</label>
+      <textarea id="message" rows="5" placeholder="Type your message...." required></textarea>
     </div>
-   <p>En envoyant ce formumaire vous acceptez nos termes, conditons et politique de confidentialité 
-    qui explique comment nous pouvons collecter, utiliser et divulguer vos informations personnelles, 
-    y compris à des tiers.
+   <p>By submitting this form you agree to our terms and conditions and our Privacy Policy which explains how we may collect,<br></br> use and disclose your personal information including to third parties.
    </p>
-    <button type="submit" className="send-btn">Envoyé</button>
+    <button type="submit" className="send-btn">send</button>
   </form>
 </div>
 
       <div className="contact-content">
         <div className="contact-info">
-          <h2>Nos coordonnées</h2>
-          <p><strong>📍 Adresse :</strong> Bd de la Résistance, 179, Angle des Boulevards de Londres, Av. Mers Sultan, Casablanca 20250, Maroc</p>
-          <p><strong>📞 Téléphone :</strong> 0771-497646</p>
+          <h2> Our Informations</h2>
+          <p><strong>📍 Adress :</strong> B179 Resistance Blvd, Corner of London and Mers Sultan Ave, Casablanca 20250, Marocco</p>
+         <p>
+  <strong>📞 Phone :</strong>
+  <a href="tel:+212771497646">0771-497646</a>
+</p>
+
           <p><strong>📧 Email :</strong> contact@diravenir.com</p>
         </div>
 
         <div className="contact-social">
-          <h2>Suivez-nous sur nos réseaux sociaux !</h2>
+          <h2>Follow us on social media !</h2>
           <div className="social-icons">
             <a href="https://www.instagram.com/diravenir/" target="_blank" rel="noreferrer"><FaInstagram /></a>
             <a href="https://www.linkedin.com/company/diravenir/" target="_blank" rel="noreferrer"><FaLinkedin /></a>

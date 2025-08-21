@@ -6,8 +6,8 @@ html {
   display: flex;
   justify-content: space-between;
   align-items: center;
-    background-color: transparent !important;
-     backdrop-filter: blur(6px);
+  background-color: transparent !important;
+  backdrop-filter: blur(6px);
   padding: 10px 20px;
   color: white;
   flex-wrap: wrap;
@@ -22,9 +22,49 @@ html {
   color: white;
 }
 
+.navbar.navbar-yellow {
+  background-color: #FCBE1C !important; /* jaune */
+  backdrop-filter: none !important;
+  color: white;
+}
+
+.navbar.navbar-yellow a,
+.navbar.navbar-yellow .nav-link,
+.navbar.navbar-yellow .navbar-brand {
+  color: #fff !important;
+}
+
+.navbar.navbar-yellow a:hover,
+.navbar.navbar-yellow .nav-link:hover,
+.navbar.navbar-yellow .navbar-brand:hover {
+  color: #f4f4f4 !important;
+}
+
+.navbar.navbar-yellow .login-btn {
+  background: transparent;
+  border: 1px solid #fff !important;
+  color: #fff !important;
+}
+
+.navbar.navbar-yellow .login-btn:hover {
+  background: #fff !important;
+  color: #FFA500 !important; /* jaune au hover */
+}
+
+.navbar.navbar-yellow .register-btn {
+  background: #fff !important;
+  color: #000 !important;
+  border: 1px solid #fff !important;
+}
+
+.navbar.navbar-yellow .register-btn:hover {
+  background: #f4f4f4 !important; /* léger gris au hover */
+  color: #000 !important;
+}
+
 
 .navbar-logo {
-  height: 50px;
+  height: 70px;
   margin-right: 10px;
 }
 

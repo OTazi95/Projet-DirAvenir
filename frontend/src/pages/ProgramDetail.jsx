@@ -142,36 +142,36 @@ function ProgramDetail() {
         </h2>
         <div className="documents-grid">
           <div className="document-item">
-            <span className="doc-icon">🎓</span>
-            <span className="doc-text">Valid Admission Request</span>
+            <span className="doc-icon">🛂</span>
+            <span className="doc-text">Valid Moroccan Passport</span>
           </div>
           <div className="document-item">
-            <span className="doc-icon">📋</span>
-            <span className="doc-text">High school Transcripts</span>
+            <span className="doc-icon">🎓</span>
+            <span className="doc-text">High school Diploma</span>
           </div>
           <div className="document-item">
             <span className="doc-icon">📝</span>
             <span className="doc-text">Good Conduct Certificate</span>
           </div>
           <div className="document-item">
-            <span className="doc-icon">💾</span>
-            <span className="doc-text">Scanned Digital Documents</span>
+            <span className="doc-icon">📷</span>
+            <span className="doc-text">Small Digital Photo</span>
           </div>
           <div className="document-item">
             <span className="doc-icon">📚</span>
-            <span className="doc-text">Academic Certificates</span>
+            <span className="doc-text">Academic Transcript</span>
           </div>
           <div className="document-item">
             <span className="doc-icon">📖</span>
-            <span className="doc-text">Application Documents</span>
+            <span className="doc-text">Application Form Fill</span>
           </div>
           <div className="document-item">
             <span className="doc-icon">🏆</span>
-            <span className="doc-text">English Language Certificate</span>
+            <span className="doc-text">English Proficiency Certificate</span>
           </div>
           <div className="document-item">
             <span className="doc-icon">📋</span>
-            <span className="doc-text">Academic Certificates</span>
+            <span className="doc-text">Academic Study Plan</span>
           </div>
         </div>
       </motion.div>
