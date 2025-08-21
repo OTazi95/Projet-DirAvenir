@@ -451,22 +451,16 @@
   margin-top: -20px;
 }
 
+.achievements-title .yellow-text {
+  color: #FFD700;
+}
+
 .achievements-content {
   display: flex;
   align-items: center;
-  /* Retirez flex-wrap si vous ne voulez pas qu'ils aillent à la ligne */
-  /* flex-wrap: wrap; */ 
   justify-content: center;
   max-width: 1200px;
   width: 100%;
-}
-
-.achievements-grid {
-  display: flex;
-  /* Changez la direction pour les aligner en colonne */
-  flex-direction: column; 
-  gap: 20px;
-  margin-left: 50px;
 }
 
 .achievements-image-container {
@@ -476,75 +470,125 @@
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  margin-right: 175px;
+  margin-right: 50px;
 }
 
+.achievements-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 15px;
+  width: 440px;
+}
 
-.achievement-card {
-  width: 250px;
-  background-color: #f2f2f2;
-  border-radius: 10px;
-  padding: 30px;
+/* Première carte - 200 Students Abroad */
+.achievement-card.first-card {
+  grid-column: 1;
+  grid-row: 1;
+  width: 200px;
+  height: 160px;
+  background-color: white;
+  border-radius: 15px;
+  padding: 20px;
   text-align: center;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   animation: move-up-down 4s ease-in-out infinite;
-  margin-right: 90px;
-  /* Utilisation de Flexbox pour organiser le contenu de la carte */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-around;
-  height: 200px; /* Hauteur fixe pour un alignement cohérent */
+  justify-content: space-between;
 }
 
-.wide-card {
-  width: 450px;
-  height: 70px;
-  /* Centrer le contenu du 90% */
+/* Deuxième carte - 70 Programs Available */
+.achievement-card.second-card {
+  grid-column: 2;
+  grid-row: 1;
+  width: 200px;
+  height: 160px;
+  background-color: white;
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  animation: move-up-down 4s ease-in-out infinite;
+  animation-delay: -1s;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  /* Réinitialise les marges pour cette carte */
-  margin-right: 0;
-  margin-left: 0;
+  justify-content: space-between;
 }
 
-/* On alterne l'animation pour les cartes */
-.achievement-card:nth-child(even) {
+/* Troisième carte - 90% Students Satisfied (carte large) */
+.achievement-card.wide-card {
+  grid-column: 1 / 3;
+  grid-row: 2;
+  width: 440px;
+  height: 100px;
+  background-color: white;
+  border-radius: 15px;
+  padding: 20px;
+  text-align: left;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  animation: move-up-down 4s ease-in-out infinite;
   animation-delay: -2s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
 }
 
 .achievement-number {
-  font-size: 3rem;
+  font-size: 4rem;
   font-weight: bold;
   color: #541652;
-  /* Pas de marge sur le conteneur, l'espacement est géré par le parent */
 }
 
-/* Style spécifique au nombre de la première carte (200) */
-.achievement-number .yellow-text {
+.achievement-number.yellow {
   color: #FFD700;
-  position: relative;
-  top: 15px; /* Déplace le nombre 200 vers le bas */
+}
+
+.achievement-number.purple {
+  color: #541652;
 }
 
 .achievement-text {
-  font-size: 1.3rem;
+  font-size: 1rem;
   font-family: 'Poppins', sans-serif;
-  color: black;
-  /* Le positionnement est géré par Flexbox du parent et les marges */
-  margin-top: 15px; /* Espacement entre le nombre et le texte */
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .achievement-icon {
-  width: 50px;
-  height: 50px;
-  /* Espacement et alignement gérés par Flexbox */
+  width: 30px;
+  height: 30px;
 }
 
 .text-wrapper {
-  /* Conteneur pour le texte qui se met en dessous */
   line-height: 1.2;
+  font-weight: 500;
+}
+
+/* Style spécifique pour la carte 90% */
+.wide-card .satisfaction-text {
+  font-size: 1rem;
+  color: #666;
+  line-height: 1.3;
+}
+
+/* Motif de points décoratif */
+.wide-card::after {
+  content: '';
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 80px;
+  height: 60px;
+  background-image: radial-gradient(circle, #ddd 2px, transparent 2px);
+  background-size: 12px 12px;
+  opacity: 0.5;
 }
 
 /* Animation de flottement */
@@ -554,6 +598,28 @@
   }
   50% {
     transform: translateY(-20px);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .achievements-content {
+    flex-direction: column;
+  }
+  
+  .achievements-image-container {
+    margin-right: 0;
+    margin-bottom: 30px;
+  }
+  
+  .achievements-grid {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+  
+  .achievement-card.wide-card {
+    grid-column: 1;
+    width: 100%;
   }
 }
 /* 7. Section des témoignages */
@@ -585,6 +651,7 @@
   font-size: 2.8rem;
   font-weight: bold;
   font-family: 'Poppins', sans-serif;
+  margin-bottom: 60px;
 }
 
 .yellow-text {
@@ -595,13 +662,15 @@
   color: #541652;
 }
 
-.testimonials-container {
+/* NOUVEAU: Container horizontal pour les témoignages */
+.testimonials-horizontal-container {
   display: flex;
   justify-content: center;
   gap: 30px;
   flex-wrap: wrap;
   position: relative;
   z-index: 1;
+  margin-top: -50px; /* Ajustement pour compenser le titre positionné */
 }
 
 .testimonial-card {
@@ -610,9 +679,13 @@
   padding: 40px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   width: 350px;
+  min-height: 400px; /* Hauteur minimale pour uniformité */
   text-align: left;
   position: relative;
-  transition: transform 0.4s ease-out, box-shadow 0.4s ease-out; /* Transition plus longue pour un effet plus doux */
+  transition: transform 0.4s ease-out, box-shadow 0.4s ease-out;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .testimonial-card::before {
@@ -629,23 +702,32 @@
 
 .profile-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 20px;
   margin-bottom: 20px;
 }
 
+.profile-image-container {
+  flex-shrink: 0;
+}
+
 .profile-pic {
-  width: 100px; /* Taille ajustée pour les icônes de profil */
-  height: 100px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   border: 2px solid #541652;
   object-fit: cover;
 }
 
+.profile-info {
+  flex: 1;
+  min-width: 0; /* Permet au texte de se réduire */
+}
+
 .profile-info h3 {
   font-size: 1.2rem;
   color: #541652;
-  margin: 0;
+  margin: 0 0 5px 0;
   font-weight: bold;
 }
 
@@ -657,24 +739,27 @@
 }
 
 .star-rating {
-  color: #FFDB58; /* Couleur jaune moutarde pour les étoiles */
+  color: #FFDB58;
+  margin: 8px 0;
 }
 
 .star-rating .star {
   color: #ccc;
-  font-size: 24px;
+  font-size: 18px;
 }
 
 .star-rating .star.filled {
-  color: #FFDB58; /* Couleur jaune moutarde pour les étoiles remplies */
+  color: #FFDB58;
 }
 
 .star-rating .duration {
   margin-left: 10px;
+  font-size: 0.8rem;
+  color: #888;
 }
 
 .star {
-  font-size: 1.2rem;
+  font-size: 1rem;
   margin-right: 2px;
 }
 
@@ -683,25 +768,34 @@
   font-weight: 500 !important;
   font-family: 'Poppins', sans-serif;
 }
-.duration, .sponsor-tag {
-  font-size: 0.8rem;
-  color: #888;
-  display: inline-block;
-  margin-top: 5px;
-  margin-right: 10px;
+
+.testimonial-badges {
+  margin-top: 10px;
+}
+
+.badge-text {
+  font-size: 0.75rem;
+  color: #777;
+}
+
+.testimonial-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
 }
 
 .testimonial-body p {
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: #555;
   line-height: 1.5;
+  margin: 0;
 }
 
-/* Nouvelles règles pour l'animation de survol */
+/* Animation de survol */
 .testimonial-card:hover {
-  transform: translateY(-10px); /* Soulève la carte de 10px */
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); /* Ombre plus forte */
-  animation: shimmer 1s infinite linear; /* Nouvelle animation */
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  animation: shimmer 1s infinite linear;
 }
 
 @keyframes shimmer {
@@ -709,14 +803,63 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   }
   50% {
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2), 0 0 50px rgba(255, 219, 88, 0.5); /* Ajoute un éclat jaune autour de la carte */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2), 0 0 50px rgba(255, 219, 88, 0.5);
   }
   100% {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   }
 }
 
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .testimonials-horizontal-container {
+    gap: 20px;
+  }
+  
+  .testimonial-card {
+    width: 300px;
+    padding: 30px;
+  }
+}
 
+@media (max-width: 992px) {
+  .testimonials-horizontal-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+  }
+  
+  .testimonial-card {
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .testimonials-title {
+    left: 0;
+    text-align: center;
+    font-size: 2.2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .testimonials-title {
+    font-size: 1.8rem;
+    top: -50px;
+  }
+  
+  .testimonial-card {
+    padding: 25px;
+    border-radius: 30px;
+  }
+  
+  .profile-header {
+    gap: 15px;
+  }
+  
+  .testimonial-body p {
+    font-size: 0.9rem;
+  }
+}
 /*
   ========================================
   8. Section "Our Destinations"
@@ -733,6 +876,7 @@
   font-weight: bold;
   font-family: 'Poppins', sans-serif;
   margin-bottom: 50px;
+  text-align: center;
 }
 
 .destinations-container {
@@ -780,7 +924,6 @@
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   z-index: 10;
 }
-
 /*
   ========================================
   9. Section "Our Partners"
@@ -811,6 +954,31 @@
   height: auto;
 }
 
+
+
+
+
+
+
+
+
+
+.destinations-title,
+.partners-title {
+  font-size: 2.8rem !important;
+  font-weight: bold !important;
+  font-family: 'Poppins', sans-serif !important;
+  margin-bottom: 50px !important;
+  text-align: center !important;
+  color: #541652 !important;
+}
+
+
+
+
+
+
+
 .reset-button {
   background-color: #f5B400;
   color: white;
@@ -823,4 +991,14 @@
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.3s;
+}
+
+.apply-button {
+  background-color: #f5B400;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
 }

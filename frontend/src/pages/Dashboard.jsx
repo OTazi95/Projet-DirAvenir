@@ -96,9 +96,9 @@ const achievements = [
 ];
 
 const destinations = [
-  { id: 1, name: 'China', image: chinaDest },
-  { id: 2, name: 'Cyprus', image: cyprusDest },
-  { id: 3, name: 'Romania', image: romaniaDest },
+  { id: 1, image: chinaDest },
+  { id: 2, image: cyprusDest },
+  { id: 3, image: romaniaDest },
 ];
 
 const partners = [
@@ -284,6 +284,12 @@ const handleProgramDetail = (programId) => {
                   <span className="program-filiere">{program.category}</span>
                   <h3>{program.program}</h3>
                   <p className="program-description">{program.description}</p>
+                                <button 
+                  className="apply-button"
+                  onClick={() => handleProgramDetail(program.id)}
+                >
+                  En savoir plus
+                </button>
                   <button className="apply-button">Postuler</button>
                 </div>
               ))}
@@ -424,127 +430,126 @@ const handleProgramDetail = (programId) => {
       </div>
 
 
-      {/* 7. Section de témoignages (DEPLACEE) */}
+{/* 7. Section de témoignages (MODIFIEE POUR AFFICHAGE HORIZONTAL) */}
       <section className="testimonials-section">
         <h2 className="testimonials-title">
           <span className="yellow-text">From</span> <span className="purple-text">Dreamers</span> <span className="yellow-text">to</span><br />
           <span className="yellow-text">Achievers & doers</span>
         </h2>
-        
-        <div className="testimonials-carousel-container">
-          <div className="testimonials-track" ref={testimonialsTrackRef}>
-            {testimonials.map(testimonial => (
-              <div className="testimonial-card" key={testimonial.id}>
-                {testimonial.id === 1 && (
-                  <div className="dravenir-scholar-badge" style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: '#FFD700',
-                    padding: '8px 12px',
-                    borderRadius: '50px',
-                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                    whiteSpace: 'nowrap',
-                    position: 'absolute',
-                    top: '-20px', 
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    zIndex: '10'
-                  }}>
-                    <img src={trophy} alt="Dravenir Scholar Trophy" style={{ width: '24px', height: '24px', marginRight: '8px' }} />
-                    <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#6A0DAD' }}>Dravenir Scholar</span>
-                  </div>
-                )}
-                <div className="profile-header">
-                  <div className="profile-image-container">
-                    {testimonial.profileIcon}
-                  </div>
-                  <div className="profile-info">
-                    <h3>{testimonial.name}</h3>
-                    <p className={specialRoles.includes(testimonial.role) ? 'yellow-role-text' : ''}>
-                      {testimonial.role}
-                    </p>
-                    <StarRating rating={testimonial.rating} duration={testimonial.duration} />
-                    <div className="testimonial-badges" style={{ marginTop: '10px', display: 'flex', flexWrap: 'nowrap', alignItems: 'center' }}>
-                      {testimonial.badgeText && (
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                          {React.cloneElement(testimonial.badgeIcon, { style: { color: '#FFDB58', marginRight: '5px' } })}
-                          <span className="badge-text" style={{ color: '#777', whiteSpace: 'nowrap' }}>{testimonial.badgeText}</span>
-                        </div>
-                      )}
-                      {testimonial.degreeText && (
-                        <div style={{ display: 'flex', alignItems: 'center', marginLeft: '10px' }}>
-                          {React.cloneElement(testimonial.degreeIcon, { style: { color: '#FFDB58', marginRight: '5px' } })}
-                          <span className="badge-text" style={{ color: '#777', whiteSpace: 'nowrap' }}>{testimonial.degreeText}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                
+        {/* Affichage horizontal des témoignages */}
+        <div className="testimonials-horizontal-container">
+          {testimonials.slice(0, 3).map(testimonial => (
+            <div className="testimonial-card" key={testimonial.id}>
+              {testimonial.id === 1 && (
+                <div className="dravenir-scholar-badge" style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#FFD700',
+                  padding: '8px 12px',
+                  borderRadius: '50px',
+                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                  whiteSpace: 'nowrap',
+                  position: 'absolute',
+                  top: '-20px', 
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  zIndex: '10'
+                }}>
+                  <img src={trophy} alt="Dravenir Scholar Trophy" style={{ width: '24px', height: '24px', marginRight: '8px' }} />
+                  <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#6A0DAD' }}>Dravenir Scholar</span>
                 </div>
-                <div className="testimonial-body">
-                  <p>{testimonial.description}</p>
+              )}
+              <div className="profile-header">
+                <div className="profile-image-container">
+                  {testimonial.profileIcon}
+                </div>
+                <div className="profile-info">
+                  <h3>{testimonial.name}</h3>
+                  <p className={specialRoles.includes(testimonial.role) ? 'yellow-role-text' : ''}>
+                    {testimonial.role}
+                  </p>
+                  <StarRating rating={testimonial.rating} duration={testimonial.duration} />
+                  <div className="testimonial-badges" style={{ marginTop: '10px', display: 'flex', flexWrap: 'nowrap', alignItems: 'center' }}>
+                    {testimonial.badgeText && (
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        {React.cloneElement(testimonial.badgeIcon, { style: { color: '#FFDB58', marginRight: '5px' } })}
+                        <span className="badge-text" style={{ color: '#777', whiteSpace: 'nowrap' }}>{testimonial.badgeText}</span>
+                      </div>
+                    )}
+                    {testimonial.degreeText && (
+                      <div style={{ display: 'flex', alignItems: 'center', marginLeft: '10px' }}>
+                        {React.cloneElement(testimonial.degreeIcon, { style: { color: '#FFDB58', marginRight: '5px' } })}
+                        <span className="badge-text" style={{ color: '#777', whiteSpace: 'nowrap' }}>{testimonial.degreeText}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-        <div className="carousel-dots">
-          {[...Array(testimonials.length - 1)].map((_, index) => (
-            <span
-              key={index}
-              className={`dot ${index === activeDot ? 'active' : ''}`}
-              onClick={() => handleDotClick(index)}
-            ></span>
+              <div className="testimonial-body">
+                <p>{testimonial.description}</p>
+              </div>
+            </div>
           ))}
         </div>
       </section>
 
-      {/* 8. Our Achievements */}
-      <section className="achievements-section">
-        <h2 className="achievements-title">Our <span className="yellow-text">Achievements</span></h2>
-        <div className="achievements-content">
-          <div className="achievements-image-container">
-            {/* L'image de fond sera gérée par le CSS */}
-          </div>
-          <div className="achievements-grid">
-            {achievements.map(item => (
-              <div className={`achievement-card ${item.id === 2 ? 'wide-card' : ''}`} key={item.id}>
-                {item.id === 2 ? (
-                  /* Cas du 90% */
-                  <div className="achievement-number">
-                    <span className="purple-text">{item.number}</span>
-                  </div>
-                ) : (
-                  /* Cas du 200 Students Abroad */
-                  <>
-                    <div className="achievement-number">
-                      <span className="yellow-text">{item.number}</span>
-                    </div>
-                    <div className="achievement-text">
-                      {item.icon && 
-                        <img 
-                          src={item.icon} 
-                          alt="Students Abroad Icon" 
-                          className="achievement-icon" 
-                        />
-                      }
-                      <div className="text-wrapper">
-                        <span>Students</span>
-                        <br />
-                        <span>Abroad</span>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
+
+{/* 8. Our Achievements */}
+<section className="achievements-section">
+  <h2 className="achievements-title">Our <span className="yellow-text">Achievements</span></h2>
+  <div className="achievements-content">
+    <div className="achievements-image-container">
+      {/* L'image de fond sera gérée par le CSS */}
+    </div>
+    <div className="achievements-grid">
+      
+      {/* Première carte - 200 Students Abroad */}
+      <div className="achievement-card first-card">
+        <div className="achievement-number yellow">200</div>
+        <div className="achievement-text">
+       <img 
+            src={itemicon} 
+            alt="Students Icon" 
+            className="achievement-icon" 
+          />
+          <div className="text-wrapper">
+            <div>Students</div>
+            <div>Abroad</div>
           </div>
         </div>
-      </section>
+      </div>
+      
+      {/* Deuxième carte - 70 Programs Available */}
+      <div className="achievement-card second-card">
+        <div className="achievement-number yellow">70</div>
+        <div className="achievement-text">
+          <span className="achievement-icon">📚</span>
+          <div className="text-wrapper">
+            <div>Programs</div>
+            <div>Available</div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Troisième carte - 90% Students Satisfied */}
+      <div className="achievement-card wide-card">
+        <div className="achievement-number purple">90%</div>
+        <div className="satisfaction-text">
+          <div>Students Satisfied</div>
+          <div>With Their Chosen</div>
+          <div>program</div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</section>
       
       {/* 9. Our Destinations */}
       <section className="destinations-section">
-        <h2 className="section-title">Our <span className="yellow-text">Destinations</span></h2>
+        <h2 className="destinations-title">Our <span className="yellow-text">Destinations</span></h2>
         <div className="destinations-container">
           {destinations.map(dest => (
             <div className="destination-item" key={dest.id}>
@@ -557,7 +562,7 @@ const handleProgramDetail = (programId) => {
 
       {/* 10. Our Partners */}
       <section className="partners-section">
-        <h2 className="section-title">Our <span className="yellow-text">Partners</span></h2>
+        <h2 className="partners-title">Our <span className="yellow-text">Partners</span></h2>
         <div className="partners-container">
           {partners.map(partner => (
             <div className="partner-item" key={partner.id}>

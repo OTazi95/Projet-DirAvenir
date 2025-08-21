@@ -104,21 +104,22 @@
   font-weight: 600;
 }
 
-
+/* PAGINATION AMÉLIORÉE */
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 60px 0 40px 0;
-  gap: 10px;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .pagination button {
   background-color: white;
   border: 2px solid #5e2ca5;
   color: #5e2ca5;
-  width: 50px;
-  height: 50px;
+  min-width: 45px;
+  height: 45px;
   border-radius: 50%;
   font-size: 1rem;
   font-weight: 600;
@@ -127,19 +128,50 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0;
 }
 
-.pagination button:hover {
+.pagination button:hover:not(.disabled) {
   background-color: #5e2ca5;
   color: white;
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .pagination button.active {
   background-color: #5e2ca5;
   color: white;
-  transform: scale(1.15);
+  transform: scale(1.1);
   box-shadow: 0 4px 15px rgba(94, 44, 165, 0.4);
+}
+
+.pagination-nav {
+  border-radius: 8px !important;
+  font-size: 1.2rem !important;
+  min-width: 50px !important;
+  font-weight: 700 !important;
+}
+
+.pagination-nav.disabled {
+  opacity: 0.4;
+  cursor: not-allowed !important;
+  background-color: #f5f5f5 !important;
+  color: #ccc !important;
+  border-color: #e0e0e0 !important;
+}
+
+.pagination-nav.disabled:hover {
+  transform: none !important;
+}
+
+.pagination-dots {
+  color: #5e2ca5;
+  font-weight: bold;
+  font-size: 1.2rem;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
 }
 
 .filters-container {
@@ -280,13 +312,23 @@
   
   .pagination {
     margin: 40px 0 20px 0;
-    gap: 5px;
+    gap: 4px;
   }
   
   .pagination button {
-    width: 40px;
-    height: 40px;
-    font-size: 0.9rem;
+    min-width: 35px;
+    height: 35px;
+    font-size: 0.85rem;
+  }
+  
+  .pagination-nav {
+    min-width: 40px !important;
+    font-size: 1rem !important;
+  }
+  
+  .pagination-dots {
+    font-size: 1rem;
+    padding: 0 5px;
   }
 }
 
@@ -319,10 +361,19 @@
     -webkit-line-clamp: 2;
     line-clamp: 2; /* ✅ Ajout de la propriété standard */
   }
+  
+  .pagination {
+    gap: 2px;
+  }
+  
+  .pagination button {
+    min-width: 30px;
+    height: 30px;
+    font-size: 0.75rem;
+  }
+  
+  .pagination-nav {
+    min-width: 35px !important;
+    font-size: 0.9rem !important;
+  }
 }
-
-
-
-
-
-

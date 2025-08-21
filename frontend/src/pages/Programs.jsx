@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 function Programs() {
   const [programs, setPrograms] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const totalPages = 77;
   const [searchCategory, setSearchCategory] = useState('');
   const [selectedCountry, setSelectedCountry] = useState('');
   const [filters, setFilters] = useState({ category: '', country: '' });
@@ -27,7 +27,6 @@ function Programs() {
         }
       });
       setPrograms(response.data.results);
-      setTotalPages(Math.ceil(response.data.count / 6));
     } catch (error) {
       console.error('Erreur lors du chargement des programmes', error);
     }
@@ -58,6 +57,120 @@ function Programs() {
 
 const handleProgramDetail = (programId) => {
     navigate(`/program-detail/${programId}`);
+  };
+
+  // Fonction pour générer la pagination responsive et dynamique
+  const renderPagination = () => {
+    const items = [];
+    
+    // Bouton première page (<<)
+    items.push(
+      <button
+        key="first"
+        className={`pagination-nav ${currentPage === 1 ? 'disabled' : ''}`}
+        onClick={() => currentPage > 1 && handlePageChange(1)}
+        disabled={currentPage === 1}
+        title="Première page"
+      >
+        ≪
+      </button>
+    );
+
+    // Bouton page précédente (<)
+    items.push(
+      <button
+        key="prev"
+        className={`pagination-nav ${currentPage === 1 ? 'disabled' : ''}`}
+        onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        title="Page précédente"
+      >
+        ‹
+      </button>
+    );
+
+    // Affichage des numéros de pages
+   
+      // Pagination dynamique intelligente
+      let startPage, endPage;
+
+      if (currentPage <= 3) {
+        // Si on est au début (pages 1, 2, 3)
+        startPage = 1;
+        endPage = 5;
+      } else if (currentPage >= totalPages - 2) {
+        // Si on est à la fin (3 dernières pages)
+        startPage = totalPages - 4;
+        endPage = totalPages;
+      } else {
+        // Au milieu : afficher la page courante au centre
+        startPage = currentPage - 2;
+        endPage = currentPage + 2;
+      }
+
+      // Afficher les pages calculées
+      for (let i = startPage; i <= endPage; i++) {
+        items.push(
+          <button
+            key={i}
+            className={currentPage === i ? 'active' : ''}
+            onClick={() => handlePageChange(i)}
+          >
+            {i}
+          </button>
+        );
+      }
+
+      // Ajouter les points de suspension et dernières pages si nécessaire
+      if (endPage < totalPages - 1) {
+        items.push(
+          <span key="dots" className="pagination-dots">
+            ...
+          </span>
+        );
+        
+        // Afficher les 2 dernières pages
+        for (let i = totalPages - 1; i <= totalPages; i++) {
+          items.push(
+            <button
+              key={i}
+              className={currentPage === i ? 'active' : ''}
+              onClick={() => handlePageChange(i)}
+            >
+              {i}
+            </button>
+          );
+        }
+      }
+    
+
+    // Bouton page suivante (>)
+    items.push(
+      <button
+        key="next"
+        className={`pagination-nav ${currentPage === totalPages ? 'disabled' : ''}`}
+        onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        title="Page suivante"
+      >
+        ›
+      </button>
+    );
+
+    // Bouton dernière page (>>)
+    items.push(
+      <button
+        key="last"
+        className={`pagination-nav ${currentPage === totalPages ? 'disabled' : ''}`}
+        onClick={() => currentPage < totalPages && handlePageChange(totalPages)}
+        disabled={currentPage === totalPages}
+        title="Dernière page"
+      >
+        ≫
+      </button>
+    );
+
+    return items;
   };
 
   return (
@@ -114,16 +227,9 @@ const handleProgramDetail = (programId) => {
         ))}
       </div>
 
+      {/* PAGINATION */}
       <div className="pagination">
-        {[...Array(Math.min(totalPages, 77))].map((_, index) => (
-          <button
-            key={index}
-            className={currentPage === index + 1 ? 'active' : ''}
-            onClick={() => handlePageChange(index + 1)}
-          >
-            {index + 1}
-          </button>
-        ))}
+        {renderPagination()}
       </div>
     </div>
   );
