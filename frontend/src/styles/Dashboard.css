@@ -58,8 +58,8 @@
 }
 
 .hero-text p {
-  font-size: 1.2rem;
-  color: #555;
+  font-size: 1.3rem;
+  color: #777;
   margin-top: 10px;
 }
 
@@ -259,7 +259,7 @@
 }
 
 .join-item  img:hover{
-  transform: translateY(-10px);
+  transform: translateY(-5px);
 }
 
 .item-number {
@@ -279,7 +279,8 @@
 
 .item-text img {
   /* Gardez la largeur de l'image et la marge */
-  width: 330px;
+  width: 90px !important;
+  height: 90px !important; 
   margin-right: 0; /* Enlevez la marge droite, car le texte est en dessous */
   margin-bottom: 10px; /* Ajoutez un peu d'espace entre l'icône et le texte */
 }
@@ -301,6 +302,7 @@
   height: auto;
   margin-top: 100px;
 }
+
 /* 4. How It Works Section */
 
 .how-it-works-illustration {
@@ -625,7 +627,7 @@
 /* 7. Section des témoignages */
 .testimonials-section {
   padding: 80px 20px;
-  background-color: #f8f8f8;
+  background-color: #f2f2f2;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -646,7 +648,7 @@
 
 .testimonials-title {
   position: relative;
-  top: -100px;
+  top: -80px;
   left: -250px;
   font-size: 2.8rem;
   font-weight: bold;
@@ -676,9 +678,9 @@
 .testimonial-card {
   background-color: #fff;
   border-radius: 50px;
-  padding: 40px;
+  padding: 60px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  width: 350px;
+  width: 450px;
   min-height: 400px; /* Hauteur minimale pour uniformité */
   text-align: left;
   position: relative;
@@ -952,16 +954,8 @@
 .partner-logo {
   max-width: 100%;
   height: auto;
+  top:-80px;
 }
-
-
-
-
-
-
-
-
-
 
 .destinations-title,
 .partners-title {
@@ -971,27 +965,74 @@
   margin-bottom: 50px !important;
   text-align: center !important;
   color: #541652 !important;
+  margin-top: -60px;
 }
 
 
 
+.filters-container {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
 
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
 
+.filter-input {
+  padding: 12px 20px;
+  border: 2px solid #ccc !important;
+  border-radius: 25px;
+  outline: none;
+  font-size: 16px;
+  transition: all 0.3s ease !important;
+  margin-left: -100px;
+}
 
+.filter-input:focus {
+  border-color: var(--main-mauve) !important;
+  box-shadow: 0 0 8px rgba(84, 22, 82, 0.4) !important;
+}
+
+.search-button {
+  background-color: #541652 !important;
+  color: white !important;
+  padding: 12px 25px !important;
+  border: none !important;
+  border-radius: 25px !important;
+  cursor: pointer !important;
+  font-weight: bold !important;
+  transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s !important;
+}
+
+.search-button:hover {
+  background-color: #541652 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(84, 22, 82, 0.4) !important;
+}
 
 .reset-button {
-  background-color: #f5B400;
-  color: white;
+  background-color: #f5b400 !important;
+  color: white !important;
+  padding: 14px 25px !important;
+  border: none !important;
+  border-radius: 25px !important;
+  cursor: pointer !important;
+  font-weight: bold !important;
+  transition: transform 0.2s, box-shadow 0.2s !important;
 }
 
-.search-button, .reset-button {
-  padding: 12px 25px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s;
+.reset-button:hover{
+    background-color: #f5B400 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(84, 22, 82, 0.4) !important;
 }
+
+
+
 
 .apply-button {
   background-color: #f5B400;

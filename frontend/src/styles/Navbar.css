@@ -9,21 +9,20 @@ html {
   background-color: transparent !important;
   backdrop-filter: blur(6px);
   padding: 10px 20px;
-  color: white;
+  color: #f2f2f2;
   flex-wrap: wrap;
-  position: relative; /* pour gérer positionnement des ::after */
-  z-index: 1000; /* pour rester au-dessus si besoin */
+  position: relative;
+  z-index: 1000;
 }
 
-
 .navbar.navbar-mauve {
-  background-color: #4b014e !important; /* mauve */
+  background-color: #4b014e !important;
   backdrop-filter: none !important;
   color: white;
 }
 
 .navbar.navbar-yellow {
-  background-color: #FCBE1C !important; /* jaune */
+  background-color: #FCBE1C !important;
   backdrop-filter: none !important;
   color: white;
 }
@@ -48,7 +47,7 @@ html {
 
 .navbar.navbar-yellow .login-btn:hover {
   background: #fff !important;
-  color: #FFA500 !important; /* jaune au hover */
+  color: #FFA500 !important;
 }
 
 .navbar.navbar-yellow .register-btn {
@@ -58,10 +57,9 @@ html {
 }
 
 .navbar.navbar-yellow .register-btn:hover {
-  background: #f4f4f4 !important; /* léger gris au hover */
+  background: #f4f4f4 !important;
   color: #000 !important;
 }
-
 
 .navbar-logo {
   height: 70px;
@@ -83,7 +81,7 @@ html {
 }
 
 .navbar-links li a {
-  color: #999999; /* gris clair */
+  color: #999999;
   text-decoration: none;
   font-weight: 500;
   padding: 6px 10px;
@@ -93,7 +91,7 @@ html {
 }
 
 .navbar-links li a:hover {
-  color: #FFD700; /* jaune doré */
+  color: #FFD700;
   background-color: transparent;
 }
 
@@ -163,4 +161,147 @@ html {
   font-size: 22px;
   color: white;
   cursor: pointer;
+}
+
+/* Styles pour le sélecteur de langue en dropdown */
+.language-selector {
+  position: relative;
+  display: inline-block;
+  margin-right: 15px;
+}
+
+.language-dropdown-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 25px;
+  padding: 8px 16px;
+  cursor: pointer;
+  color: #f2f2f2;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.language-dropdown-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+/* Style spécifique pour les pages dashboard, orientation, programs */
+.navbar-default .language-dropdown-btn {
+  color: #4b014e !important;
+  border: 1px solid #4b014e !important;
+  background: rgba(75, 1, 78, 0.1);
+}
+
+.navbar-default .language-dropdown-btn:hover {
+  background-color: rgba(75, 1, 78, 0.2) !important;
+  border-color: #4b014e !important;
+  color: #4b014e !important;
+}
+
+/* Style pour la navbar jaune */
+.navbar.navbar-yellow .language-dropdown-btn {
+  color: #fff !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+}
+
+.navbar.navbar-yellow .language-dropdown-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  border-color: #fff !important;
+}
+
+/* Style pour la navbar mauve */
+.navbar.navbar-mauve .language-dropdown-btn {
+  color: #fff !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+}
+
+.navbar.navbar-mauve .language-dropdown-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  border-color: #fff !important;
+}
+
+.language-icon {
+  font-size: 16px;
+}
+
+.chevron {
+  font-size: 12px;
+  transition: transform 0.3s ease;
+  margin-left: auto;
+}
+
+.chevron.rotated {
+  transform: rotate(180deg);
+}
+
+.language-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: white;
+  border: 1px solid #e1e5e9;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 160px;
+  overflow: hidden;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.language-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  transition: all 0.2s ease;
+}
+
+.language-option:hover {
+  background-color: #f8fafc;
+  color: #1f2937;
+}
+
+.language-option.active {
+  background-color: #ccc;
+  color: white;
+}
+
+.language-option.active:hover {
+  background-color: #ccc;
+}
+
+/* Spécifique : bouton actif sur pages mauves */
+.language-option.active.mauve-page {
+  background-color: #4b014e !important;
+  color: white !important;
+}
+
+.language-option.active.mauve-page:hover {
+  background-color: #3d0040 !important;
 }

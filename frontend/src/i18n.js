@@ -4,12 +4,10 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 
 import translationFR from './locales/fr/translation.json';
 import translationEN from './locales/en/translation.json';
-import translationAR from './locales/ar/translation.json';
 
 const resources = {
   fr: { translation: translationFR },
-  en: { translation: translationEN },
-  ar: { translation: translationAR } 
+  en: { translation: translationEN }
 };
 
 i18n
@@ -17,7 +15,8 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: 'fr',
+    lng: 'en', // Langue par défaut
+    fallbackLng: 'en', // Langue de secours
     interpolation: { escapeValue: false },
   });
 

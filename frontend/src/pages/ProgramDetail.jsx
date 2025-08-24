@@ -37,10 +37,9 @@ function ProgramDetail() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleApplyNow = () => {
-    // Logique pour postuler
-    alert('Redirection vers le formulaire de candidature...');
-  };
+  const handleApply = (programId) => {
+  navigate(`/application/${programId}`);
+};
 
   if (loading) {
     return (
@@ -121,12 +120,6 @@ function ProgramDetail() {
           </div>
         </div>
         
-        {/* Bouton CTA */}
-        <div className="cta-section">
-          <button className="apply-now-btn" onClick={handleApplyNow}>
-            Apply Now
-          </button>
-        </div>
       </motion.div>
 
       {/* Section Documents Needed */}
@@ -232,7 +225,7 @@ function ProgramDetail() {
       >
         <div className="cta-content">
           <h3>Interested in this program and ready to get started?</h3>
-          <button className="final-apply-btn" onClick={handleApplyNow}>
+          <button className="final-apply-btn" onClick={() => handleApply(program.id)}>
             Apply Now
           </button>
         </div>

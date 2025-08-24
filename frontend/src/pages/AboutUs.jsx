@@ -31,20 +31,21 @@ const teamMembers = [
   { img: meryemderni, name: 'Meryem Derni', role: 'Co-Founder' },
   { img: nadiaboukdir, name: 'Nadia Boukdir', role: 'Co-Founder' },
   { img: bouchralyass, name: 'Bouchra Lyass', role: 'Marketing Coordinator ' },
-  { img: raniajamaudi, name: 'Rania Jamoudi', role: 'Admission Coordinator'  },
-  { img: abdellahlouadi, name: 'Abdellah Louadi ', role: 'Educational Consultant'},
+  { img: raniajamaudi, name: 'Rania Jamoudi', role: 'Admission Coordinator' },
+  { img: abdellahlouadi, name: 'Abdellah Louadi ', role: 'Educational Consultant' },
   { img: hamzaaomari, name: 'Hamza Aomari', role: 'Educational Consultant' },
   { img: wiamfarih, name: 'Wiam Farih', role: 'Educational Consultant' },
   { img: marouanezahid, name: 'Marouane Zahid', role: 'Educational Consultant' },
- 
-  // ajoute les autres membres ici si besoin
 ];
 
 const AboutUs = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    AOS.init({ duration: 1000 });
+    AOS.init({
+      duration: 1000,
+      once: true,
+    });
   }, []);
 
   const prevMember = () => {
@@ -59,45 +60,48 @@ const AboutUs = () => {
   for (let i = 0; i < 3; i++) {
     visibleMembers.push(teamMembers[(currentIndex + i) % teamMembers.length]);
   }
+
   return (
     <div className="about-us">
       {/* Banner */}
       <section className="banner">
         <div className="banner-text">
-          <h2 className="about-title">A&nbsp;B&nbsp;O&nbsp;U&nbsp;T&nbsp;&nbsp;&nbsp;U&nbsp;S</h2>
-          <h1 className="main-title">
+          <h2 className="about-title" data-aos="fade-right">
+            A&nbsp;B&nbsp;O&nbsp;U&nbsp;T&nbsp;&nbsp;&nbsp;U&nbsp;S
+          </h2>
+          <h1 className="main-title" data-aos="fade-left">
             The Platform <br />
             <span className="subtitle">
               For The Next <br />
               <span className="future-makers">Future Makers</span>
             </span>
           </h1>
-          <p className="banner-texts">
+          <p className="banner-texts" data-aos="fade-up">
             <span className="trans">
               Transforming education for the<br />
               <span className="next">next generation of students & learners</span>
             </span>
           </p>
-          <div className="parent-container">
+          <div className="parent-container" data-aos="zoom-in">
             <img src={points} alt="dots" className="dots" />
             <img src={points} alt="dots" className="dots" />
           </div>
         </div>
 
         <div className="banner-images">
-          <img src={circle} alt="Circle" className="circle" />
-          <img src={photo3} alt="Banner 1" className="img-top" />
-          <img src={photo5} alt="Banner 2" className="img-middle" />
-          <img src={photo2} alt="Banner 3" className="img-bottom" />
+          <img src={circle} alt="Circle" className="circle" data-aos="zoom-in" />
+          <img src={photo3} alt="Banner 1" className="img-top" data-aos="fade-down" />
+          <img src={photo5} alt="Banner 2" className="img-middle" data-aos="fade-up" />
+          <img src={photo2} alt="Banner 3" className="img-bottom" data-aos="fade-up" />
         </div>
       </section>
 
       {/* Our Story */}
       <section className="our-story">
-        <div className="story-image">
+        <div className="story-image" data-aos="fade-left">
           <img src={ourstory} alt="Story" />
         </div>
-        <div className="story-text">
+        <div className="story-text" data-aos="fade-right">
           <h3>O&nbsp;U&nbsp;R&nbsp;&nbsp;&nbsp;S&nbsp;T&nbsp;O&nbsp;R&nbsp;Y</h3>
           <h2 className="headline">
             Innovating new <br />
@@ -116,14 +120,14 @@ const AboutUs = () => {
 
       {/* Mission and Vision */}
       <section className="mission-vision">
-        <div className="mission">
+        <div className="mission" data-aos="fade-up">
           <img src={mission} alt="Mission" />
           <h3><span className="our-text">Our </span><span className="highlight-yellow">Mission</span></h3>
           <p className="mission-text">
             We aspire to empower students to succeed in life, offering not only academic orientation but also the hope and inspiration to realize their dreams abroad through international scholarships, global internships, volunteering opportunities & many more.
           </p>
         </div>
-        <div className="vision">
+        <div className="vision" data-aos="fade-up">
           <img src={vision} alt="Vision" />
           <h3><span className="our-text">Our </span><span className="highlight-yellow">Vision</span></h3>
           <p className="vision-text">
@@ -134,29 +138,27 @@ const AboutUs = () => {
 
       {/* Values */}
       <section className="values">
-        <h2>
+        <h2 data-aos="fade-down">
           <span className="text-purple">Our </span>
           <span className="text-yellow">Values</span>
         </h2>
         <div className="values-list">
-          <div className="value">
+          <div className="value" data-aos="zoom-in">
             <img src={honesty} alt="Honesty" />
             <h4>Honesty</h4>
             <p>We deliver on our promises to students with integrity, transparency, and a genuine commitment to their success.</p>
           </div>
-          <div className="value">
+          <div className="value" data-aos="zoom-in">
             <img src={studentsfocus} alt="Student Focus" />
             <h4>Students Focus</h4>
-            <p>
-              We keep students at the heart of everything we do because their success is what&nbsp;matters <br />most.
-            </p>
+            <p>We keep students at the heart of everything we do because their success is what&nbsp;matters <br />most.</p>
           </div>
-          <div className="value">
+          <div className="value" data-aos="zoom-in">
             <img src={growthoriented} alt="Growth" />
             <h4>Growth Oriented</h4>
             <p>We aspire to cultivate a Moroccan generation that values education on a&nbsp;global <br />scale.</p>
           </div>
-          <div className="value">
+          <div className="value" data-aos="zoom-in">
             <img src={beleive} alt="Believe" />
             <h4>Believe</h4>
             <p>We believe in our students, regardless of their academic grades, skills, or&nbsp;past <br />challenges.</p>
@@ -165,29 +167,26 @@ const AboutUs = () => {
       </section>
 
       {/* Team */}
-     <section className="team">
-      <h2>Our <span className="highlight-yellow">Team</span></h2>
-
-      <div className="team-slider">
-        <button className="arrow left-arrow" onClick={prevMember}>
-          <FaChevronLeft size={30} />
-        </button>
-
-        <div className="team-members">
-          {visibleMembers.map((member, index) => (
-            <div className="team-member" key={index}>
-              <img className="team-photo" src={member.img} alt={member.name} />
-              <h4>{member.name}</h4>
-              <p>{member.role}</p>
-            </div>
-          ))}
+      <section className="team">
+        <h2 data-aos="fade-down">Our <span className="highlight-yellow">Team</span></h2>
+        <div className="team-slider">
+          <button className="arrow left-arrow" onClick={prevMember}>
+            <FaChevronLeft size={30} />
+          </button>
+          <div className="team-members">
+            {visibleMembers.map((member, index) => (
+              <div className="team-member" key={index} data-aos="fade-up">
+                <img className="team-photo" src={member.img} alt={member.name} />
+                <h4>{member.name}</h4>
+                <p>{member.role}</p>
+              </div>
+            ))}
+          </div>
+          <button className="arrow right-arrow" onClick={nextMember}>
+            <FaChevronRight size={30} />
+          </button>
         </div>
-
-        <button className="arrow right-arrow" onClick={nextMember}>
-          <FaChevronRight size={30} />
-        </button>
-      </div>
-    </section>
+      </section>
     </div>
   );
 };

@@ -90,11 +90,6 @@ const testimonials = [
   },
 ];
 
-const achievements = [
-  { id: 1, number: '200', text: 'Students Abroad', icon: itemicon },
-  { id: 2, number: '90%', text: '', icon: null },
-];
-
 const destinations = [
   { id: 1, image: chinaDest },
   { id: 2, image: cyprusDest },
@@ -193,6 +188,10 @@ const handleProgramDetail = (programId) => {
     }
   };
 
+  const handleApply = (programId) => {
+  navigate(`/application/${programId}`);
+};
+
   // Fonction pour réinitialiser la nouvelle recherche
   const resetNewSearch = () => {
     setSearchCategory('');
@@ -254,18 +253,18 @@ const handleProgramDetail = (programId) => {
         <div className="filters-container">
           <input
             type="text"
-            placeholder="Rechercher par catégorie..."
+            placeholder="Reserch by categories..."
             value={searchCategory}
             onChange={handleCategoryChange}
             className="filter-input"
           />
           
           <button className="search-button" onClick={applyNewFilters}>
-            Rechercher
+            Research
           </button>
           
           <button className="reset-button" onClick={resetNewSearch}>
-            Réinitialiser
+            Reset
           </button>
         </div>
 
@@ -290,7 +289,7 @@ const handleProgramDetail = (programId) => {
                 >
                   En savoir plus
                 </button>
-                  <button className="apply-button">Postuler</button>
+                  <button className="apply-button" onClick={() => handleApply(program.id)}>Postuler</button>
                 </div>
               ))}
             </div>
@@ -413,7 +412,7 @@ const handleProgramDetail = (programId) => {
                 >
                   En savoir plus
                 </button>
-              <button className="apply-button">Postuler</button>
+              <button className="apply-button" onClick={() => handleApply(program.id)}>Postuler</button>
             </div>
           ))}
         </div>
@@ -429,8 +428,58 @@ const handleProgramDetail = (programId) => {
         </div>
       </div>
 
-
-{/* 7. Section de témoignages (MODIFIEE POUR AFFICHAGE HORIZONTAL) */}
+{/* 7. Our Achievements */}
+<section className="achievements-section">
+  <h2 className="achievements-title">Our <span className="yellow-text">Achievements</span></h2>
+  <div className="achievements-content">
+    <div className="achievements-image-container">
+      {/* L'image de fond sera gérée par le CSS */}
+    </div>
+    <div className="achievements-grid">
+      
+      {/* Première carte - 200 Students Abroad */}
+      <div className="achievement-card first-card">
+        <div className="achievement-number yellow">200</div>
+        <div className="achievement-text">
+       <img 
+            src={itemicon} 
+            alt="Students Icon" 
+            className="achievement-icon" 
+          />
+          <div className="text-wrapper">
+            <div>Students</div>
+            <div>Abroad</div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Deuxième carte - 70 Programs Available */}
+      <div className="achievement-card second-card">
+        <div className="achievement-number yellow">70</div>
+        <div className="achievement-text">
+          <span className="achievement-icon">📚</span>
+          <div className="text-wrapper">
+            <div>Programs</div>
+            <div>Available</div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Troisième carte - 90% Students Satisfied */}
+      <div className="achievement-card wide-card">
+        <div className="achievement-number purple">90%</div>
+        <div className="satisfaction-text">
+          <div>Students Satisfied</div>
+          <div>With Their Chosen</div>
+          <div>program</div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</section>
+      
+{/* 8. Section de témoignages (MODIFIEE POUR AFFICHAGE HORIZONTAL) */}
       <section className="testimonials-section">
         <h2 className="testimonials-title">
           <span className="yellow-text">From</span> <span className="purple-text">Dreamers</span> <span className="yellow-text">to</span><br />
@@ -496,57 +545,6 @@ const handleProgramDetail = (programId) => {
       </section>
 
 
-{/* 8. Our Achievements */}
-<section className="achievements-section">
-  <h2 className="achievements-title">Our <span className="yellow-text">Achievements</span></h2>
-  <div className="achievements-content">
-    <div className="achievements-image-container">
-      {/* L'image de fond sera gérée par le CSS */}
-    </div>
-    <div className="achievements-grid">
-      
-      {/* Première carte - 200 Students Abroad */}
-      <div className="achievement-card first-card">
-        <div className="achievement-number yellow">200</div>
-        <div className="achievement-text">
-       <img 
-            src={itemicon} 
-            alt="Students Icon" 
-            className="achievement-icon" 
-          />
-          <div className="text-wrapper">
-            <div>Students</div>
-            <div>Abroad</div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Deuxième carte - 70 Programs Available */}
-      <div className="achievement-card second-card">
-        <div className="achievement-number yellow">70</div>
-        <div className="achievement-text">
-          <span className="achievement-icon">📚</span>
-          <div className="text-wrapper">
-            <div>Programs</div>
-            <div>Available</div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Troisième carte - 90% Students Satisfied */}
-      <div className="achievement-card wide-card">
-        <div className="achievement-number purple">90%</div>
-        <div className="satisfaction-text">
-          <div>Students Satisfied</div>
-          <div>With Their Chosen</div>
-          <div>program</div>
-        </div>
-      </div>
-      
-    </div>
-  </div>
-</section>
-      
       {/* 9. Our Destinations */}
       <section className="destinations-section">
         <h2 className="destinations-title">Our <span className="yellow-text">Destinations</span></h2>

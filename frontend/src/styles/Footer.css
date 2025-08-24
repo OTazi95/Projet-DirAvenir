@@ -81,6 +81,23 @@
   margin-top: 20px;
 }
 
+/* --- RÈGLES SPÉCIFIQUES POUR LA SECTION DES LIENS --- */
+.footer-section.links {
+  text-align: center; /* Permet de centrer les éléments à l'intérieur */
+}
+
+.footer-section.links ul {
+  list-style: disc; /* Remet les points (puces) de la liste */
+  padding: 0;       /* IMPORTANT : supprime l'espacement par défaut */
+  margin: 0 auto;   /* Centre la liste et enlève la marge par défaut */
+  display: table;   /* Permet de centrer la liste en tant que bloc */
+}
+
+.footer-section.links li {
+  text-align: left; /* Aligne le texte des liens à gauche */
+}
+
+
 @media screen and (max-width: 768px) {
   .footer-content {
     flex-direction: column;

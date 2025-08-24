@@ -37,7 +37,7 @@ function Programs() {
       category: searchCategory,
       country: selectedCountry
     });
-    setCurrentPage(1); // Remettre à la page 1 à chaque recherche
+    setCurrentPage(1);
   };
 
   const handlePageChange = (pageNumber) => {
@@ -58,6 +58,10 @@ function Programs() {
 const handleProgramDetail = (programId) => {
     navigate(`/program-detail/${programId}`);
   };
+
+const handleApply = (programId) => {
+  navigate(`/application/${programId}`);
+};
 
   // Fonction pour générer la pagination responsive et dynamique
   const renderPagination = () => {
@@ -175,7 +179,9 @@ const handleProgramDetail = (programId) => {
 
   return (
     <div className="programs-container">
-      <h2>Nos <span className='highlight-yellow'>Programmes</span></h2>
+      <div className="programs-header">
+        <h1>Programs <span className="programs-list">List</span></h1>
+      </div>
 
       {/* FILTRES */}
       <div className="filters-container">
@@ -208,21 +214,41 @@ const handleProgramDetail = (programId) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: index * 0.05 }}
           >
-            <img 
-              src={program.logo ? `http://localhost:8000/media/logo/${program.logo}` : '/default-logo.png'}
-              alt={`${program.universities} logo`}
-              className="program-logo"
-            />
-            <span className="program-filiere">{program.category}</span>
-            <h3>{program.universities}</h3>
-            <p className="program-description">{program.description}</p>
-            <button 
-                  className="apply-button"
+            <div className="card-header">
+              <div className="logo-container">
+                <img 
+                  src={program.logo ? `http://localhost:8000/media/logo/${program.logo}` : '/default-logo.png'}
+                  alt={`${program.universities} logo`}
+                  className="program-logo"
+                />
+              </div>
+            </div>
+            
+            <div className="card-content">
+              <h3 className="program-title">{program.category}</h3>
+              <p className="program-description">{program.description}</p>
+              <div className="program-meta">
+              </div>
+            </div>
+            <div className="card-actions">
+              <div className="action-buttons-top">
+                <button 
+                  className="more-infos-button"
                   onClick={() => handleProgramDetail(program.id)}
                 >
-                  En savoir plus
+                  <span className="icon">💬</span> More Infos
                 </button>
-            <button className="apply-button">Postuler</button>
+                <button className="save-this-button">
+                  <span className="icon">⭐</span> Save This
+                </button>
+              </div>
+              <button 
+                className="apply-now-button" 
+                onClick={() => handleApply(program.id)}
+              >
+                Apply Now
+              </button>
+            </div>
           </motion.div>
         ))}
       </div>
