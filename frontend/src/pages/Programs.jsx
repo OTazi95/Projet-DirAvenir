@@ -225,7 +225,7 @@ const handleApply = (programId) => {
             </div>
             
             <div className="card-content">
-              <h3 className="program-title">{program.category}</h3>
+              <h3 className="program-title">{program.program}</h3>
               <p className="program-description">{program.description}</p>
               <div className="program-meta">
               </div>

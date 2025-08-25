@@ -3,7 +3,6 @@
     "home": "Accueil",
     "orientation": "Orientation",
     "programs": "Programmes",
-    "packs": "Nos packs",
     "about": "À propos de nous",
     "faq": "FAQ",
     "contact": "Nous contacter",
@@ -12,6 +11,129 @@
     "logout": "Déconnexion",
     "createAccount": "Créer un compte"
   },
+  "orientation": {
+    "titlePart1": "Trouvez la filière",
+    "titlePart2": "vous convient le mieux",
+    "helpText": "Ok, laissez-nous vous aider",
+    "startButtonPart1": "Démarrer",
+    "startButtonPart2": "le test",
+    "programsButtonPart1": "Découvrir les",
+    "programsButtonPart2": "Programmes",
+    "imageAlt": "Image d'orientation"
+  },
+  "contact": {
+    "bannerTitle": "Contactez Notre Équipe",
+    "nameLabel": "Votre nom*",
+    "namePlaceholder": "Entrez votre nom complet",
+    "emailLabel": " Votre Email",
+    "emailPlaceholder": "contact@gmail.com",
+    "phoneLabel": "Numéro de téléphone*",
+    "phonePlaceholder": "Entrez votre numéro de téléphone",
+    "subjectLabel": "Sujet lié à*",
+    "subjectOption1": "Orientation",
+    "subjectOption2": "Échec de paiement",
+    "subjectOption3": "Autre",
+    "messageLabel": "Votre message*",
+    "messagePlaceholder": "Tapez votre message...",
+    "termsText": "En soumettant ce formulaire, vous acceptez nos conditions générales et notre politique de confidentialité, qui explique comment nous pouvons collecter, utiliser et divulguer vos informations personnelles, y compris à des tiers.",
+    "infoTitle": "Nos Informations",
+    "infoAddressLabel": "Adresse",
+    "infoAddressValue": "Bd de la Résistance, 179, Angle des Boulevards de Londres, Av. Mers Sultan, Casablanca 20250, Maroc",
+    "infoPhoneLabel": "Numéro de Tél",
+    "infoPhoneValue": "0771-497646",
+    "infoEmailLabel": "Email",
+    "infoEmailValue": "contact@diravenir.com",
+    "socialTitle": "Suivez-nous sur les réseaux sociaux !",
+    "locationTitle": "Localisation DirAvenir"
+   },
+     "faq": {
+    "title": "Foire aux questions",
+    "questions": [
+      {
+        "question": "Qui est éligible à l'orientation ?",
+        "answer": "Notre orientation est ouverte aux étudiants, aux personnes en reconversion professionnelle et aux établissements d'enseignement. Elle est conçue pour accompagner toute personne à la recherche de conseils académiques ou professionnels."
+      },
+      {
+        "question": "Qu'est-ce que Diravenir ?",
+        "answer": "Diravenir est une plateforme d'orientation éducative qui aide les étudiants, notamment au Maroc, à trouver des opportunités d'études à l'étranger. Elle offre un accompagnement personnalisé dans le choix des programmes, les candidatures aux universités, l'obtention de bourses et la gestion des procédures comme les visas et l'hébergement, principalement dans des pays comme la Chine et Chypre."
+      },
+      {
+        "question": "Dans quels pays aidez-vous les étudiants ?",
+        "answer": "Nous aidons les étudiants à explorer des opportunités académiques en Roumanie, à Chypre et en Chine. Que ce soit pour des études de premier cycle ou de troisième cycle, nous fournissons un accompagnement tout au long du processus, du choix du bon programme à l'obtention d'un visa et à la recherche d'un logement."
+      },
+      {
+        "question": "Quelles bourses d'études sont disponibles ?",
+        "answer": "Nous offrons une variété d'options de bourses d'études pour soutenir les étudiants dans leur parcours académique. Vous pouvez avoir accès à des bourses basées sur le mérite, des bourses basées sur les besoins financiers et des bourses spécifiques à certaines destinations pour des programmes en Roumanie, à Chypre et en Chine. Chaque opportunité inclut un accompagnement complet sur l'éligibilité, les exigences de candidature et les délais."
+      },
+      {
+        "question": "Quels documents sont requis pour l'inscription ?",
+        "answer": "Les documents couramment requis pour l'inscription incluent : un passeport ou une pièce d'identité valide, des relevés de notes, une preuve de maîtrise de la langue, des lettres de recommandation et un formulaire de candidature dûment rempli. L'équipe Diravenir vous aidera à préparer et soumettre tous les documents nécessaires."
+      },
+      {
+        "question": "Dois-je parler anglais ?",
+        "answer": "La maîtrise de l'anglais est souvent requise, selon le programme et le pays. Cependant, certains programmes peuvent offrir un soutien dans d'autres langues. Nous offrons une assistance en français et en anglais."
+      },
+      {
+        "question": "Aidez-vous avec les procédures de visa et de logement ?",
+        "answer": "Oui, nous aidons à la fois avec les demandes de visa et les arrangements de logement. Notre équipe vous guide tout au long du processus pour assurer une transition en douceur vers votre destination d'études."
+      },
+      {
+        "question": "Avez-vous déjà travaillé avec des étudiants ?",
+        "answer": "Oui, nous avons travaillé avec succès avec des centaines d'étudiants et nous continuons à en accompagner beaucoup tout au long de leur parcours académique."
+      },
+      {
+        "question": "Comment puis-je démarrer le processus ?",
+        "answer": "Pour démarrer le processus, vous pouvez nous contacter via WhatsApp ou remplir notre formulaire d'inscription en ligne. Notre équipe vous guidera ensuite étape par étape à travers les prochaines étapes."
+      },
+      {
+        "question": "Comment savoir quel programme d'études me convient ?",
+        "answer": "Pour trouver le programme d'études qui vous convient, nous proposons un accompagnement personnalisé basé sur vos centres d'intérêt, vos compétences et vos objectifs de carrière. Nos experts vous aident à explorer les options et à choisir la meilleure pour votre avenir."
+      },
+      {
+        "question": "Quel est le meilleur moment pour postuler ?",
+        "answer": "Il est préférable de postuler le plus tôt possible pour sécuriser votre admission et votre bourse. Commencer tôt vous donne les meilleures chances de remplir toutes les conditions à temps. Nous recommandons de postuler entre mars et juillet pour la prochaine année académique."
+      }
+    ]
+  },
+  "about": {
+    "bannerTitle": "À PROPOS DE NOUS",
+    "mainTitle": "La Plateforme",
+    "subTitle": "Pour les futurs",
+    "futureMakers": "Bâtisseurs",
+    "bannerText": "Transformer l'éducation pour la prochaine génération d'étudiants & d'apprenants",
+    "ourStoryTitle": "NOTRE HISTOIRE",
+    "storyHeadline": "Innover de nouvelles façons de guider les étudiants",
+    "storyParagraph1": "Nous croyons au pouvoir de l'apprentissage guidé par un but et de l'imagination audacieuse. Nous ne voyons aucune limite à ce que nous pouvons construire lorsque la curiosité rencontre la communauté, lorsque les rêves sont soutenus par l'action.",
+    "storyParagraph2": "Nous ne faisons qu'éduquer la prochaine génération, nous co-créons l'avenir avec elle. Chaque étudiant est un bâtisseur, un penseur, un acteur. Ensemble, nous façonnons des avenirs qui comptent.",
+    "storyParagraph3": "C'est plus qu'une plateforme. C'est un mouvement pour ceux qui osent rêver et travailler à construire.",
+    "missionTitle": "Notre Mission",
+    "missionText": "Nous aspirons à donner aux étudiants les moyens de réussir dans la vie, en leur offrant non seulement une orientation académique, mais aussi l'espoir et l'inspiration de réaliser leurs rêves à l'étranger grâce à des bourses internationales, des stages, des opportunités de bénévolat et bien plus encore.",
+    "visionTitle": "Notre Vision",
+    "visionText": "Nous construisons l'avenir des étudiants en leur fournissant une orientation académique complète et des bourses internationales, en veillant à ce qu'ils aient le soutien et les ressources nécessaires pour réussir et réaliser leurs rêves à l'étranger.",
+    "valuesTitle": "Nos Valeurs",
+    "values": [
+      {
+        "title": "Honnêteté",
+        "description": "Nous tenons nos promesses envers les étudiants avec intégrité, transparence et un engagement sincère envers leur réussite."
+      },
+      {
+        "title": "Centré sur l'étudiant",
+        "description": "Nous plaçons les étudiants au cœur de tout ce que nous faisons, car leur réussite est ce qui compte le plus."
+      },
+      {
+        "title": "Axé sur la croissance",
+        "description": "Nous aspirons à cultiver une génération marocaine qui valorise l'éducation à l'échelle mondiale."
+      },
+      {
+        "title": "Croyance",
+        "description": "Nous croyons en nos étudiants, quels que soient leurs notes, leurs compétences ou leurs défis passés."
+      }
+    ]
+  },
+  "ourPacks": {
+    "title": "Nos packs"
+  },
+   
   "footer": {
     "description": "DirAvenir est une plateforme web qui accompagne les étudiants dans leur orientation scolaire et leurs démarches de candidature au Maroc et à l’étranger. Elle se distingue par une approche personnalisée basée sur des tests, des recommandations et un suivi avant toute demande.",
     "subscribeTitle": "Abonnez-vous à notre Newsletter",
@@ -20,7 +142,6 @@
     "home": "Accueil",
     "programs": "Programmes",
     "orientation": "Orientation",
-    "ourPacks": "Nos packs",
     "aboutUs": "À propos de nous",
     "contactUs": "Nous contacter",
     "contactTitle": "Nos coordonnées",

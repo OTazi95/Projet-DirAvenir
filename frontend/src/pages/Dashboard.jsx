@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { motion } from "framer-motion";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 import { BsBookmark } from "react-icons/bs";
 import '../styles/Dashboard.css';
@@ -17,18 +18,17 @@ import career from '../assets/home_pictures/career.png';
 import point from '../assets/home_pictures/point.png';
 import howitworks from '../assets/home_pictures/how_it_works.png';
 import itemicon from '../assets/home_pictures/itemicon.png';
+import livre from '../assets/home_pictures/livre.png';
 import profile1 from '../assets/home_pictures/profile1.png';
 import profile2 from '../assets/home_pictures/profile2.png';
 import profile3 from '../assets/home_pictures/profile3.png';
 import trophy from '../assets/home_pictures/trophy.png';
-// Importations d'images corrigées pour les destinations et les partenaires
 import finalUni from '../assets/Final-logo.png';
 import cyprusUni from '../assets/Cyprus-logo.png';
 import bauUni from '../assets/BAU-logo.png';
 import chinaDest from '../assets/home_pictures/china.png';
 import cyprusDest from '../assets/home_pictures/cyprus.png';
 import romaniaDest from '../assets/home_pictures/romania.png';
-// Importation d'icônes spécifiques
 import { FaGraduationCap, FaMedal } from 'react-icons/fa'; 
 
 const testimonials = [
@@ -248,7 +248,7 @@ const handleProgramDetail = (programId) => {
               Up To Success <br />
               With Us
             </h1>
-            <p>Get the guidance you need for the future of work.</p>
+            <p id='ph'>Get the guidance you need for the future of work.</p>
  {/* Nouvelle barre de recherche avec input (comme Programs.jsx) */}
         <div className="filters-container">
           <input
@@ -272,27 +272,58 @@ const handleProgramDetail = (programId) => {
         {searchResults.length > 0 && (
           <div className="search-results">
             <h3>Résultats de recherche ({searchResults.length})</h3>
-            <div className="programs-grid">
-              {searchResults.map((program) => (
-                <div key={program.id} className="program-card">
-                  <img
-                    src={program.logo ? `http://localhost:8000/media/logo/${program.logo}` : '/default-logo.png'}
-                    alt={`${program.universities} logo`}
-                    className="program-logo"
-                  />
-                  <span className="program-filiere">{program.category}</span>
-                  <h3>{program.program}</h3>
-                  <p className="program-description">{program.description}</p>
-                                <button 
-                  className="apply-button"
-                  onClick={() => handleProgramDetail(program.id)}
-                >
-                  En savoir plus
-                </button>
-                  <button className="apply-button" onClick={() => handleApply(program.id)}>Postuler</button>
-                </div>
-              ))}
-            </div>
+
+<div className="programs-grid">
+  {searchResults.map((program, index) => (
+    <motion.div
+      key={program.id || index}
+      className="program-card"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: index * 0.05 }}
+    >
+      {/* HEADER */}
+      <div className="card-header">
+        <div className="logo-container">
+          <img
+            src={program.logo ? `http://localhost:8000/media/logo/${program.logo}` : '/default-logo.png'}
+            alt={`${program.universities} logo`}
+            className="program-logo"
+          />
+        </div>
+      </div>
+
+      {/* CONTENT */}
+      <div className="card-content">
+        {/* catégorie en badge */}
+        <h3 className="program-title">{program.program}</h3>
+        <p className="program-description">{program.description}</p>
+      </div>
+
+      {/* ACTIONS */}
+      <div className="card-actions">
+        <div className="action-buttons-top">
+          <button
+            className="more-infos-button"
+            onClick={() => handleProgramDetail(program.id)}
+          >
+            <span className="icon">💬</span> More Infos
+          </button>
+          <button className="save-this-button">
+            <span className="icon">⭐</span> Save This
+          </button>
+        </div>
+        <button
+          className="apply-now-button"
+          onClick={() => handleApply(program.id)}
+        >
+          Apply Now
+        </button>
+      </div>
+    </motion.div>
+  ))}
+</div>
+
           </div>
         )}
 
@@ -389,33 +420,61 @@ const handleProgramDetail = (programId) => {
         <img src={howitworks} alt="How it works illustration" className="how-it-works-illustration" />
       </section>
  
-   {/* NOUVELLE SECTION PROGRAMMES POPULAIRES */}
+   {/* SECTION PROGRAMMES POPULAIRES */}
       <div className="popular-programs-section">
         <h2>
           Popular <span className="highlight-yellow">Programs</span>
         </h2>
-        
-        <div className="programs-grid">
-          {topPrograms.map((program, index) => (
-            <div key={program.id} className="program-card">
-              <img
-                src={program.logo ? `http://localhost:8000/media/logo/${program.logo}` : '/default-logo.png'}
-                alt={`${program.universities} logo`}
-                className="program-logo"
-              />
-              <span className="program-filiere">{program.category}</span>
-              <h3>{program.program}</h3>
-              <p className="program-description">{program.description}</p>
-              <button 
-                  className="apply-button"
-                  onClick={() => handleProgramDetail(program.id)}
-                >
-                  En savoir plus
-                </button>
-              <button className="apply-button" onClick={() => handleApply(program.id)}>Postuler</button>
-            </div>
-          ))}
+
+<div className="programs-grid">
+  {topPrograms.map((program, index) => (
+    <motion.div
+      key={program.id || index}
+      className="program-card"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: index * 0.05 }}
+    >
+      {/* HEADER */}
+      <div className="card-header">
+        <div className="logo-container">
+          <img 
+            src={program.logo ? `http://localhost:8000/media/logo/${program.logo}` : '/default-logo.png'}
+            alt={`${program.universities} logo`}
+            className="program-logo"
+          />
         </div>
+      </div>
+
+      {/* CONTENT */}
+      <div className="card-content">
+        <h3 className="program-title">{program.program}</h3>
+        <p className="program-description">{program.description}</p>
+      </div>
+
+      {/* ACTIONS */}
+      <div className="card-actions">
+        <div className="action-buttons-top">
+          <button 
+            className="more-infos-button"
+            onClick={() => handleProgramDetail(program.id)}
+          >
+            <span className="icon">💬</span> More Infos
+          </button>
+          <button className="save-this-button">
+            <span className="icon">⭐</span> Save This
+          </button>
+        </div>
+        <button 
+          className="apply-now-button" 
+          onClick={() => handleApply(program.id)}
+        >
+          Apply Now
+        </button>
+      </div>
+    </motion.div>
+  ))}
+</div>
 
         {/* BOUTON VOIR TOUS LES PROGRAMMES */}
         <div className="view-all-container">
@@ -457,7 +516,11 @@ const handleProgramDetail = (programId) => {
       <div className="achievement-card second-card">
         <div className="achievement-number yellow">70</div>
         <div className="achievement-text">
-          <span className="achievement-icon">📚</span>
+       <img 
+            src={livre} 
+            alt="Book Icon" 
+            className="achievement-icon" 
+          />
           <div className="text-wrapper">
             <div>Programs</div>
             <div>Available</div>

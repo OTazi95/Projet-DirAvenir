@@ -3,31 +3,162 @@
     "home": "Home",
     "orientation": "Orientation",
     "programs": "Programs",
-    "packs": "Our Packs",
-    "about": "About Us",
+    "about": "About us",
     "faq": "FAQ",
-    "contact": "Contact Us",
+    "contact": "Contact us",
     "login": "Login",
     "register": "Register",
     "logout": "Logout",
-    "createAccount": "Create an Account"
+    "createAccount": "Create an account"
   },
+  "orientation": {
+    "titlePart1": "Find your",
+    "titlePart2": "major match",
+    "helpText": "Ok, let me help you",
+    "startButtonPart1": "Start",
+    "startButtonPart2": "the test",
+    "programsButtonPart1": "Read About ",
+    "programsButtonPart2": "Programs",
+    "imageAlt": "Orientation image"
+  },
+  "contact": {
+    "bannerTitle": "Contact Our Team",
+    "nameLabel": "Your name*",
+    "namePlaceholder": "Enter your full name",
+    "emailLabel": " Your Email*",
+    "emailPlaceholder": "contact@gmail.com",
+    "phoneLabel": "Phone number*",
+    "phonePlaceholder": "Enter your phone number",
+    "subjectLabel": "Subject related to*",
+    "subjectOption1": "Orientation",
+    "subjectOption2": "Payment failure",
+    "subjectOption3": "Other",
+    "messageLabel": "Your message*",
+    "messagePlaceholder": "Type your message...",
+   "termsText": "By submitting this form, you agree to our terms and conditions and our privacy policy, which explains how we can collect , use and disclose your personal information, including to third parties.",
+    "sendButton": "Send",
+    "infoTitle": "Our Information",
+    "infoAddressLabel": "Address",
+    "infoAddressValue": "179 Resistance Blvd, Corner of London and Mers Sultan Ave, Casablanca 20250, Morocco",
+    "infoPhoneLabel": "Phone",
+    "infoPhoneValue": "0771-497646",
+    "infoEmailLabel": "Email",
+    "infoEmailValue": "contact@diravenir.com",
+    "socialTitle": "Follow us on social media!",
+    "locationTitle": "DirAvenir Location"
+  },
+
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "questions": [
+      {
+        "question": "Who is eligible for orientation?",
+        "answer": "Our orientation is open to students, career changers, and educational institutions. It’s designed to support anyone seeking academic or professional guidance."
+      },
+      {
+        "question": "What is Diravenir?",
+        "answer": "Diravenir is an educational guidance platform that helps students, especially in Morocco, find study opportunities abroad. It offers personalized support in choosing programs, applying to universities, obtaining scholarships, and handling procedures such as visas and accommodation mainly in countries like China and Cyprus."
+      },
+      {
+        "question": "In which countries do you assist students?",
+        "answer": "We assist students in exploring academic opportunities in Romania, Cyprus, and China. Whether it's for undergraduate or postgraduate studies, we provide guidance throughout the entire process from choosing the right program to securing a visa and finding accommodation."
+      },
+      {
+        "question": "What scholarships are available?",
+        "answer": "We offer a variety of scholarship options to support students on their academic journey. You can access merit-based awards, need-based grants, and destination-specific scholarships for programs in countries like Romania, Cyprus, and China. Each opportunity includes full guidance on eligibility, application requirements, and deadlines."
+      },
+      {
+        "question": "What documents are required for registration?",
+        "answer": "The documents required for registration typically include: a valid passport or ID, academic transcripts, proof of language proficiency, recommendation letters, and a completed application form. The entire Diravenir team will assist you in preparing and submitting all necessary paperwork."
+      },
+      {
+        "question": "Do I need to speak English?",
+        "answer": "Speaking English is often required, depending on the program and country. However, some programs may offer support in other languages. We provide assistance in both French and English."
+      },
+      {
+        "question": "Do you assist with visa and housing arrangements?",
+        "answer": "Yes, we assist with both visa applications and housing arrangements. Our team guides you through the entire process to ensure a smooth transition to your study destination."
+      },
+      {
+        "question": "Have you worked with students before?",
+        "answer": "Yes, we have successfully worked with hundreds of students and continue to support many throughout their academic journeys."
+      },
+      {
+        "question": "How do I start the process?",
+        "answer": "To start the process, you can contact us via WhatsApp or fill out our online registration form. Our team will then guide you step-by-step through the next stages."
+      },
+      {
+        "question": "How do I know which study program is right for me?",
+        "answer": "To find the right study program for you, we offer personalized counseling based on your interests, skills, and career goals. Our experts help you explore options and choose the best fit for your future."
+      },
+      {
+        "question": "What is the best time to apply?",
+        "answer": "It’s best to apply as soon as possible to secure your admission and scholarship. Starting early gives you the best chance to complete all requirements on time. We recommend applying between March and July for the next academic year."
+      }
+    ]
+  },
+  "about": {
+    "bannerTitle": "ABOUT US",
+    "mainTitle": "The Platform",
+    "subTitle": "For The Next",
+    "futureMakers": "Future Makers",
+    "bannerText": "Transforming education for the next generation of students & learners",
+    "ourStoryTitle": "OUR STORY",
+    "storyHeadline": "Innovating new ways to guide students",
+    "storyParagraph1": "We believe in the power of purpose-driven learning and bold imagination. We see no limits to what we can build when curiosity meets community, when dreams are backed by action.",
+    "storyParagraph2": "We are not just educating the next generation, we are co-creating the future with them. Each scholar is a builder, a thinker, a doer. Together, we are shaping futures that matter.",
+    "storyParagraph3": "This is more than a platform. This is a movement for those who dare to dream and work to build.",
+    "missionTitle": "Our Mission",
+    "missionText": "We aspire to empower students to succeed in life, offering not only academic orientation but also the hope and inspiration to realize their dreams abroad through international scholarships, global internships, volunteering opportunities & many more.",
+    "visionTitle": "Our Vision",
+    "visionText": "We build students' futures by providing comprehensive academic guidance, international scholarships ensuring they have the support and resources needed to succeed and realize their dreams abroad.",
+    "valuesTitle": "Our Values",
+    "values": [
+      {
+        "title": "Honesty",
+        "description": "We deliver on our promises to students with integrity, transparency, and a genuine commitment to their success."
+      },
+      {
+        "title": "Students Focus",
+        "description": "We keep students at the heart of everything we do because their success is what matters most."
+      },
+      {
+        "title": "Growth Oriented",
+        "description": "We aspire to cultivate a Moroccan generation that values education on a global scale."
+      },
+      {
+        "title": "Believe",
+        "description": "We believe in our students, regardless of their academic grades, skills, or past challenges."
+      }
+    ],
+    "teamTitle": "Our Team",
+    "teamMembers": [
+      { "name": "Meryem Derni", "role": "Co-Founder" },
+      { "name": "Nadia Boukdir", "role": "Co-Founder" },
+      { "name": "Bouchra Lyass", "role": "Marketing Coordinator" },
+      { "name": "Rania Jamoudi", "role": "Admission Coordinator" },
+      { "name": "Abdellah Louadi", "role": "Educational Consultant" },
+      { "name": "Hamza Aomari", "role": "Educational Consultant" },
+      { "name": "Wiam Farih", "role": "Educational Consultant" },
+      { "name": "Marouane Zahid", "role": "Educational Consultant" }
+    ]
+  },
+
   "footer": {
-    "description": "DirAvenir is a web platform that supports students in their educational orientation and application procedures both in Morocco and abroad. It stands out through a personalized approach based on tests, recommendations, and guidance before any application.",
+    "description": "DirAvenir is a web platform that supports students in their educational orientation and application procedures both in Morocco and abroad. It stands out for a personalized approach based on tests, recommendations, and follow-up before any application.",
     "subscribeTitle": "Subscribe to our Newsletter",
     "emailPlaceholder": "Your email address",
     "quickLinks": "Quick Links",
     "home": "Home",
     "programs": "Programs",
     "orientation": "Orientation",
-    "ourPacks": "Our Packs",
-    "aboutUs": "About Us",
-    "contactUs": "Contact Us",
-    "contactTitle": "Our Contact Information",
+    "aboutUs": "About us",
+    "contactUs": "Contact us",
+    "contactTitle": "Our contact information",
     "address": "179 Resistance Blvd, Corner of London and Mers Sultan Ave, Casablanca 20250",
-    "followUs": "Follow Us",
-    "terms": "Terms and Conditions",
-    "privacy": "Privacy Policy",
+    "followUs": "Follow us",
+    "terms": "Terms and conditions",
+    "privacy": "Privacy policy",
     "rights": "All rights reserved."
   }
 }

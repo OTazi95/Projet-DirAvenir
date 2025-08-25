@@ -62,7 +62,6 @@ function Navbar() {
           <li><NavLink to="/dashboard">{t('navbar.home')}</NavLink></li>
           <li><NavLink to="/Orientation">{t('navbar.orientation')}</NavLink></li>
           <li><NavLink to="/programs">{t('navbar.programs')}</NavLink></li>
-          <li><a href="#">{t('navbar.packs')}</a></li>
           <li><NavLink to="/about">{t('navbar.about')}</NavLink></li>
           <li><NavLink to="/faq">{t('navbar.faq')}</NavLink></li>
           <li><NavLink to="/contact">{t('navbar.contact')}</NavLink></li>

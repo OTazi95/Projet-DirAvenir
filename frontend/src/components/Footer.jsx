@@ -35,9 +35,6 @@ function Footer() {
     <Link to="/orientation">{t('footer.orientation')}</Link>
   </li>
   <li>
-    <Link to="/packs">{t('footer.ourPacks')}</Link>
-  </li>
-  <li>
     <Link to="/about">{t('footer.aboutUs')}</Link>
   </li>
   <li>

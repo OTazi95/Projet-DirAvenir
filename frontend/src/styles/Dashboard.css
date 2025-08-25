@@ -57,7 +57,7 @@
   font-weight: bold;
 }
 
-.hero-text p {
+.hero-text #ph {
   font-size: 1.3rem;
   color: #777;
   margin-top: 10px;
@@ -198,6 +198,22 @@
   width: 25px;
   border-radius: 5px;
 }
+
+/* DESCRIPTION */
+.program-description {
+  color: #f3f4f6;
+ font-family: 'Poppins', sans-serif;
+ font-size: 0.85rem;
+  margin-bottom: 15px;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  display: -webkit-box;     
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+}
+
+
 
 
 /* 3. Who Can Join */
