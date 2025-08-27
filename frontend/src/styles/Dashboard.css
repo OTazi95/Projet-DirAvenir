@@ -447,6 +447,12 @@
   font-size: 1rem;
   cursor: pointer;
   font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.view-all-button:hover {
+  transform: translateY(-10px);
+  background-color: #541652b7
 }
 
 /* 6. Section des réalisations */

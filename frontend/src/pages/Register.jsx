@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import '../styles/Register.css';
 import logo from '../assets/logo.png';
 import illustrationImage from '../assets/register-illustration.png';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 import { FaGoogle, FaFacebookF, FaApple } from 'react-icons/fa';
 
 function Register() {
@@ -201,9 +200,8 @@ function Register() {
             {/* Terms */}
             <p className="terms-text">
               By continuing, you agree to the{" "}
-              <a href="#" className="terms-link">Terms of Service</a>
-              {" "}and{" "}
-              <a href="#" className="terms-link">Privacy Policy</a>
+              <Link to="/terms" className="terms-link">Terms of Service</Link>              {" "}and{" "}
+              <Link to="/privacy" className="terms-link">Privacy Policy</Link>              
             </p>
           </div>
         </div>

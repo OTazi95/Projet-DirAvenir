@@ -1,21 +1,37 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/Modals.css';
 
 function UserProfileModal({ isOpen, onClose }) {
-  const prenom = localStorage.getItem('prenom');
-  const nom = localStorage.getItem('nom');
-  const email = localStorage.getItem('email');
+  // Récupérer l'objet complet de l'utilisateur
+  const user = JSON.parse(localStorage.getItem('auth_user')) || {};
+
+  const navigate = useNavigate();
 
   if (!isOpen) return null;
 
+  const handleNavigateToDashboard = () => {
+    navigate('/welcome-etudiant');
+    onClose();
+  };
+
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <h2>Mes Informations</h2>
-        <p><strong>Prénom:</strong> {prenom}</p>
-        <p><strong>Nom:</strong> {nom}</p>
-        <p><strong>Email:</strong> {email}</p>
-        <button onClick={onClose} className="close-btn">Fermer</button>
+    <div className="profile-dropdown">
+      <div className="profile-header">
+        <h3>Mes Informations</h3>
+      </div>
+      <div className="profile-body">
+        <p><strong>Prénom:</strong> {user.prenom}</p>
+        <p><strong>Nom:</strong> {user.nom}</p>
+        <p><strong>Email:</strong> {user.email}</p>
+      </div>
+      <div className="profile-actions">
+        <button onClick={handleNavigateToDashboard} className="dashboard-btn">
+          My Personal Dashboard
+        </button>
+        <button onClick={onClose} className="close-btn">
+          Fermer
+        </button>
       </div>
     </div>
   );

@@ -6,9 +6,132 @@ from rest_framework.authentication import TokenAuthentication
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db import connection
-from .models import ProgrammesUniversites
-from .serializers import ProgrammesUniversitesSerializer  
+from django.contrib.auth import authenticate
+from rest_framework.authtoken.models import Token
+from django.contrib.auth.models import User
+import json
+from accounts.models import Profile
 
+
+@csrf_exempt
+def register_view(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            nom = data.get("nom")
+            prenom = data.get("prenom")
+            email = data.get("email")
+            password = data.get("password")
+            password2 = data.get("password2")
+
+            # Vérifications
+            if password != password2:
+                return JsonResponse({"error": "Les mots de passe ne correspondent pas"}, status=400)
+
+            if User.objects.filter(email=email).exists():
+                return JsonResponse({"error": "Cet email est déjà utilisé"}, status=400)
+
+            # Créer l'utilisateur
+            user = User.objects.create_user(
+                username=email,  # Utiliser l'email comme username
+                email=email,
+                password=password,
+                first_name=prenom,
+                last_name=nom
+            )
+
+            # Vérifier que le profile a été créé
+            profile, created = Profile.objects.get_or_create(user=user)
+            if not created:
+                profile.role = "etudiant"  # S'assurer que le rôle est correct
+                profile.save()
+
+            return JsonResponse({
+                "message": "Inscription réussie",
+                "user": {
+                    "id": user.id,
+                    "email": user.email,
+                    "prenom": user.first_name,
+                    "nom": user.last_name,
+                    "role": profile.role
+                }
+            })
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+    
+    return JsonResponse({"error": "Méthode non autorisée"}, status=405)
+
+@csrf_exempt
+def login_view(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            email = data.get("email")
+            password = data.get("password")
+
+            print(f"=== DEBUG BACKEND LOGIN ===")
+            print(f"Email reçu: {email}")
+            print(f"Password reçu: {'***' if password else 'empty'}")
+
+            if not email or not password:
+                return JsonResponse({"error": "Email et mot de passe requis"}, status=400)
+
+            # Authentifier l'utilisateur
+            user = authenticate(username=email, password=password)
+            
+            if user is not None:
+                print(f"Utilisateur authentifié: {user.email}")
+                
+                # Créer ou récupérer le token
+                token, created = Token.objects.get_or_create(user=user)
+                print(f"Token {'créé' if created else 'récupéré'}: {token.key[:10]}...")
+
+                # Récupérer le rôle depuis le Profile
+                try:
+                    profile = Profile.objects.get(user=user)
+                    role = profile.role
+                    print(f"Rôle trouvé dans Profile: {role}")
+                except Profile.DoesNotExist:
+                    print("Profile n'existe pas, création avec rôle par défaut...")
+                    profile = Profile.objects.create(user=user, role="etudiant")
+                    role = "etudiant"
+
+                # Préparer les données utilisateur
+                user_data = {
+                    "id": user.id,
+                    "email": user.email,
+                    "username": user.username,
+                    "prenom": user.first_name,
+                    "nom": user.last_name,
+                    "role": role
+                }
+
+                print(f"Données utilisateur à envoyer: {user_data}")
+
+                # Réponse avec toutes les données nécessaires
+                response_data = {
+                    "message": "Connexion réussie",
+                    "token": token.key,
+                    "user": user_data
+                }
+
+                print(f"Réponse complète: {response_data}")
+                return JsonResponse(response_data)
+            else:
+                print("Authentification échouée - utilisateur non trouvé ou mot de passe incorrect")
+                return JsonResponse({"error": "Email ou mot de passe incorrect"}, status=401)
+
+        except json.JSONDecodeError as e:
+            print(f"Erreur JSON: {str(e)}")
+            return JsonResponse({"error": "Format JSON invalide"}, status=400)
+        except Exception as e:
+            print(f"Erreur dans login_view: {str(e)}")
+            return JsonResponse({"error": str(e)}, status=400)
+
+    return JsonResponse({"error": "Méthode non autorisée"}, status=405)
+
+# Fonctions pour la gestion admin
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -25,6 +148,181 @@ def verify_password(request):
 
     return Response({'message': 'Mot de passe vérifié avec succès.'})
 
+@api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_student(request, student_id):
+    try:
+        # Vérifier que l'utilisateur connecté est admin
+        user_profile = Profile.objects.get(user=request.user)
+        if user_profile.role not in ['admin', 'administrateur']:
+            return Response({"error": "Permission refusée - Accès admin requis"}, status=403)
+        
+        # Récupérer l'utilisateur à supprimer
+        user_to_delete = User.objects.get(id=student_id)
+        profile_to_delete = Profile.objects.get(user=user_to_delete)
+        
+        # Vérifier que c'est bien un étudiant
+        if profile_to_delete.role != 'etudiant':
+            return Response({"error": "Impossible de supprimer un administrateur via cette fonction"}, status=400)
+        
+        # Supprimer l'utilisateur (le profil sera supprimé automatiquement en cascade)
+        user_to_delete.delete()
+        return Response({"message": "Étudiant supprimé avec succès"})
+        
+    except User.DoesNotExist:
+        return Response({"error": "Étudiant introuvable"}, status=404)
+    except Profile.DoesNotExist:
+        return Response({"error": "Profil étudiant introuvable"}, status=404)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
+
+# Supprimer un administrateur avec toutes les sécurités
+@api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_admin(request, admin_id):
+    try:
+        # Vérifier que l'utilisateur connecté est admin
+        current_user_profile = Profile.objects.get(user=request.user)
+        if current_user_profile.role not in ['admin', 'administrateur']:
+            return Response({"error": "Permission refusée - Accès admin requis"}, status=403)
+        
+        # Récupérer l'administrateur à supprimer
+        admin_to_delete = User.objects.get(id=admin_id)
+        admin_profile = Profile.objects.get(user=admin_to_delete)
+        
+        # Vérifier que c'est bien un administrateur
+        if admin_profile.role not in ['admin', 'administrateur']:
+            return Response({"error": "Cet utilisateur n'est pas un administrateur"}, status=400)
+        
+        # Empêcher l'admin de se supprimer lui-même
+        if admin_to_delete.id == request.user.id:
+            return Response({"error": "Vous ne pouvez pas vous supprimer vous-même"}, status=400)
+        
+        # Vérifier qu'on ne supprime pas le dernier administrateur
+        admin_count = Profile.objects.filter(role__in=['admin', 'administrateur']).count()
+        if admin_count <= 1:
+            return Response({"error": "Impossible de supprimer le dernier administrateur du système"}, status=400)
+        
+        # Supprimer l'administrateur
+        admin_to_delete.delete()
+        return Response({"message": "Administrateur supprimé avec succès"})
+        
+    except User.DoesNotExist:
+        return Response({"error": "Administrateur introuvable"}, status=404)
+    except Profile.DoesNotExist:
+        return Response({"error": "Profil administrateur introuvable"}, status=404)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
+
+# Ajouter un admin avec vérifications
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def add_admin(request):
+    try:
+        # Vérifier que l'utilisateur connecté est admin
+        user_profile = Profile.objects.get(user=request.user)
+        if user_profile.role not in ['admin', 'administrateur']:
+            return Response({"error": "Permission refusée - Accès admin requis"}, status=403)
+        
+        data = request.data
+        email = data.get("email", "").strip()
+        first_name = data.get("first_name", "").strip()
+        last_name = data.get("last_name", "").strip()
+        password = data.get("password", "")
+
+        # Validation des champs requis
+        if not email or not password:
+            return Response({"error": "Email et mot de passe sont obligatoires"}, status=400)
+        
+        if len(password) < 6:
+            return Response({"error": "Le mot de passe doit contenir au moins 6 caractères"}, status=400)
+
+        # Vérifier si l'email existe déjà
+        if User.objects.filter(email=email).exists():
+            return Response({"error": "Un utilisateur avec cet email existe déjà"}, status=400)
+        
+        # Vérifier le format de l'email
+        from django.core.validators import validate_email
+        from django.core.exceptions import ValidationError
+        try:
+            validate_email(email)
+        except ValidationError:
+            return Response({"error": "Format d'email invalide"}, status=400)
+
+        # Créer le nouvel administrateur
+        new_admin = User.objects.create_user(
+            username=email,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            password=password
+        )
+        
+        # Créer ou mettre à jour le profil avec le rôle admin
+        admin_profile, created = Profile.objects.get_or_create(user=new_admin)
+        admin_profile.role = 'admin'
+        admin_profile.save()
+
+        return Response({
+            "message": "Administrateur créé avec succès", 
+            "admin": {
+                "id": new_admin.id,
+                "first_name": new_admin.first_name,
+                "last_name": new_admin.last_name,
+                "email": new_admin.email,
+                "role": admin_profile.role
+            }
+        }, status=201)
+        
+    except Profile.DoesNotExist:
+        return Response({"error": "Profil utilisateur actuel introuvable"}, status=404)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
+
+# Liste des étudiants avec vérification admin
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_students(request):
+    try:
+        # Vérifier que l'utilisateur connecté est admin
+        user_profile = Profile.objects.get(user=request.user)
+        if user_profile.role not in ['admin', 'administrateur']:
+            return Response({"error": "Permission refusée - Accès admin requis"}, status=403)
+        
+        students = Profile.objects.filter(role='etudiant').select_related('user').values(
+            'user__id', 'user__first_name', 'user__last_name', 'user__email'
+        )
+        return Response(list(students))
+        
+    except Profile.DoesNotExist:
+        return Response({"error": "Profil utilisateur introuvable"}, status=404)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
+
+# Liste des administrateurs avec vérification admin
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_admins(request):
+    try:
+        # Vérifier que l'utilisateur connecté est admin
+        user_profile = Profile.objects.get(user=request.user)
+        if user_profile.role not in ['admin', 'administrateur']:
+            return Response({"error": "Permission refusée - Accès admin requis"}, status=403)
+        
+        admins = Profile.objects.filter(role__in=['admin', 'administrateur']).select_related('user').values(
+            'user__id', 'user__first_name', 'user__last_name', 'user__email'
+        )
+        return Response(list(admins))
+        
+    except Profile.DoesNotExist:
+        return Response({"error": "Profil utilisateur introuvable"}, status=404)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
 
 # accounts/views.py
 
@@ -299,339 +597,6 @@ def get_program_detail_with_similar(request, program_id):
     except Exception as e:
         return Response({'error': f'Erreur serveur: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
-
-# views.py - Vues API Django
-from rest_framework import generics, status
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-from django.views.decorators.http import require_http_methods
-import json
-import math
-
-from .models import Major, OrientationTest, TestResult
-from .serializers import MajorSerializer, OrientationTestSerializer, TestResultSerializer
-
-# Configuration des scores selon le PDF
-PILLAR_SCORING = {
-    'q1': {
-        'A': {'interet_scientifique_tech': 5, 'interet_artistique_creatif': 3, 'valeur_innovation_challenge': 4, 'competence_manuel_technique': 2},
-        'B': {'interet_scientifique_tech': 4, 'interet_logique_analytique': 5, 'competence_resolution_problemes': 4, 'pref_theorie_recherche': 3},
-        'C': {'interet_social_humain': 5, 'valeur_impact_societal': 5, 'competence_communication': 4},
-        'D': {'interet_business_gestion': 5, 'competence_organisation': 5, 'pref_travail_equipe_collab': 3},
-        'E': {'interet_artistique_creatif': 5, 'valeur_innovation_challenge': 2, 'pref_travail_autonome': 3}
-    },
-    'q2': {
-        'tech': {'interet_scientifique_tech': 3, 'valeur_innovation_challenge': 2},
-        'art': {'interet_artistique_creatif': 3},
-        'social': {'interet_social_humain': 3, 'valeur_impact_societal': 2},
-        'business': {'interet_business_gestion': 3},
-        'organization': {'competence_organisation': 3},
-        'manual': {'competence_manuel_technique': 3}
-    },
-    'q3': {
-        'A': {'interet_scientifique_tech': 3, 'competence_manuel_technique': 2},
-        'B': {'interet_logique_analytique': 3, 'pref_theorie_recherche': 2},
-        'C': {'interet_artistique_creatif': 3},
-        'D': {'interet_social_humain': 3},
-        'E': {'interet_business_gestion': 3, 'interet_artistique_creatif': 2}
-    },
-    'q4': {
-        'A': {'competence_resolution_problemes': 4, 'interet_logique_analytique': 4},
-        'B': {'interet_scientifique_tech': 3, 'interet_logique_analytique': 3, 'pref_theorie_recherche': 2},
-        'C': {'interet_artistique_creatif': 4, 'valeur_innovation_challenge': 4},
-        'D': {'competence_communication': 4, 'pref_travail_equipe_collab': 4, 'interet_social_humain': 2}
-    },
-    'q5': {
-        'budget': {'interet_business_gestion': 1, 'competence_organisation': 1, 'interet_logique_analytique': 1},
-        'event': {'competence_organisation': 1, 'pref_travail_equipe_collab': 1, 'competence_communication': 1},
-        'write': {'competence_communication': 1, 'interet_artistique_creatif': 1},
-        'repair': {'competence_manuel_technique': 1, 'interet_scientifique_tech': 1},
-        'draw': {'interet_artistique_creatif': 1, 'competence_manuel_technique': 1},
-        'equation': {'interet_logique_analytique': 1, 'interet_scientifique_tech': 1},
-        'convince': {'competence_communication': 1, 'interet_business_gestion': 1},
-        'counsel': {'interet_social_humain': 1, 'competence_communication': 1}
-    },
-    'q6': {
-        'A': {'pref_theorie_recherche': 4, 'interet_logique_analytique': 3},
-        'B': {'interet_scientifique_tech': 3},
-        'C': {'competence_manuel_technique': 4, 'pref_pratique_terrain': 4},
-        'D': {'competence_communication': 4, 'pref_travail_equipe_collab': 4}
-    },
-    'q7': {
-        'A': {'valeur_impact_societal': 5, 'interet_social_humain': 4},
-        'B': {'valeur_innovation_challenge': 4, 'interet_scientifique_tech': 3},
-        'C': {'interet_artistique_creatif': 5},
-        'D': {'valeur_impact_societal': 5, 'interet_social_humain': 3}
-    },
-    'q8': {
-        'A': {'pref_theorie_recherche': 4, 'interet_scientifique_tech': 3},
-        'B': {'pref_travail_equipe_collab': 4, 'interet_business_gestion': 2},
-        'C': {'interet_artistique_creatif': 4, 'competence_manuel_technique': 3},
-        'D': {'pref_pratique_terrain': 4, 'competence_manuel_technique': 3},
-        'E': {'pref_travail_autonome': 4, 'pref_theorie_recherche': 2}
-    },
-    'q9': {
-        'security': {'valeur_stabilite_securite': 1},
-        'innovation': {'valeur_innovation_challenge': 1},
-        'autonomy': {'valeur_autonomie': 1},
-        'salary': {'interet_business_gestion': 1}
-    },
-    'q10': {
-        'A': {'interet_logique_analytique': 4, 'competence_resolution_problemes': 3},
-        'B': {'pref_pratique_terrain': 4, 'competence_resolution_problemes': 3},
-        'C': {'competence_communication': 4, 'pref_travail_equipe_collab': 3},
-        'D': {'valeur_innovation_challenge': 4, 'interet_scientifique_tech': 3}
-    },
-    'q11': {
-        'A': {'pref_travail_autonome': 5, 'valeur_autonomie': 4},
-        'B': {'pref_travail_equipe_collab': 5},
-        'C': {'valeur_stabilite_securite': 4, 'competence_organisation': 3}
-    },
-    'q12': {
-        'A': {'competence_organisation': 4, 'interet_logique_analytique': 3},
-        'B': {'competence_communication': 4, 'interet_artistique_creatif': 3},
-        'C': {'competence_communication': 4, 'interet_social_humain': 3, 'pref_travail_equipe_collab': 2}
-    },
-    'q13': {
-        'A': {'interet_logique_analytique': 5},
-        'B': {'interet_artistique_creatif': 4, 'pref_travail_autonome': 3},
-        'C': {'interet_social_humain': 4, 'pref_travail_equipe_collab': 3}
-    },
-    'q14': {
-        'sciences': {'interet_scientifique_tech': 4, 'interet_logique_analytique': 4},
-        'literature': {'interet_social_humain': 3, 'competence_communication': 3},
-        'social_sciences': {'interet_social_humain': 4, 'pref_theorie_recherche': 2},
-        'arts': {'interet_artistique_creatif': 4},
-        'technology': {'interet_scientifique_tech': 4, 'interet_logique_analytique': 3},
-        'management': {'interet_business_gestion': 4, 'competence_organisation': 3}
-    }
-}
-
-MAX_SCORES = {
-    'interet_scientifique_tech': 25,
-    'interet_artistique_creatif': 21,
-    'interet_social_humain': 20,
-    'interet_business_gestion': 18,
-    'interet_logique_analytique': 20,
-    'competence_resolution_problemes': 15,
-    'competence_communication': 16,
-    'competence_organisation': 14,
-    'competence_manuel_technique': 12,
-    'valeur_impact_societal': 17,
-    'valeur_innovation_challenge': 17,
-    'valeur_stabilite_securite': 5,
-    'valeur_autonomie': 14,
-    'pref_travail_equipe_collab': 13,
-    'pref_travail_autonome': 14,
-    'pref_pratique_terrain': 8,
-    'pref_theorie_recherche': 10
-}
-
-def calculate_user_profile(answers):
-    """Calcule le profil utilisateur basé sur les réponses"""
-    profile = {pillar: 0 for pillar in MAX_SCORES.keys()}
-    
-    for question_id, answer in answers.items():
-        scoring = PILLAR_SCORING.get(question_id, {})
-        
-        if answer['type'] == 'single':
-            scores = scoring.get(answer['value'], {})
-            for pillar, points in scores.items():
-                if pillar in profile:
-                    profile[pillar] += points
-                    
-        elif answer['type'] == 'multiple':
-            for selected_id in answer['value']:
-                scores = scoring.get(selected_id, {})
-                for pillar, points in scores.items():
-                    if pillar in profile:
-                        profile[pillar] += points
-                        
-        elif answer['type'] == 'ranking':
-            for option_id, rank in answer['value'].items():
-                scores = scoring.get(option_id, {})
-                multiplier = 4 if rank == 1 else 3 if rank == 2 else 2
-                for pillar, points in scores.items():
-                    if pillar in profile:
-                        profile[pillar] += points * multiplier
-                        
-        elif answer['type'] == 'slider':
-            for option_id, value in answer['value'].items():
-                scores = scoring.get(option_id, {})
-                for pillar, points in scores.items():
-                    if pillar in profile:
-                        profile[pillar] += value
-    
-    # Normaliser sur 100
-    for pillar in profile:
-        max_score = MAX_SCORES.get(pillar, 20)
-        profile[pillar] = min(100, max(0, round((profile[pillar] / max_score) * 100)))
-    
-    return profile
-
-def calculate_major_matches(user_profile):
-    """Calcule la correspondance avec toutes les majeures"""
-    majors = Major.objects.all()
-    results = []
-    
-    for major in majors:
-        major_profile = {
-            'interet_scientifique_tech': major.interet_scientifique_tech,
-            'interet_artistique_creatif': major.interet_artistique_creatif,
-            'interet_social_humain': major.interet_social_humain,
-            'interet_business_gestion': major.interet_business_gestion,
-            'interet_logique_analytique': major.interet_logique_analytique,
-            'competence_resolution_problemes': major.competence_resolution_problemes,
-            'competence_communication': major.competence_communication,
-            'competence_organisation': major.competence_organisation,
-            'competence_manuel_technique': major.competence_manuel_technique,
-            'valeur_impact_societal': major.valeur_impact_societal,
-            'valeur_innovation_challenge': major.valeur_innovation_challenge,
-            'valeur_stabilite_securite': major.valeur_stabilite_securite,
-            'valeur_autonomie': major.valeur_autonomie,
-            'pref_travail_equipe_collab': major.pref_travail_equipe_collab,
-            'pref_travail_autonome': major.pref_travail_autonome,
-            'pref_pratique_terrain': major.pref_pratique_terrain,
-            'pref_theorie_recherche': major.pref_theorie_recherche
-        }
-        
-        # Calcul de la distance euclidienne pondérée
-        total_distance = 0
-        weight_sum = 0
-        
-        for pillar, ideal_score in major_profile.items():
-            user_score = user_profile.get(pillar, 0)
-            diff = abs(user_score - ideal_score)
-            weight = ideal_score
-            
-            total_distance += (diff * weight) ** 2
-            weight_sum += weight ** 2
-        
-        if weight_sum > 0:
-            distance = math.sqrt(total_distance / weight_sum)
-            match_percentage = max(0, round(100 - distance))
-        else:
-            match_percentage = 0
-            
-        results.append({
-            'major': major,
-            'percentage': match_percentage,
-            'distance': distance if weight_sum > 0 else float('inf')
-        })
-    
-    # Trier par pourcentage décroissant
-    results.sort(key=lambda x: x['percentage'], reverse=True)
-    
-    return results
-
-@csrf_exempt
-@api_view(['POST'])
-def submit_test(request):
-    """Soumet un test d'orientation et retourne les résultats"""
-    try:
-        data = json.loads(request.body)
-        answers = data.get('answers', {})
-        session_id = data.get('session_id')
-        
-        # Calculer le profil utilisateur
-        user_profile = calculate_user_profile(answers)
-        
-        # Créer l'objet test
-        test = OrientationTest.objects.create(
-            user=request.user if request.user.is_authenticated else None,
-            answers=answers,
-            session_id=session_id,
-            **user_profile
-        )
-        
-        # Calculer les correspondances avec les majeures
-        matches = calculate_major_matches(user_profile)
-        
-        # Sauvegarder les résultats
-        for i, match in enumerate(matches):
-            TestResult.objects.create(
-                test=test,
-                major=match['major'],
-                match_percentage=match['percentage'],
-                rank=i + 1
-            )
-        
-        # Préparer la réponse
-        top_results = matches[:5]  # Top 5
-        response_data = {
-            'test_id': test.id,
-            'user_profile': user_profile,
-            'recommendations': [
-                {
-                    'major': result['major'].name,
-                    'description': result['major'].description,
-                    'percentage': result['percentage'],
-                    'rank': i + 1
-                }
-                for i, result in enumerate(top_results)
-            ]
-        }
-        
-        return Response(response_data, status=status.HTTP_201_CREATED)
-        
-    except Exception as e:
-        return Response(
-            {'error': str(e)}, 
-            status=status.HTTP_400_BAD_REQUEST
-        )
-
-@api_view(['GET'])
-def get_majors(request):
-    """Récupère toutes les majeures disponibles"""
-    majors = Major.objects.all()
-    serializer = MajorSerializer(majors, many=True)
-    return Response(serializer.data)
-
-@api_view(['GET'])
-def get_test_results(request, test_id):
-    """Récupère les résultats d'un test spécifique"""
-    try:
-        test = OrientationTest.objects.get(id=test_id)
-        results = TestResult.objects.filter(test=test)[:5]  # Top 5
-        
-        user_profile = {
-            'interet_scientifique_tech': test.interet_scientifique_tech,
-            'interet_artistique_creatif': test.interet_artistique_creatif,
-            'interet_social_humain': test.interet_social_humain,
-            'interet_business_gestion': test.interet_business_gestion,
-            'interet_logique_analytique': test.interet_logique_analytique,
-            'competence_resolution_problemes': test.competence_resolution_problemes,
-            'competence_communication': test.competence_communication,
-            'competence_organisation': test.competence_organisation,
-            'competence_manuel_technique': test.competence_manuel_technique,
-            'valeur_impact_societal': test.valeur_impact_societal,
-            'valeur_innovation_challenge': test.valeur_innovation_challenge,
-            'valeur_stabilite_securite': test.valeur_stabilite_securite,
-            'valeur_autonomie': test.valeur_autonomie,
-            'pref_travail_equipe_collab': test.pref_travail_equipe_collab,
-            'pref_travail_autonome': test.pref_travail_autonome,
-            'pref_pratique_terrain': test.pref_pratique_terrain,
-            'pref_theorie_recherche': test.pref_theorie_recherche
-        }
-        
-        response_data = {
-            'test_id': test.id,
-            'user_profile': user_profile,
-            'recommendations': TestResultSerializer(results, many=True).data
-        }
-        
-        return Response(response_data)
-        
-    except OrientationTest.DoesNotExist:
-        return Response(
-            {'error': 'Test not found'}, 
-            status=status.HTTP_404_NOT_FOUND
-        )
 
 
 

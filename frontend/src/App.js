@@ -20,7 +20,10 @@ import Orientation from './components/Orientation';
 import OrientationTest from './components/OrientationTest';
 import ProgramDetail from './pages/ProgramDetail'; 
 import ApplicationForm from "./pages/ApplicationForm";
-
+import StudentWelcomeDashboard from './components/WelcomeEtudiant';
+import AdminWelcomeDashboard from './components/WelcomeAdmin';
+import TermsOfService from './components/TermsOfService';
+import PrivacyPolicy from './components/PrivacyPolicy';
 
 
 // Animation wrapper pour transition fluide
@@ -63,6 +66,11 @@ function AnimatedRoutes() {
           <Route path="/orientation/test" element={<PageTransition><OrientationTest /></PageTransition>} />
           <Route path="/program-detail/:programId" element={<PageTransition><ProgramDetail /></PageTransition>} />
           <Route path="/application/:programId" element={<PageTransition><ApplicationForm /></PageTransition>} />
+          <Route path="/welcome-admin" element={<PageTransition><AdminWelcomeDashboard /></PageTransition>} />
+          <Route path="/welcome-etudiant" element={<PageTransition><StudentWelcomeDashboard /></PageTransition>} />
+          <Route path="/terms" element={<PageTransition><TermsOfService    /></PageTransition>} />
+          <Route path="/privacy" element={<PageTransition><PrivacyPolicy    /></PageTransition>} />
+
         </Route>
       </Routes>
     </AnimatePresence>

@@ -148,12 +148,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # CORRECT CORS SETUP
-CORS_ALLOW_ALL_ORIGINS = False  # désactive le '*'
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # React
-    # ajoute d'autres origines si nécessaire
+     "http://127.0.0.1:3000",# ajoute d'autres origines si nécessaire
 ]
 
 # Ajoute ceci pour autoriser tous les headers

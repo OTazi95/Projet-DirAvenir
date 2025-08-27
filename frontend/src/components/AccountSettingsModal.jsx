@@ -10,30 +10,6 @@ function AccountSettingsModal({ isOpen, onClose }) {
   const [notification, setNotification] = useState('');
   const [error, setError] = useState('');
 
- const handlePasswordCheck = async () => {
-  const token = localStorage.getItem('token');
-
-  try {
-    const response = await axios.post(
-      'http://localhost:8000/api/verify-password/',
-      { current_password: currentPassword },
-      {
-        headers: {
-          Authorization: `Token ${token}`,
-          'Content-Type': 'application/json',
-        },
-        withCredentials: true  // <-- Important pour le CORS avec token
-      }
-    );
-
-    if (response.data.message) {
-      setStep(2);
-    }
-  } catch (error) {
-    setNotification('Mot de passe incorrect.');
-    setTimeout(() => setNotification(''), 3000);
-  }
-};
 
   const handleUpdate = async () => {
   const token = localStorage.getItem('token');
@@ -91,7 +67,7 @@ function AccountSettingsModal({ isOpen, onClose }) {
         {step === 1 && (
           <>
             <input type="password" placeholder="Mot de passe actuel" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} />
-            <button className="confirm-btn" onClick={handlePasswordCheck}>Vérifier</button>
+            
             {error && <p className="error-text">{error}</p>}
           </>
         )}

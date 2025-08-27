@@ -17,6 +17,8 @@ import abdellahlouadi from '../assets/aboutUS/Photo_equipe/AbdellahLouadi.jpg';
 import marouanezahid from '../assets/aboutUS/Photo_equipe/MarouaneZahid.jpg';
 import meryemderni from '../assets/aboutUS/Photo_equipe/MeryemDerni.jpg';
 import raniajamoudi from '../assets/aboutUS/Photo_equipe/RaniaJamaudi.jpg';
+import hafssahallioui from '../assets/aboutUS/Photo_equipe/Hafssahallioui.jpg';
+import ikbalmountassir from '../assets/aboutUS/Photo_equipe/ikbalMountassir.jpg';
 
 import ourstory from '../assets/aboutUS/ourstory.png';
 import beleive from '../assets/aboutUS/beleive.png';
@@ -37,6 +39,8 @@ const memberImages = {
   hamzaaomari,
   wiamfarih,
   marouanezahid,
+  hafssahallioui,
+  ikbalmountassir,
 };
 
 const valueImages = {

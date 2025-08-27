@@ -48,7 +48,7 @@ const testimonials = [
   },
   {
     id: 2,
-    name: 'Fatimazahra Naim',
+    name: 'Abderazak Elghalibi',
     role: 'Cyber Security',
     rating: 4,
     duration: '3 Month ago',

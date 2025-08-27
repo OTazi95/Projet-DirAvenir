@@ -275,3 +275,392 @@ body {
   0% { opacity: 0; transform: translateY(20px) scale(0.98); }
   100% { opacity: 1; transform: translateY(0) scale(1); }
 }
+
+
+
+
+
+
+
+
+
+/* 🚀 MESSAGE DE SUCCÈS PLEIN ÉCRAN - Style Diravenir */
+.success-fullscreen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: overlayFadeIn 0.5s ease-out forwards;
+  backdrop-filter: blur(3px);
+}
+
+.success-fullscreen-content {
+  background: white;
+  padding: 3rem;
+  border-radius: 25px;
+  text-align: center;
+  max-width: 500px;
+  width: 90%;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  animation: contentSlideUp 0.6s ease-out 0.2s forwards;
+  transform: translateY(50px);
+  opacity: 0;
+}
+
+/* Animation de l'overlay */
+@keyframes overlayFadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes contentSlideUp {
+  0% { 
+    transform: translateY(50px); 
+    opacity: 0; 
+  }
+  100% { 
+    transform: translateY(0); 
+    opacity: 1; 
+  }
+}
+
+/* 🎯 Animation du checkmark */
+.success-animation {
+  margin-bottom: 2rem;
+}
+
+.checkmark-circle {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.checkmark {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: block;
+  stroke-width: 3;
+  stroke: #28a745;
+  stroke-miterlimit: 10;
+}
+
+.checkmark-circle-path {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 3;
+  stroke: #28a745;
+  animation: checkmarkCircle 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmark-check {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  stroke: #28a745;
+  stroke-width: 3;
+  animation: checkmarkCheck 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+
+@keyframes checkmarkCircle {
+  0% { stroke-dashoffset: 166; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes checkmarkCheck {
+  0% { stroke-dashoffset: 48; }
+  100% { stroke-dashoffset: 0; }
+}
+
+/* 📝 Texte du succès */
+.success-fullscreen-content h2 {
+  color: #4b014e;
+  font-family: 'Poppins', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  animation: textFadeIn 0.8s ease-out 1s forwards;
+  opacity: 0;
+}
+
+.success-fullscreen-content p {
+  color: #333;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  animation: textFadeIn 0.8s ease-out 1.2s forwards;
+  opacity: 0;
+}
+
+@keyframes textFadeIn {
+  0% { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+/* 🎯 Boutons d'action */
+.success-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+  animation: buttonsSlideUp 0.8s ease-out 1.4s forwards;
+  opacity: 0;
+}
+
+@keyframes buttonsSlideUp {
+  0% { 
+    opacity: 0; 
+    transform: translateY(30px); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+.dashboard-btn {
+  background: linear-gradient(135deg, #4b014e, #6a1b9a);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(75, 1, 78, 0.3);
+}
+
+.dashboard-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(75, 1, 78, 0.4);
+  background: linear-gradient(135deg, #6a1b9a, #4b014e);
+}
+
+.continue-btn {
+  background: transparent;
+  color: #4b014e;
+  border: 2px solid #4b014e;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.continue-btn:hover {
+  background: #4b014e;
+  color: white;
+  transform: translateY(-3px);
+}
+
+/* 🌟 Décorations flottantes */
+.success-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: 25px;
+}
+
+.floating-icon {
+  position: absolute;
+  font-size: 24px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.floating-icon:nth-child(1) {
+  top: 20%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.floating-icon:nth-child(2) {
+  top: 30%;
+  right: 15%;
+  animation-delay: 1s;
+}
+
+.floating-icon:nth-child(3) {
+  bottom: 25%;
+  left: 20%;
+  animation-delay: 2s;
+}
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg); 
+    opacity: 0.7;
+  }
+  50% { 
+    transform: translateY(-20px) rotate(180deg); 
+    opacity: 1;
+  }
+}
+
+/* Messages de succès/erreur - Style Diravenir */
+.status-message {
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  animation: slideDownMessage 0.4s ease-out;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.error-message {
+  background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+  color: #721c24;
+  border: 2px solid #dc3545;
+}
+
+.retry-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.3s ease;
+}
+
+.retry-btn:hover {
+  background: #c82333;
+  transform: translateY(-2px);
+}
+
+/* Animation pour les messages */
+@keyframes slideDownMessage {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Bouton en état de chargement - Style Diravenir */
+.send-btn.sending {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.8;
+  transform: none;
+}
+
+.send-btn.sending:hover {
+  background-color: #6c757d;
+  transform: none;
+}
+
+/* Spinner pour le chargement */
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Champs désactivés pendant l'envoi */
+.contact-form input:disabled,
+.contact-form select:disabled,
+.contact-form textarea:disabled {
+  background-color: #f8f9fa;
+  opacity: 0.7;
+  cursor: not-allowed;
+  border-color: #e9ecef;
+}
+
+/* 📱 Responsive pour mobile */
+@media (max-width: 768px) {
+  .success-fullscreen-content {
+    padding: 2rem 1.5rem;
+    margin: 1rem;
+    width: calc(100% - 2rem);
+  }
+  
+  .success-fullscreen-content h2 {
+    font-size: 24px;
+  }
+  
+  .success-fullscreen-content p {
+    font-size: 15px;
+  }
+  
+  .success-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .dashboard-btn, .continue-btn {
+    width: 100%;
+    padding: 14px 20px;
+  }
+  
+  .checkmark-circle {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .checkmark {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .floating-icon {
+    font-size: 18px;
+  }
+  
+  .status-message {
+    margin: 1rem 0.5rem 1.5rem;
+    padding: 0.875rem 1rem;
+    font-size: 14px;
+  }
+  
+  .spinner {
+    width: 14px;
+    height: 14px;
+    margin-right: 6px;
+  }
+}

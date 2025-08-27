@@ -29,18 +29,3 @@ class RegisterView(APIView):
         user = User.objects.create_user(username=email, email=email, password=password, first_name=prenom, last_name=nom)
         return Response({'message': 'Utilisateur créé avec succès'}, status=201)
 
-class LoginView(APIView):
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        email = request.data.get('email')
-        password = request.data.get('password')
-
-        user = authenticate(username=email, password=password)
-        if user is not None:
-            return Response({
-                'message': 'Connexion réussie',
-                'nom': user.last_name,
-                'prenom': user.first_name
-            }, status=200)
-        return Response({'error': 'Email ou mot de passe incorrect'}, status=400)
