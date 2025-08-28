@@ -13,6 +13,324 @@ import json
 from accounts.models import Profile
 
 
+
+
+# views.py - Ajoutez ces vues à votre fichier views.py existant
+
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.response import Response
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from django.utils import timezone
+from .models import Application
+import random
+import string
+
+def generate_application_id():
+    """Génère un ID unique pour la candidature"""
+    while True:
+        app_id = ''.join(random.choices(string.digits, k=6))
+        if not Application.objects.filter(application_id=app_id).exists():
+            return app_id
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def submit_application(request):
+    """
+    Soumet une nouvelle candidature
+    """
+    try:
+        data = request.data
+        
+        # Générer un ID unique pour la candidature
+        app_id = data.get('formData', {}).get('applicationId', generate_application_id())
+        
+        # Créer la nouvelle candidature
+        application = Application.objects.create(
+            user=request.user,
+            program=data.get('program', ''),
+            university=data.get('university', ''),
+            status='sent',
+            form_data=data.get('formData', {}),
+            application_id=str(app_id)
+        )
+        
+        return Response({
+            'message': 'Candidature soumise avec succès',
+            'application': {
+                'id': application.id,
+                'application_id': application.application_id,
+                'program': application.program,
+                'university': application.university,
+                'status': application.status,
+                'submission_date': application.submission_date.isoformat(),
+                'user_name': application.user_name,
+                'user_email': application.user_email
+            }
+        }, status=201)
+        
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_user_applications(request):
+    """
+    Récupère toutes les candidatures de l'utilisateur connecté
+    """
+    try:
+        applications = Application.objects.filter(user=request.user)
+        
+        applications_data = []
+        for app in applications:
+            applications_data.append({
+                'id': app.id,
+                'applicationId': app.application_id,
+                'program': app.program,
+                'university': app.university,
+                'status': app.status,
+                'submissionDate': app.submission_date.isoformat(),
+                'formData': app.form_data,
+                'userName': app.user_name,
+                'userEmail': app.user_email,
+                'userId': app.user.id
+            })
+        
+        return Response(applications_data)
+        
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_all_applications(request):
+    """
+    Récupère toutes les candidatures (admin uniquement)
+    """
+    try:
+        # Vérifier que l'utilisateur est admin
+        from accounts.models import Profile
+        user_profile = Profile.objects.get(user=request.user)
+        if user_profile.role not in ['admin', 'administrateur']:
+            return Response({"error": "Permission refusée - Accès admin requis"}, status=403)
+        
+        applications = Application.objects.all().select_related('user')
+        
+        applications_data = []
+        for app in applications:
+            applications_data.append({
+                'id': app.id,
+                'applicationId': app.application_id,
+                'program': app.program,
+                'university': app.university,
+                'status': app.status,
+                'submissionDate': app.submission_date.isoformat(),
+                'formData': app.form_data,
+                'userName': app.user_name,
+                'userEmail': app.user_email,
+                'userId': app.user.id,
+                'reviewedBy': app.reviewed_by.get_full_name() if app.reviewed_by else None,
+                'reviewedDate': app.reviewed_date.isoformat() if app.reviewed_date else None,
+                'notes': app.notes
+            })
+        
+        return Response(applications_data)
+        
+    except Profile.DoesNotExist:
+        return Response({"error": "Profil utilisateur introuvable"}, status=404)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
+@api_view(['PATCH'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def update_application_status(request, application_id):
+    """
+    Met à jour le statut d'une candidature (admin uniquement)
+    """
+    try:
+        # Vérifier que l'utilisateur est admin
+        from accounts.models import Profile
+        user_profile = Profile.objects.get(user=request.user)
+        if user_profile.role not in ['admin', 'administrateur']:
+            return Response({"error": "Permission refusée - Accès admin requis"}, status=403)
+        
+        application = Application.objects.get(id=application_id)
+        new_status = request.data.get('status')
+        
+        if new_status not in ['sent', 'reviewing', 'approved', 'rejected']:
+            return Response({"error": "Statut invalide"}, status=400)
+        
+        application.status = new_status
+        application.reviewed_by = request.user
+        application.reviewed_date = timezone.now()
+        
+        # Ajouter des notes automatiques selon le statut
+        status_notes = {
+            'reviewing': 'Candidature en cours d\'examen',
+            'approved': f'Candidature approuvée par {request.user.get_full_name()}',
+            'rejected': f'Candidature rejetée par {request.user.get_full_name()}'
+        }
+        
+        if new_status in status_notes:
+            application.notes = status_notes[new_status]
+        
+        application.save()
+        
+        return Response({
+            'message': 'Statut mis à jour avec succès',
+            'application': {
+                'id': application.id,
+                'status': application.status,
+                'reviewedBy': application.reviewed_by.get_full_name(),
+                'reviewedDate': application.reviewed_date.isoformat(),
+                'notes': application.notes
+            }
+        })
+        
+    except Application.DoesNotExist:
+        return Response({"error": "Candidature introuvable"}, status=404)
+    except Profile.DoesNotExist:
+        return Response({"error": "Profil utilisateur introuvable"}, status=404)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_application_detail(request, application_id):
+    """
+    Récupère les détails d'une candidature spécifique
+    """
+    try:
+        # Vérifier que l'utilisateur est admin ou propriétaire de la candidature
+        from accounts.models import Profile
+        user_profile = Profile.objects.get(user=request.user)
+        
+        application = Application.objects.get(id=application_id)
+        
+        # Autoriser l'accès si admin ou si c'est sa propre candidature
+        if user_profile.role not in ['admin', 'administrateur'] and application.user != request.user:
+            return Response({"error": "Permission refusée"}, status=403)
+        
+        application_data = {
+            'id': application.id,
+            'applicationId': application.application_id,
+            'program': application.program,
+            'university': application.university,
+            'status': application.status,
+            'submissionDate': application.submission_date.isoformat(),
+            'formData': application.form_data,
+            'userName': application.user_name,
+            'userEmail': application.user_email,
+            'userId': application.user.id,
+            'reviewedBy': application.reviewed_by.get_full_name() if application.reviewed_by else None,
+            'reviewedDate': application.reviewed_date.isoformat() if application.reviewed_date else None,
+            'notes': application.notes
+        }
+        
+        return Response(application_data)
+        
+    except Application.DoesNotExist:
+        return Response({"error": "Candidature introuvable"}, status=404)
+    except Profile.DoesNotExist:
+        return Response({"error": "Profil utilisateur introuvable"}, status=404)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
+@api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_application(request, application_id):
+    """
+    Supprime une candidature (admin uniquement)
+    """
+    try:
+        # Vérifier que l'utilisateur est admin
+        from accounts.models import Profile
+        user_profile = Profile.objects.get(user=request.user)
+        if user_profile.role not in ['admin', 'administrateur']:
+            return Response({"error": "Permission refusée - Accès admin requis"}, status=403)
+        
+        application = Application.objects.get(id=application_id)
+        application_info = f"#{application.application_id} - {application.user_name}"
+        application.delete()
+        
+        return Response({
+            'message': f'Candidature {application_info} supprimée avec succès'
+        })
+        
+    except Application.DoesNotExist:
+        return Response({"error": "Candidature introuvable"}, status=404)
+    except Profile.DoesNotExist:
+        return Response({"error": "Profil utilisateur introuvable"}, status=404)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_application_statistics(request):
+    """
+    Récupère les statistiques des candidatures (admin uniquement)
+    """
+    try:
+        # Vérifier que l'utilisateur est admin
+        from accounts.models import Profile
+        user_profile = Profile.objects.get(user=request.user)
+        if user_profile.role not in ['admin', 'administrateur']:
+            return Response({"error": "Permission refusée - Accès admin requis"}, status=403)
+        
+        from django.db.models import Count
+        
+        # Statistiques globales
+        total_applications = Application.objects.count()
+        status_counts = Application.objects.values('status').annotate(count=Count('status'))
+        
+        # Statistiques par mois
+        from django.db.models.functions import TruncMonth
+        monthly_stats = Application.objects.annotate(
+            month=TruncMonth('submission_date')
+        ).values('month').annotate(count=Count('id')).order_by('month')
+        
+        # Programmes les plus demandés
+        popular_programs = Application.objects.values('program').annotate(
+            count=Count('program')
+        ).order_by('-count')[:5]
+        
+        statistics = {
+            'total_applications': total_applications,
+            'status_breakdown': {item['status']: item['count'] for item in status_counts},
+            'monthly_applications': [
+                {
+                    'month': item['month'].strftime('%Y-%m'),
+                    'count': item['count']
+                } for item in monthly_stats
+            ],
+            'popular_programs': [
+                {
+                    'program': item['program'],
+                    'count': item['count']
+                } for item in popular_programs
+            ]
+        }
+        
+        return Response(statistics)
+        
+    except Profile.DoesNotExist:
+        return Response({"error": "Profil utilisateur introuvable"}, status=404)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
+
+
+
+
+
+
 @csrf_exempt
 def register_view(request):
     if request.method == "POST":
@@ -323,6 +641,213 @@ def get_admins(request):
         return Response({"error": "Profil utilisateur introuvable"}, status=404)
     except Exception as e:
         return Response({"error": str(e)}, status=500)
+
+
+
+
+
+
+
+
+
+
+
+@api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def update_profile(request):
+    """
+    Met à jour le profil de l'utilisateur connecté
+    """
+    try:
+        user = request.user
+        data = request.data
+        
+        # Récupérer les données du formulaire
+        prenom = data.get('prenom', '').strip()
+        nom = data.get('nom', '').strip()
+        email = data.get('email', '').strip()
+        current_password = data.get('current_password', '')
+        new_password = data.get('new_password', '').strip()
+        
+        # Validation des champs obligatoires
+        if not prenom or not nom or not email:
+            return Response({'error': 'Prénom, nom et email sont obligatoires'}, status=400)
+        
+        if not current_password:
+            return Response({'error': 'Le mot de passe actuel est requis'}, status=400)
+        
+        # Vérifier le mot de passe actuel
+        if not user.check_password(current_password):
+            return Response({'error': 'Mot de passe actuel incorrect'}, status=400)
+        
+        # Vérifier si l'email existe déjà pour un autre utilisateur
+        if User.objects.filter(email=email).exclude(id=user.id).exists():
+            return Response({'error': 'Cet email est déjà utilisé par un autre utilisateur'}, status=400)
+        
+        # Validation de l'email
+        from django.core.validators import validate_email
+        from django.core.exceptions import ValidationError
+        try:
+            validate_email(email)
+        except ValidationError:
+            return Response({'error': 'Format d\'email invalide'}, status=400)
+        
+        # Mettre à jour les informations utilisateur
+        user.first_name = prenom
+        user.last_name = nom
+        user.email = email
+        user.username = email  # Utiliser l'email comme username
+        
+        # Mettre à jour le mot de passe si fourni
+        if new_password:
+            if len(new_password) < 6:
+                return Response({'error': 'Le nouveau mot de passe doit contenir au moins 6 caractères'}, status=400)
+            user.set_password(new_password)
+        
+        user.save()
+        
+        # Retourner les informations mises à jour
+        return Response({
+            'message': 'Profil mis à jour avec succès',
+            'user': {
+                'id': user.id,
+                'prenom': user.first_name,
+                'nom': user.last_name,
+                'email': user.email,
+                'username': user.username
+            }
+        })
+        
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
+
+@api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_profile(request):
+    """
+    Supprime le compte de l'utilisateur connecté
+    """
+    try:
+        user = request.user
+        
+        # Vérifier que l'utilisateur n'est pas un admin (sécurité supplémentaire)
+        try:
+            profile = Profile.objects.get(user=user)
+            if profile.role in ['admin', 'administrateur']:
+                return Response({
+                    'error': 'Les administrateurs ne peuvent pas supprimer leur compte via cette méthode'
+                }, status=403)
+        except Profile.DoesNotExist:
+            # Si pas de profil, créer un profil étudiant par défaut
+            Profile.objects.create(user=user, role='etudiant')
+        
+        # Supprimer l'utilisateur (le profil sera supprimé automatiquement via CASCADE)
+        user_email = user.email
+        user.delete()
+        
+        return Response({
+            'message': f'Compte {user_email} supprimé avec succès'
+        })
+        
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
+
+# Optionnel : Vue pour récupérer les informations du profil actuel
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_profile(request):
+    """
+    Récupère les informations du profil de l'utilisateur connecté
+    """
+    try:
+        user = request.user
+        
+        # Récupérer le rôle depuis le Profile
+        try:
+            profile = Profile.objects.get(user=user)
+            role = profile.role
+        except Profile.DoesNotExist:
+            # Créer un profil par défaut si inexistant
+            profile = Profile.objects.create(user=user, role='etudiant')
+            role = 'etudiant'
+        
+        return Response({
+            'user': {
+                'id': user.id,
+                'prenom': user.first_name,
+                'nom': user.last_name,
+                'email': user.email,
+                'username': user.username,
+                'role': role
+            }
+        })
+        
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
+
+# Vue pour changer uniquement le mot de passe
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+    """
+    Change uniquement le mot de passe de l'utilisateur
+    """
+    try:
+        user = request.user
+        data = request.data
+        
+        current_password = data.get('current_password', '')
+        new_password = data.get('new_password', '')
+        confirm_password = data.get('confirm_password', '')
+        
+        # Validation
+        if not current_password or not new_password:
+            return Response({
+                'error': 'Mot de passe actuel et nouveau mot de passe sont requis'
+            }, status=400)
+        
+        if new_password != confirm_password:
+            return Response({
+                'error': 'Le nouveau mot de passe et sa confirmation ne correspondent pas'
+            }, status=400)
+        
+        if len(new_password) < 6:
+            return Response({
+                'error': 'Le nouveau mot de passe doit contenir au moins 6 caractères'
+            }, status=400)
+        
+        # Vérifier le mot de passe actuel
+        if not user.check_password(current_password):
+            return Response({'error': 'Mot de passe actuel incorrect'}, status=400)
+        
+        # Changer le mot de passe
+        user.set_password(new_password)
+        user.save()
+        
+        return Response({'message': 'Mot de passe modifié avec succès'})
+        
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # accounts/views.py
 

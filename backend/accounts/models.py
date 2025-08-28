@@ -123,3 +123,59 @@ class ProgrammesUniversitesV2(models.Model):
     @property
     def has_scholarship(self):
         return self.scholarship and self.scholarship.lower() not in ['no', 'none', 'n/a', 'non']
+    
+
+
+
+
+
+
+
+
+
+from django.db import models
+from django.contrib.auth.models import User
+import json
+
+class Application(models.Model):
+    STATUS_CHOICES = [
+        ('sent', 'Envoyée'),
+        ('reviewing', 'En cours d\'examen'),
+        ('approved', 'Approuvée'),
+        ('rejected', 'Rejetée'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='applications')
+    program = models.CharField(max_length=200)
+    university = models.CharField(max_length=200)
+    submission_date = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='sent')
+    
+    # Stockage des données du formulaire en JSON
+    form_data = models.JSONField(default=dict)
+    
+    # Métadonnées additionnelles
+    application_id = models.CharField(max_length=10, unique=True)
+    notes = models.TextField(blank=True, null=True)
+    reviewed_by = models.ForeignKey(
+        User, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True, 
+        related_name='reviewed_applications'
+    )
+    reviewed_date = models.DateTimeField(null=True, blank=True)
+    
+    class Meta:
+        ordering = ['-submission_date']
+        
+    def __str__(self):
+        return f"Application {self.application_id} - {self.user.get_full_name()}"
+    
+    @property
+    def user_name(self):
+        return f"{self.user.first_name} {self.user.last_name}"
+    
+    @property
+    def user_email(self):
+        return self.user.email
