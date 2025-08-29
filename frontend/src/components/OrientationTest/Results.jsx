@@ -67,7 +67,7 @@ export default function Results() {
       <div className="actions-bottom">
         <button
           className="nav-btn ghost"
-          onClick={() => navigate("/orientation-test")}
+          onClick={() => navigate("/orientation/test")}
         >
           Refaire le test
         </button>

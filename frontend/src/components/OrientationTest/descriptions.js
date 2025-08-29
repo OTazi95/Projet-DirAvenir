@@ -398,7 +398,7 @@ const MAJOR_DESCRIPTIONS = {
     ]
   },
 
-  'MBBS (Bachelor of Medicine, Bachelor of Surgery)': {
+  'MBBS': {
     description: "Le MBBS est la voie vers la médecine. C'est un domaine exigeant qui vous prépare à diagnostiquer, traiter et prévenir les maladies, en vous consacrant à la santé et au bien-être d'autrui.",
     strengths: [
       {

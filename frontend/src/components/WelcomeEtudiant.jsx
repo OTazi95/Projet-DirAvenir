@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-// Ajoutez ces imports en haut du fichier
+// Imports pour les icônes
 import { Clock, CheckCircle, XCircle, Eye, Calendar, User, Mail, Phone, MapPin, FileText, Target, Award, TrendingUp, BookOpen } from 'lucide-react';
+// Imports pour calculer les vrais résultats du test
+import MAJOR_PROFILES from './OrientationTest/profiles';
+import { weightedEuclideanMatchScores, topKMatches, computeRawScoresFromAnswers, computeMaxScoresTheoretical, normalizeScores0to100 } from './OrientationTest/scoring';
 import '../styles/WelcomeEtudiant.css';
 
 
@@ -64,6 +67,11 @@ const WelcomeEtudiant = () => {
         }
       });
       
+      console.log('=== DONNÉES TEST REÇUES ===');
+      console.log('Response data:', response.data);
+      console.log('Normalized scores:', response.data?.normalized_scores);
+      console.log('========================');
+      
       if (response.data) {
         setOrientationTest(response.data);
       }
@@ -76,6 +84,142 @@ const WelcomeEtudiant = () => {
     } finally {
       setLoadingTest(false);
     }
+  };
+
+  // Component pour afficher les résultats du test d'orientation - VERSION CORRIGÉE
+const OrientationTestSection = ({ testData, isLoading }) => {
+  if (isLoading) {
+    return (
+      <div className="test-section loading">
+        <div className="loading-content">
+          <Target size={48} color="#3B82F6" />
+          <p>Chargement de vos résultats...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!testData) {
+    return (
+      <div className="test-section no-test">
+        <div className="no-test-content">
+          <Target size={64} color="#9CA3AF" />
+          <h3>Test d'orientation</h3>
+          <p>Découvrez les filières qui vous correspondent le mieux en passant notre test d'orientation personnalisé.</p>
+          <button 
+            className="test-btn primary"
+            onClick={() => navigate('/orientation/test')}
+          >
+            <BookOpen size={20} />
+            Passer le test d'orientation
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+    // Fonction corrigée pour calculer les vrais résultats
+// Fonction corrigée pour calculer les vrais résultats
+const getTopResults = (answers) => {
+  if (!answers) {
+    console.warn("Aucune réponse disponible");
+    return [];
+  }
+
+  try {
+    // Recalcul comme dans Results.jsx
+    const raw = computeRawScoresFromAnswers(answers);
+    const max = computeMaxScoresTheoretical();
+    const normalized = normalizeScores0to100(raw, max);
+
+    const matchScores = weightedEuclideanMatchScores(normalized, MAJOR_PROFILES);
+    const topMatches = topKMatches(matchScores, 3);
+
+    return topMatches.map(({ major, score }) => ({
+      major,
+      score: Math.round(score)
+    }));
+  } catch (error) {
+    console.error("Erreur lors du calcul:", error);
+    return [];
+  }
+};
+
+    const topResults = getTopResults(testData.answers);
+    const testDate = new Date(testData.completed_at).toLocaleDateString('fr-FR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    return (
+      <div className="test-section completed">
+        <div className="test-header">
+          <div className="test-title">
+            <Award size={32} color="#10B981" />
+            <div>
+              <h3>Résultats de votre test d'orientation</h3>
+              <p className="test-date">Complété le {testDate}</p>
+            </div>
+          </div>
+          <button 
+            className="test-btn secondary"
+            onClick={() => navigate('/orientation/test')}
+          >
+            <TrendingUp size={16} />
+            Repasser le test
+          </button>
+        </div>
+
+        {topResults.length > 0 ? (
+          <div className="results-grid">
+            {topResults.map((result, index) => (
+              <div key={result.major} className={`result-card rank-${index + 1}`}>
+                <div className="rank-badge">#{index + 1}</div>
+                <div className="result-info">
+                  <h4>{result.major}</h4>
+                  <div className="score-bar">
+                    <div className="score-fill" style={{ width: `${result.score}%` }}></div>
+                    <span className="score-text">{result.score}%</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="no-results">
+            <div className="error-icon">⚠️</div>
+            <p>Impossible d'afficher les résultats du résumé.</p>
+            <p className="error-hint">Vous pouvez consulter les détails complets ci-dessous.</p>
+          </div>
+        )}
+
+        <div className="test-actions">
+          <button 
+            className="test-btn ghost"
+            onClick={() => navigate('/results', { 
+              state: {
+                answers: testData.answers,
+                raw: testData.raw_scores,
+                max: testData.max_scores,
+                normalized: testData.normalized_scores,
+                PILLAR_KEYS: testData.pillar_keys
+              }
+            })}
+          >
+            <Eye size={16} />
+            Voir les détails complets
+          </button>
+          <button 
+            className="test-btn primary"
+            onClick={() => navigate('/programs')}
+          >
+            <FileText size={16} />
+            Explorer les programmes
+          </button>
+        </div>
+      </div>
+    );
   };
 
   useEffect(() => {
@@ -180,121 +324,7 @@ const WelcomeEtudiant = () => {
     fetchOrientationTestResults();
   }, [navigate]);
 
-  // Component pour afficher les résultats du test d'orientation
-  const OrientationTestSection = ({ testData, isLoading }) => {
-    if (isLoading) {
-      return (
-        <div className="test-section loading">
-          <div className="loading-content">
-            <Target size={48} color="#3B82F6" />
-            <p>Chargement de vos résultats...</p>
-          </div>
-        </div>
-      );
-    }
-
-    if (!testData) {
-      return (
-        <div className="test-section no-test">
-          <div className="no-test-content">
-            <Target size={64} color="#9CA3AF" />
-            <h3>Test d'orientation</h3>
-            <p>Découvrez les filières qui vous correspondent le mieux en passant notre test d'orientation personnalisé.</p>
-            <button 
-              className="test-btn primary"
-              onClick={() => navigate('/orientation/test')}
-            >
-              <BookOpen size={20} />
-              Passer le test d'orientation
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    // Calculer les top 3 résultats depuis normalized_scores
-    const getTopResults = (normalizedScores) => {
-      if (!normalizedScores) return [];
-      
-      // Import des profiles et scoring functions (vous devrez les adapter)
-      // Pour l'instant, retournons un exemple
-      return [
-        { major: 'Informatique', score: 85 },
-        { major: 'Ingénierie', score: 78 },
-        { major: 'Sciences', score: 72 }
-      ];
-    };
-
-    const topResults = getTopResults(testData.normalized_scores);
-    const testDate = new Date(testData.completed_at).toLocaleDateString('fr-FR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-
-    return (
-      <div className="test-section completed">
-        <div className="test-header">
-          <div className="test-title">
-            <Award size={32} color="#10B981" />
-            <div>
-              <h3>Résultats de votre test d'orientation</h3>
-              <p className="test-date">Complété le {testDate}</p>
-            </div>
-          </div>
-          <button 
-            className="test-btn secondary"
-            onClick={() => navigate('/orientation/test')}
-          >
-            <TrendingUp size={16} />
-            Repasser le test
-          </button>
-        </div>
-
-        <div className="results-grid">
-          {topResults.slice(0, 3).map((result, index) => (
-            <div key={result.major} className={`result-card rank-${index + 1}`}>
-              <div className="rank-badge">#{index + 1}</div>
-              <div className="result-info">
-                <h4>{result.major}</h4>
-                <div className="score-bar">
-                  <div className="score-fill" style={{ width: `${result.score}%` }}></div>
-                  <span className="score-text">{result.score}%</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="test-actions">
-          <button 
-            className="test-btn ghost"
-            onClick={() => navigate('/results', { 
-              state: {
-                answers: testData.answers,
-                raw: testData.raw_scores,
-                max: testData.max_scores,
-                normalized: testData.normalized_scores,
-                PILLAR_KEYS: testData.pillar_keys
-              }
-            })}
-          >
-            <Eye size={16} />
-            Voir les détails complets
-          </button>
-          <button 
-            className="test-btn primary"
-            onClick={() => navigate('/programs')}
-          >
-            <FileText size={16} />
-            Explorer les programmes
-          </button>
-        </div>
-      </div>
-    );
-  };
-
-  // Component ApplicationStatus (identique au précédent)
+  // Component ApplicationStatus
   const ApplicationStatus = ({ applications = [] }) => {
     const getStatusIcon = (status) => {
       switch (status) {
@@ -587,12 +617,6 @@ const WelcomeEtudiant = () => {
                 Votre réussite commence ici !
               </p>
               
-              <div className="features-grid">
-                <div className="feature-item">
-                  <div className="feature-dot green"></div>
-                  <span>Tests d'orientation</span>
-                </div>
-              </div>
 
               {/* Boutons d'action */}
               <div className="account-actions">
