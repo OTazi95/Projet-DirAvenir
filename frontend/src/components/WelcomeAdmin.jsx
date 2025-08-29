@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+// Ajoutez ces imports en haut du fichier WelcomeAdmin.jsx
+import { Clock, CheckCircle, XCircle, Eye, Check, X, User, GraduationCap, FileText } from 'lucide-react';
 import "../styles/WelcomeAdmin.css";
 
 const WelcomeAdmin = () => {
@@ -9,9 +11,30 @@ const WelcomeAdmin = () => {
   const [students, setStudents] = useState([]);
   const [admins, setAdmins] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('students');
+  // Modifiez les onglets existants pour ajouter l'onglet applications
+  const [activeTab, setActiveTab] = useState('students'); // students, admins, applications
+  // Ajoutez ces états dans le component WelcomeAdmin
+  const [applications, setApplications] = useState([]);
+  const [selectedApp, setSelectedApp] = useState(null);
+  const [applicationFilter, setApplicationFilter] = useState('all');
   const navigate = useNavigate();
 
+  // Ajoutez cette fonction pour charger les candidatures
+  const fetchApplications = async () => {
+    try {
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      const headers = token ? { 'Authorization': `Token ${token}` } : {};
+      
+      const response = await axios.get("http://localhost:8000/api/applications/all/", { headers });
+      console.log('Candidatures récupérées:', response.data);
+      setApplications(response.data);
+      
+    } catch (error) {
+      console.error('Erreur lors du chargement des candidatures:', error);
+    }
+  };
+
+  // Modifiez le useEffect existant pour inclure le chargement des candidatures
   useEffect(() => {
     console.log('=== DEBUG WELCOME ADMIN ===');
     
@@ -58,6 +81,7 @@ const WelcomeAdmin = () => {
     console.log('✅ Utilisateur admin vérifié');
     setUserInfo(authUser);
     fetchData();
+    fetchApplications(); // Ajoutez cette ligne
   }, [navigate]);
 
   const fetchData = async () => {
@@ -82,6 +106,300 @@ const WelcomeAdmin = () => {
       console.error('Erreur lors du chargement des données:', error);
       setIsLoading(false);
     }
+  };
+
+  // Ajoutez cette fonction pour changer le statut des candidatures
+  const handleApplicationStatusChange = async (appId, newStatus) => {
+    try {
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      const headers = token ? { 'Authorization': `Token ${token}` } : {};
+      
+      await axios.patch(`http://localhost:8000/api/applications/${appId}/status/`, {
+        status: newStatus
+      }, { headers });
+      
+      // Mettre à jour l'état local
+      setApplications(prev => 
+        prev.map(app => 
+          app.id === appId ? { ...app, status: newStatus } : app
+        )
+      );
+      
+      alert(`Statut de la candidature mis à jour: ${newStatus}`);
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du statut:', error);
+      alert('Erreur lors de la mise à jour du statut');
+    }
+  };
+
+  // Ajoutez ce component AdminApplicationManager avant le return principal
+  const AdminApplicationManager = ({ applications, onStatusChange, selectedApp, setSelectedApp }) => {
+    const filteredApplications = applications.filter(app => {
+      if (applicationFilter === 'all') return true;
+      return app.status === applicationFilter;
+    });
+
+    const getStatusIcon = (status) => {
+      switch (status) {
+        case 'sent': return <Clock size={16} color="#3B82F6" />;
+        case 'reviewing': return <Eye size={16} color="#F59E0B" />;
+        case 'approved': return <CheckCircle size={16} color="#10B981" />;
+        case 'rejected': return <XCircle size={16} color="#EF4444" />;
+        default: return <Clock size={16} color="#6B7280" />;
+      }
+    };
+
+    const handleView = (app) => {
+      setSelectedApp(app);
+      if (app.status === 'sent') {
+        onStatusChange(app.id, 'reviewing');
+      }
+    };
+
+    const ApplicationDetail = ({ application, onClose, onStatusChange }) => (
+      <div className="modal-overlay" onClick={onClose}>
+        <div className="application-detail-modal" onClick={e => e.stopPropagation()}>
+          <div className="modal-header">
+            <h3>Détails de la Candidature #{application.id}</h3>
+            <button className="modal-close" onClick={onClose}>
+              <X size={24} />
+            </button>
+          </div>
+          
+          <div className="modal-content">
+            <div className="detail-section">
+              <h4><User size={18} /> Informations Personnelles</h4>
+              <div className="detail-grid">
+                <div className="detail-item">
+                  <span className="label">Nom complet:</span>
+                  <span className="value">{application.formData.firstName} {application.formData.lastName}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="label">Email:</span>
+                  <span className="value">{application.formData.email}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="label">Téléphone:</span>
+                  <span className="value">{application.formData.phone}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="label">Date de naissance:</span>
+                  <span className="value">{application.formData.dob}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="label">Pays:</span>
+                  <span className="value">{application.formData.country}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="label">Niveau d'anglais:</span>
+                  <span className="value">{application.formData.englishLevel}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="detail-section">
+              <h4><GraduationCap size={18} /> Formation</h4>
+              {application.formData.educationalBackground?.map((edu, index) => (
+                <div key={index} className="education-item">
+                  <div className="detail-item">
+                    <span className="label">École:</span>
+                    <span className="value">{edu.school}</span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="label">Spécialité:</span>
+                    <span className="value">{edu.major}</span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="label">Note:</span>
+                    <span className="value">{edu.grade}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="detail-section">
+              <h4><FileText size={18} /> Programme Demandé</h4>
+              <div className="program-info">
+                <p><strong>Programme:</strong> {application.program}</p>
+                <p><strong>Université:</strong> {application.university}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="modal-actions">
+            {application.status === 'reviewing' && (
+              <>
+                <button 
+                  className="action-btn approve-btn"
+                  onClick={() => {
+                    onStatusChange(application.id, 'approved');
+                    onClose();
+                  }}
+                >
+                  <Check size={16} />
+                  Approuver
+                </button>
+                <button 
+                  className="action-btn reject-btn"
+                  onClick={() => {
+                    onStatusChange(application.id, 'rejected');
+                    onClose();
+                  }}
+                >
+                  <X size={16} />
+                  Rejeter
+                </button>
+              </>
+            )}
+            <button className="cancel-btn" onClick={onClose}>
+              Fermer
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+
+    return (
+      <>
+        <div className="section-header">
+          <h2>Gestion des Candidatures</h2>
+          <div className="filter-tabs">
+            <button 
+              className={`filter-tab ${applicationFilter === 'all' ? 'active' : ''}`}
+              onClick={() => setApplicationFilter('all')}
+            >
+              Toutes ({applications.length})
+            </button>
+            <button 
+              className={`filter-tab ${applicationFilter === 'sent' ? 'active' : ''}`}
+              onClick={() => setApplicationFilter('sent')}
+            >
+              Envoyées ({applications.filter(a => a.status === 'sent').length})
+            </button>
+            <button 
+              className={`filter-tab ${applicationFilter === 'reviewing' ? 'active' : ''}`}
+              onClick={() => setApplicationFilter('reviewing')}
+            >
+              En examen ({applications.filter(a => a.status === 'reviewing').length})
+            </button>
+            <button 
+              className={`filter-tab ${applicationFilter === 'approved' ? 'active' : ''}`}
+              onClick={() => setApplicationFilter('approved')}
+            >
+              Approuvées ({applications.filter(a => a.status === 'approved').length})
+            </button>
+            <button 
+              className={`filter-tab ${applicationFilter === 'rejected' ? 'active' : ''}`}
+              onClick={() => setApplicationFilter('rejected')}
+            >
+              Rejetées ({applications.filter(a => a.status === 'rejected').length})
+            </button>
+          </div>
+        </div>
+        
+        {filteredApplications.length === 0 ? (
+          <div className="empty-state">
+            <FileText size={48} color="#9CA3AF" />
+            <h3>Aucune candidature</h3>
+            <p>Aucune candidature trouvée pour ce filtre.</p>
+          </div>
+        ) : (
+          <div className="applications-table">
+            <div className="table-header">
+              <div className="header-cell">Étudiant</div>
+              <div className="header-cell">Programme</div>
+              <div className="header-cell">Date</div>
+              <div className="header-cell">Statut</div>
+              <div className="header-cell">Actions</div>
+            </div>
+            
+            {filteredApplications.map((app) => (
+              <div key={app.id} className="table-row">
+                <div className="table-cell">
+                  <div className="student-info">
+                    <div className="student-avatar">
+                      {app.userName?.charAt(0) || 'U'}
+                    </div>
+                    <div>
+                      <div className="student-name">{app.userName}</div>
+                      <div className="student-email">{app.userEmail}</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="table-cell">
+                  <div className="program-info">
+                    <div className="program-name">{app.program}</div>
+                    <div className="university-name">{app.university}</div>
+                  </div>
+                </div>
+                <div className="table-cell">
+                  <div className="date-info">
+                    {new Date(app.submissionDate).toLocaleDateString('fr-FR')}
+                    <div className="time-info">
+                      {new Date(app.submissionDate).toLocaleTimeString('fr-FR', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                      })}
+                    </div>
+                  </div>
+                </div>
+                <div className="table-cell">
+                  <div className="status-badge" style={{ 
+                    backgroundColor: app.status === 'sent' ? '#3B82F620' : 
+                                   app.status === 'reviewing' ? '#F59E0B20' :
+                                   app.status === 'approved' ? '#10B98120' : '#EF444420',
+                    color: app.status === 'sent' ? '#3B82F6' : 
+                           app.status === 'reviewing' ? '#F59E0B' :
+                           app.status === 'approved' ? '#10B981' : '#EF4444'
+                  }}>
+                    {getStatusIcon(app.status)}
+                    <span>
+                      {app.status === 'sent' ? 'Envoyée' :
+                       app.status === 'reviewing' ? 'En examen' :
+                       app.status === 'approved' ? 'Approuvée' : 'Rejetée'}
+                    </span>
+                  </div>
+                </div>
+                <div className="table-cell">
+                  <div className="action-buttons">
+                    <button 
+                      className="view-btn"
+                      onClick={() => handleView(app)}
+                    >
+                      <Eye size={16} />
+                    </button>
+                    {app.status === 'reviewing' && (
+                      <>
+                        <button 
+                          className="approve-btn-small"
+                          onClick={() => onStatusChange(app.id, 'approved')}
+                        >
+                          <Check size={16} />
+                        </button>
+                        <button 
+                          className="reject-btn-small"
+                          onClick={() => onStatusChange(app.id, 'rejected')}
+                        >
+                          <X size={16} />
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        
+        {selectedApp && (
+          <ApplicationDetail 
+            application={selectedApp} 
+            onClose={() => setSelectedApp(null)}
+            onStatusChange={onStatusChange}
+          />
+        )}
+      </>
+    );
   };
 
   const handleDeleteStudent = async (id) => {
@@ -208,6 +526,7 @@ const WelcomeAdmin = () => {
       </div>
 
       {/* Navigation Tabs */}
+      {/* Modifiez la section des tabs pour inclure l'onglet applications */}
       <div className="tabs-container">
         <button 
           className={`tab ${activeTab === 'students' ? 'active' : ''}`}
@@ -219,7 +538,13 @@ const WelcomeAdmin = () => {
           className={`tab ${activeTab === 'admins' ? 'active' : ''}`}
           onClick={() => setActiveTab('admins')}
         >
-          <span>👨‍💼</span> Gestion Administrateur
+          <span>👨‍💼</span> Gestion des Administrateur
+        </button>
+        <button 
+          className={`tab ${activeTab === 'applications' ? 'active' : ''}`}
+          onClick={() => setActiveTab('applications')}
+        >
+          <span>📋</span> Gestion des Candidatures ({applications.length})
         </button>
       </div>
 
@@ -412,6 +737,18 @@ const WelcomeAdmin = () => {
                 </button>
               </form>
             </div>
+          </div>
+        )}
+
+        {/* Ajoutez cette condition dans la section content-area */}
+        {activeTab === 'applications' && (
+          <div className="applications-section">
+            <AdminApplicationManager 
+              applications={applications} 
+              onStatusChange={handleApplicationStatusChange}
+              selectedApp={selectedApp}
+              setSelectedApp={setSelectedApp}
+            />
           </div>
         )}
       </div>

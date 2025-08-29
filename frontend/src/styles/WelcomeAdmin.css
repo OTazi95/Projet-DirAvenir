@@ -567,3 +567,356 @@
     padding: 1rem;
   }
 }
+
+
+
+
+/* Styles pour la gestion des candidatures */
+.filter-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.filter-tab {
+  padding: 8px 16px;
+  border: 2px solid #e5e7eb;
+  background: white;
+  border-radius: 20px;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-tab.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+.filter-tab:hover:not(.active) {
+  border-color: #9ca3af;
+  background: #f9fafb;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.empty-state h3 {
+  color: #111827;
+  margin: 16px 0 8px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.empty-state p {
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.applications-table {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr 1fr 1fr;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 16px 24px;
+  gap: 16px;
+}
+
+.header-cell {
+  font-size: 12px;
+  font-weight: 700;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr 1fr 1fr;
+  padding: 20px 24px;
+  border-bottom: 1px solid #f3f4f6;
+  gap: 16px;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.table-row:hover {
+  background: #f9fafb;
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+.table-cell {
+  display: flex;
+  align-items: center;
+}
+
+.student-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.student-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.student-name {
+  font-weight: 600;
+  color: #111827;
+  font-size: 14px;
+}
+
+.student-email {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.program-info .program-name {
+  font-weight: 600;
+  color: #111827;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.program-info .university-name {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.date-info {
+  font-size: 14px;
+  color: #111827;
+  font-weight: 500;
+}
+
+.time-info {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.view-btn, .approve-btn-small, .reject-btn-small {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.view-btn {
+  background: #3b82f620;
+  color: #3b82f6;
+}
+
+.view-btn:hover {
+  background: #3b82f640;
+}
+
+.approve-btn-small {
+  background: #10b98120;
+  color: #10b981;
+}
+
+.approve-btn-small:hover {
+  background: #10b98140;
+}
+
+.reject-btn-small {
+  background: #ef444420;
+  color: #ef4444;
+}
+
+.reject-btn-small:hover {
+  background: #ef444440;
+}
+
+/* Styles pour le modal de détails */
+.application-detail-modal {
+  background: white;
+  border-radius: 16px;
+  max-width: 800px;
+  width: 95%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.detail-section {
+  margin-bottom: 32px;
+}
+
+.detail-section h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #374151;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-item .label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-item .value {
+  font-size: 14px;
+  color: #111827;
+  font-weight: 500;
+}
+
+.education-item {
+  background: #f9fafb;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.program-info p {
+  margin: 8px 0;
+  color: #374151;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding: 24px;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.approve-btn {
+  background: #10b981;
+  color: white;
+}
+
+.approve-btn:hover {
+  background: #059669;
+}
+
+.reject-btn {
+  background: #ef4444;
+  color: white;
+}
+
+.reject-btn:hover {
+  background: #dc2626;
+}
+
+@media (max-width: 1024px) {
+  .table-header, .table-row {
+    grid-template-columns: 1.5fr 1.5fr 1fr 1fr;
+  }
+  
+  .table-header .header-cell:nth-child(3),
+  .table-row .table-cell:nth-child(3) {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .filter-tabs {
+    justify-content: center;
+  }
+  
+  .filter-tab {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+  
+  .applications-table {
+    overflow-x: auto;
+  }
+  
+  .table-header, .table-row {
+    grid-template-columns: repeat(5, minmax(120px, 1fr));
+    min-width: 600px;
+  }
+  
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+  }
+}

@@ -5,7 +5,6 @@ import logo from '../assets/logo.png';
 import logo2 from '../assets/logoj.png';
 import { FaUserCircle, FaCog, FaGlobe, FaChevronDown } from 'react-icons/fa';
 import { AuthContext } from '../context/AuthContext';
-import AccountSettingsModal from '../components/AccountSettingsModal';
 import UserProfileModal from '../components/UserProfileModal';
 import '../styles/Navbar.css';
 
@@ -15,7 +14,6 @@ function Navbar() {
   const location = useLocation();
   const { t, i18n } = useTranslation();
 
-  const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
 
@@ -30,17 +28,17 @@ function Navbar() {
   };
 
   // Définir les types de pages
-  const pagesMauve = ['/about'];
+  const pagesMauve = ['/about', '/program-detail'];
   const pagesYellow = ['/faq', '/contact'];
   const pagesDefault = ['/dashboard', '/Orientation', '/programs'];
 
-  const isAboutPage = pagesMauve.includes(location.pathname);
+  const isMauvePage = pagesMauve.includes(location.pathname);
   const isYellowPage = pagesYellow.includes(location.pathname);
   const isDefaultPage = pagesDefault.includes(location.pathname);
 
   // Déterminer la classe CSS de la navbar
   let navbarClass = '';
-  if (isAboutPage) {
+  if (isMauvePage) {
     navbarClass = 'navbar-mauve';
   } else if (isYellowPage) {
     navbarClass = 'navbar-yellow';
@@ -49,7 +47,7 @@ function Navbar() {
   }
 
   // Choisir le bon logo
-  let logoSrc = isAboutPage ? logo2 : logo;
+  let logoSrc = isMauvePage ? logo2 : logo;
 
   return (
     <>
@@ -82,13 +80,13 @@ function Navbar() {
             {showLanguageMenu && (
               <div className="language-dropdown-menu">
                 <button 
-                  className={`language-option ${i18n.language === 'en' ? 'active' : ''} ${isAboutPage ? 'mauve-page' : ''}`}
+                  className={`language-option ${i18n.language === 'en' ? 'active' : ''} ${isMauvePage ? 'mauve-page' : ''}`}
                   onClick={() => changeLanguage('en')}
                 >
                   Anglais
                 </button>
                 <button 
-                  className={`language-option ${i18n.language === 'fr' ? 'active' : ''} ${isAboutPage ? 'mauve-page' : ''}`}
+                  className={`language-option ${i18n.language === 'fr' ? 'active' : ''} ${isMauvePage ? 'mauve-page' : ''}`}
                   onClick={() => changeLanguage('fr')}
                 >
                   Français
@@ -99,7 +97,6 @@ function Navbar() {
 
           {isLoggedIn ? (
             <>
-              <FaCog className="nav-icon" onClick={() => setShowSettingsModal(true)} />
               <FaUserCircle className="nav-icon" onClick={() => setShowProfileModal(true)} />
               <button className="logout-btn" onClick={handleLogout}>{t('navbar.logout')}</button>
             </>
@@ -112,10 +109,6 @@ function Navbar() {
         </div>
       </nav>
 
-      <AccountSettingsModal
-        isOpen={showSettingsModal}
-        onClose={() => setShowSettingsModal(false)}
-      />
       <UserProfileModal
         isOpen={showProfileModal}
         onClose={() => setShowProfileModal(false)}

@@ -1125,3 +1125,259 @@ def get_program_detail_with_similar(request, program_id):
 
 
 
+
+
+
+
+
+# views.py - Ajoutez ces vues à votre fichier views.py existant
+
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.response import Response
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from django.utils import timezone
+from .models import OrientationTest
+from accounts.models import Profile
+import json
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def save_orientation_test(request):
+    """
+    Sauvegarde les résultats d'un test d'orientation
+    """
+    try:
+        data = request.data
+        
+        # Validation des données requises
+        required_fields = ['answers', 'raw_scores', 'max_scores', 'normalized_scores', 'pillar_keys']
+        for field in required_fields:
+            if field not in data:
+                return Response({'error': f'Le champ {field} est requis'}, status=400)
+        
+        # Créer ou mettre à jour le test d'orientation pour cet utilisateur
+        orientation_test, created = OrientationTest.objects.update_or_create(
+            user=request.user,
+            defaults={
+                'answers': data['answers'],
+                'raw_scores': data['raw_scores'],
+                'max_scores': data['max_scores'],
+                'normalized_scores': data['normalized_scores'],
+                'pillar_keys': data['pillar_keys'],
+                'completed_at': timezone.now(),
+            }
+        )
+        
+        return Response({
+            'message': 'Résultats du test sauvegardés avec succès',
+            'test_id': orientation_test.id,
+            'completed_at': orientation_test.completed_at.isoformat(),
+            'created': created  # True si nouveau test, False si mise à jour
+        }, status=201 if created else 200)
+        
+    except Exception as e:
+        print(f"Erreur lors de la sauvegarde du test d'orientation: {e}")
+        return Response({'error': 'Erreur lors de la sauvegarde des résultats'}, status=500)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_orientation_test_results(request):
+    """
+    Récupère les derniers résultats du test d'orientation de l'utilisateur
+    """
+    try:
+        # Chercher le dernier test de l'utilisateur
+        orientation_test = OrientationTest.objects.filter(user=request.user).first()
+        
+        if not orientation_test:
+            return Response({'message': 'Aucun test d\'orientation trouvé'}, status=404)
+        
+        test_data = {
+            'id': orientation_test.id,
+            'answers': orientation_test.answers,
+            'raw_scores': orientation_test.raw_scores,
+            'max_scores': orientation_test.max_scores,
+            'normalized_scores': orientation_test.normalized_scores,
+            'pillar_keys': orientation_test.pillar_keys,
+            'completed_at': orientation_test.completed_at.isoformat(),
+            'total_questions': orientation_test.total_questions,
+            'is_recent': orientation_test.is_recent,
+            'top_results': orientation_test.get_top_results(3)
+        }
+        
+        return Response(test_data)
+        
+    except Exception as e:
+        print(f"Erreur lors de la récupération des résultats: {e}")
+        return Response({'error': 'Erreur lors de la récupération des résultats'}, status=500)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_all_orientation_tests(request):
+    """
+    Récupère tous les tests d'orientation de l'utilisateur (historique)
+    """
+    try:
+        tests = OrientationTest.objects.filter(user=request.user).order_by('-completed_at')
+        
+        tests_data = []
+        for test in tests:
+            tests_data.append({
+                'id': test.id,
+                'completed_at': test.completed_at.isoformat(),
+                'total_questions': test.total_questions,
+                'is_recent': test.is_recent,
+                'top_results': test.get_top_results(3)
+            })
+        
+        return Response({
+            'tests': tests_data,
+            'total_count': len(tests_data)
+        })
+        
+    except Exception as e:
+        print(f"Erreur lors de la récupération de l'historique: {e}")
+        return Response({'error': 'Erreur lors de la récupération de l\'historique'}, status=500)
+
+@api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_orientation_test(request, test_id):
+    """
+    Supprime un test d'orientation spécifique
+    """
+    try:
+        test = OrientationTest.objects.get(id=test_id, user=request.user)
+        test.delete()
+        
+        return Response({
+            'message': 'Test d\'orientation supprimé avec succès'
+        })
+        
+    except OrientationTest.DoesNotExist:
+        return Response({'error': 'Test d\'orientation introuvable'}, status=404)
+    except Exception as e:
+        print(f"Erreur lors de la suppression du test: {e}")
+        return Response({'error': 'Erreur lors de la suppression du test'}, status=500)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_orientation_test_stats(request):
+    """
+    Récupère les statistiques des tests d'orientation (admin uniquement)
+    """
+    try:
+        # Vérifier que l'utilisateur est admin
+        user_profile = Profile.objects.get(user=request.user)
+        if user_profile.role not in ['admin', 'administrateur']:
+            return Response({"error": "Permission refusée - Accès admin requis"}, status=403)
+        
+        from django.db.models import Count, Avg
+        from django.db.models.functions import TruncMonth
+        
+        # Statistiques générales
+        total_tests = OrientationTest.objects.count()
+        total_users_tested = OrientationTest.objects.values('user').distinct().count()
+        
+        # Tests par mois
+        monthly_tests = OrientationTest.objects.annotate(
+            month=TruncMonth('completed_at')
+        ).values('month').annotate(count=Count('id')).order_by('month')
+        
+        # Moyenne des questions répondues
+        avg_questions = OrientationTest.objects.aggregate(
+            avg_questions=Avg('total_questions')
+        )['avg_questions'] or 0
+        
+        # Tests récents (derniers 30 jours)
+        from datetime import timedelta
+        recent_tests = OrientationTest.objects.filter(
+            completed_at__gte=timezone.now() - timedelta(days=30)
+        ).count()
+        
+        # Utilisateurs les plus actifs
+        top_users = OrientationTest.objects.values(
+            'user__first_name', 'user__last_name', 'user__email'
+        ).annotate(
+            test_count=Count('id')
+        ).order_by('-test_count')[:10]
+        
+        stats = {
+            'total_tests': total_tests,
+            'total_users_tested': total_users_tested,
+            'recent_tests': recent_tests,
+            'average_questions_answered': round(avg_questions, 1),
+            'monthly_breakdown': [
+                {
+                    'month': item['month'].strftime('%Y-%m'),
+                    'count': item['count']
+                } for item in monthly_tests
+            ],
+            'top_users': [
+                {
+                    'name': f"{item['user__first_name']} {item['user__last_name']}".strip() or item['user__email'],
+                    'email': item['user__email'],
+                    'test_count': item['test_count']
+                } for item in top_users
+            ]
+        }
+        
+        return Response(stats)
+        
+    except Profile.DoesNotExist:
+        return Response({"error": "Profil utilisateur introuvable"}, status=404)
+    except Exception as e:
+        print(f"Erreur lors de la récupération des statistiques: {e}")
+        return Response({'error': 'Erreur lors de la récupération des statistiques'}, status=500)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_user_orientation_history(request, user_id):
+    """
+    Récupère l'historique des tests d'orientation d'un utilisateur spécifique (admin uniquement)
+    """
+    try:
+        # Vérifier que l'utilisateur est admin
+        user_profile = Profile.objects.get(user=request.user)
+        if user_profile.role not in ['admin', 'administrateur']:
+            return Response({"error": "Permission refusée - Accès admin requis"}, status=403)
+        
+        from django.contrib.auth.models import User
+        target_user = User.objects.get(id=user_id)
+        
+        tests = OrientationTest.objects.filter(user=target_user).order_by('-completed_at')
+        
+        tests_data = []
+        for test in tests:
+            tests_data.append({
+                'id': test.id,
+                'completed_at': test.completed_at.isoformat(),
+                'total_questions': test.total_questions,
+                'is_recent': test.is_recent,
+                'top_results': test.get_top_results(3),
+                'user_name': test.user_full_name
+            })
+        
+        return Response({
+            'user': {
+                'id': target_user.id,
+                'name': target_user.get_full_name() or target_user.username,
+                'email': target_user.email
+            },
+            'tests': tests_data,
+            'total_count': len(tests_data)
+        })
+        
+    except User.DoesNotExist:
+        return Response({"error": "Utilisateur introuvable"}, status=404)
+    except Profile.DoesNotExist:
+        return Response({"error": "Profil utilisateur introuvable"}, status=404)
+    except Exception as e:
+        print(f"Erreur lors de la récupération de l'historique utilisateur: {e}")
+        return Response({'error': 'Erreur lors de la récupération de l\'historique'}, status=500)

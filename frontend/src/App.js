@@ -17,13 +17,14 @@ import AboutUs from './pages/AboutUs';
 import Faq from './pages/faq';
 import Programs from './pages/Programs';
 import Orientation from './components/Orientation';
-import OrientationTest from './components/OrientationTest';
+import OrientationTest from './components/OrientationTest/OrientationTest';
 import ProgramDetail from './pages/ProgramDetail'; 
 import ApplicationForm from "./pages/ApplicationForm";
 import StudentWelcomeDashboard from './components/WelcomeEtudiant';
 import AdminWelcomeDashboard from './components/WelcomeAdmin';
 import TermsOfService from './components/TermsOfService';
 import PrivacyPolicy from './components/PrivacyPolicy';
+import Results from './components/OrientationTest/Results';
 
 
 // Animation wrapper pour transition fluide
@@ -70,6 +71,7 @@ function AnimatedRoutes() {
           <Route path="/welcome-etudiant" element={<PageTransition><StudentWelcomeDashboard /></PageTransition>} />
           <Route path="/terms" element={<PageTransition><TermsOfService    /></PageTransition>} />
           <Route path="/privacy" element={<PageTransition><PrivacyPolicy    /></PageTransition>} />
+          <Route path="/results" element={<PageTransition><Results    /></PageTransition>} />
 
         </Route>
       </Routes>

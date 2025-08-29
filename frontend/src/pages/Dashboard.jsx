@@ -30,6 +30,9 @@ import chinaDest from '../assets/home_pictures/china.png';
 import cyprusDest from '../assets/home_pictures/cyprus.png';
 import romaniaDest from '../assets/home_pictures/romania.png';
 import { FaGraduationCap, FaMedal } from 'react-icons/fa'; 
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const testimonials = [
   {
@@ -621,17 +624,26 @@ const handleProgramDetail = (programId) => {
         </div>
       </section>
 
-      {/* 10. Our Partners */}
-      <section className="partners-section">
-        <h2 className="partners-title">Our <span className="yellow-text">Partners</span></h2>
-        <div className="partners-container">
-          {partners.map(partner => (
-            <div className="partner-item" key={partner.id}>
-              <img src={partner.logo} alt={partner.name} className="partner-logo" />
-            </div>
-          ))}
+{/* 10. Our Partners */}
+<section className="partners-section">
+  <h2 className="partners-title">
+    Our <span className="yellow-text">Partners</span>
+  </h2>
+
+  <div className="partners-slider">
+    <div className="partners-track">
+      {[...partners, ...partners].map((partner, index) => (
+        <div className="partner-item" key={index}>
+          <img 
+            src={partner.logo ? `http://localhost:8000/media/logo/${partner.logo}` : '/default-logo.png'} 
+            alt={partner.name} 
+            className="program-logo" 
+          />
         </div>
-      </section>
+      ))}
+    </div>
+  </div>
+</section>
     </div>
   );
 }

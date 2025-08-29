@@ -1,15 +1,44 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { Upload, X, Plus } from "lucide-react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Upload, X, Plus, CheckCircle, ArrowLeft } from "lucide-react";
 import axios from "axios";
-
 
 function ApplicationForm() {
   const { programId } = useParams();
+  const navigate = useNavigate();
   const [program, setProgram] = useState(null);
   const [loading, setLoading] = useState(true);
   const [step, setStep] = useState(1);
   const [error, setError] = useState(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submissionData, setSubmissionData] = useState(null);
+  
+  // Fonction utilitaire pour récupérer les données d'authentification
+  const getAuthData = () => {
+    // Récupérer les données d'authentification
+    const localAuthUser = localStorage.getItem("auth_user");
+    const sessionAuthUser = sessionStorage.getItem("auth_user");
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    
+    let authUser = null;
+    
+    if (localAuthUser) {
+      try {
+        authUser = JSON.parse(localAuthUser);
+      } catch (error) {
+        console.error('Erreur parsing localStorage auth_user:', error);
+      }
+    } else if (sessionAuthUser) {
+      try {
+        authUser = JSON.parse(sessionAuthUser);
+      } catch (error) {
+        console.error('Erreur parsing sessionStorage auth_user:', error);
+      }
+    }
+    
+    return { authUser, token };
+  };
+
   const [formData, setFormData] = useState({
     // Step 1 - Contact Details
     email: "",
@@ -101,43 +130,59 @@ function ApplicationForm() {
     }
   });
 
-  // Charger les données du programme depuis l'API
-useEffect(() => {
-  const fetchProgramDetail = async () => {
-    if (!programId) {
-      setError("ID du programme manquant");
-      setLoading(false);
+  // Vérifier l'authentification au chargement du composant
+  useEffect(() => {
+    const { authUser, token } = getAuthData();
+    
+    if (!authUser || !token) {
+      console.error('Utilisateur non authentifié');
+      navigate('/login');
       return;
     }
+    
+    // Pré-remplir les champs avec les données utilisateur
+    setFormData(prev => ({
+      ...prev,
+      email: authUser.email || '',
+      firstName: authUser.prenom || authUser.first_name || '',
+      lastName: authUser.nom || authUser.last_name || ''
+    }));
+  }, [navigate]);
 
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // Utiliser l'API existante qui fonctionne
-      const response = await axios.get(`http://localhost:8000/api/program-detail-with-similar/${programId}/`);
-      
-      console.log('Program data loaded:', response.data);
-      // Récupérer seulement les données du programme principal
-      setProgram(response.data.program);
-      
-    } catch (error) {
-      console.error("Erreur lors du chargement du programme:", error);
-      
-      if (error.response?.status === 404) {
-        setError("Programme non trouvé");
-      } else if (error.response?.status >= 500) {
-        setError("Erreur serveur. Veuillez réessayer plus tard.");
-      } else {
-        setError("Erreur lors du chargement des données");
+  // Charger les données du programme depuis l'API
+  useEffect(() => {
+    const fetchProgramDetail = async () => {
+      if (!programId) {
+        setError("ID du programme manquant");
+        setLoading(false);
+        return;
       }
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  fetchProgramDetail();
-}, [programId]);
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const response = await axios.get(`http://localhost:8000/api/program-detail-with-similar/${programId}/`);
+        console.log('Program data loaded:', response.data);
+        setProgram(response.data.program);
+        
+      } catch (error) {
+        console.error("Erreur lors du chargement du programme:", error);
+        
+        if (error.response?.status === 404) {
+          setError("Programme non trouvé");
+        } else if (error.response?.status >= 500) {
+          setError("Erreur serveur. Veuillez réessayer plus tard.");
+        } else {
+          setError("Erreur lors du chargement des données");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProgramDetail();
+  }, [programId]);
 
   const [showModal, setShowModal] = useState(null);
   const [applicationId] = useState(Math.floor(Math.random() * 900000) + 100000);
@@ -216,11 +261,113 @@ useEffect(() => {
 
   const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
 
-  const handleSubmit = () => {
-    console.log("Form submitted:", formData);
-    alert("Application submitted successfully!");
+  const handleSubmit = async () => {
+    try {
+      // Récupérer les données d'authentification
+      const { authUser, token } = getAuthData();
+      
+      if (!authUser || !token) {
+        alert("Erreur d'authentification. Veuillez vous reconnecter.");
+        navigate('/login');
+        return;
+      }
+
+      console.log('Données d\'authentification:', { authUser: !!authUser, token: !!token });
+      
+      // Préparer les données de soumission
+      const submissionPayload = {
+        program: program?.program || "Programme non spécifié",
+        university: program?.universities || "Université non spécifiée",
+        formData: {
+          ...formData,
+          applicationId: applicationId
+        }
+      };
+
+      console.log('Payload à envoyer:', submissionPayload);
+
+      // Envoyer la requête avec le token d'authentification
+      const response = await fetch('http://localhost:8000/api/applications/submit/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${token}`
+        },
+        body: JSON.stringify(submissionPayload)
+      });
+
+      console.log('Response status:', response.status);
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Candidature soumise avec succès:', result);
+        
+        setSubmissionData({
+          applicationId: result.application?.application_id || applicationId,
+          submissionDate: new Date().toISOString(),
+          status: 'sent'
+        });
+        setIsSubmitted(true);
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Erreur de réponse:', response.status, errorData);
+        throw new Error(errorData.error || `Erreur ${response.status}: ${response.statusText}`);
+      }
+
+    } catch (error) {
+      console.error("Erreur lors de l'envoi:", error);
+      alert(`Erreur lors de l'envoi de la candidature: ${error.message}`);
+    }
   };
 
+  // Component de succès
+  const ApplicationSuccess = () => (
+    <div className="success-container">
+      <div className="success-card">
+        <div className="success-icon">
+          <CheckCircle size={80} color="#10B981" />
+        </div>
+        
+        <h2 className="success-title">Candidature Envoyée avec Succès!</h2>
+        
+        <div className="success-details">
+          <p className="success-message">
+            Votre candidature a été soumise avec succès. Nous avons reçu toutes vos informations 
+            et documents requis.
+          </p>
+          
+          <div className="application-id-card">
+            <span className="id-label">ID de candidature:</span>
+            <span className="id-value">#{submissionData?.applicationId || applicationId}</span>
+          </div>
+          
+          <div className="next-steps">
+            <h3>Prochaines étapes:</h3>
+            <ul>
+              <li>Nous examinerons votre candidature dans les 3-5 jours ouvrables</li>
+              <li>Vous recevrez une notification par email du statut</li>
+              <li>Vous pouvez suivre l'évolution dans votre dashboard</li>
+            </ul>
+          </div>
+        </div>
+        
+        <button 
+          className="return-dashboard-btn"
+          onClick={() => navigate('/welcome-etudiant')}
+        >
+          <ArrowLeft size={20} />
+          Retourner au Dashboard
+        </button>
+      </div>
+    </div>
+  );
+
+  // Vérification de soumission
+  if (isSubmitted) {
+    return <ApplicationSuccess />;
+  }
+
+  // Reste du code inchangé pour les fonctions de rendu des steps...
   const renderStep1 = () => (
     <>
       <div className="form-section">
@@ -396,10 +543,10 @@ useEffect(() => {
             className="form-input form-select"
           >
             <option value="">Country *</option>
-            <option value="Morocco">🇲🇦 Morocco</option>
-            <option value="Algeria">🇩🇿 Algeria</option>
-            <option value="Tunisia">🇹🇳 Tunisia</option>
-            <option value="Egypt">🇪🇬 Egypt</option>
+            <option value="Morocco">Morocco</option>
+            <option value="Algeria">Algeria</option>
+            <option value="Tunisia">Tunisia</option>
+            <option value="Egypt">Egypt</option>
           </select>
         </div>
         
@@ -1144,6 +1291,132 @@ useEffect(() => {
           min-height: 100vh;
         }
 
+        .success-container {
+          min-height: 100vh;
+          background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+        }
+
+        .success-card {
+          background: white;
+          border-radius: 20px;
+          padding: 40px;
+          text-align: center;
+          max-width: 500px;
+          width: 100%;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+          animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .success-icon {
+          margin-bottom: 24px;
+        }
+
+        .success-title {
+          color: #111827;
+          font-size: 28px;
+          font-weight: 700;
+          margin-bottom: 20px;
+        }
+
+        .success-message {
+          color: #6B7280;
+          font-size: 16px;
+          line-height: 1.6;
+          margin-bottom: 30px;
+        }
+
+        .application-id-card {
+          background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+          color: white;
+          padding: 16px 24px;
+          border-radius: 12px;
+          margin: 20px 0;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .id-label {
+          font-size: 14px;
+          opacity: 0.9;
+        }
+
+        .id-value {
+          font-size: 18px;
+          font-weight: 700;
+        }
+
+        .next-steps {
+          text-align: left;
+          background: #F9FAFB;
+          padding: 24px;
+          border-radius: 12px;
+          margin: 20px 0;
+        }
+
+        .next-steps h3 {
+          color: #111827;
+          font-size: 18px;
+          font-weight: 600;
+          margin-bottom: 16px;
+        }
+
+        .next-steps ul {
+          list-style: none;
+          padding: 0;
+        }
+
+        .next-steps li {
+          color: #6B7280;
+          padding: 8px 0;
+          padding-left: 24px;
+          position: relative;
+        }
+
+        .next-steps li::before {
+          content: "✓";
+          position: absolute;
+          left: 0;
+          color: #10B981;
+          font-weight: bold;
+        }
+
+        .return-dashboard-btn {
+          background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+          color: white;
+          border: none;
+          padding: 16px 32px;
+          border-radius: 12px;
+          font-size: 16px;
+          font-weight: 600;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin: 20px auto 0;
+          transition: all 0.3s ease;
+        }
+
+        .return-dashboard-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+        }
+
         .progress-wrapper {
           width: 100%;
           margin-bottom: 10px;
@@ -1718,6 +1991,30 @@ useEffect(() => {
         @media (max-width: 768px) {
           .application-container {
             padding: 10px;
+          }
+
+          .success-container {
+            padding: 10px;
+          }
+
+          .success-card {
+            padding: 30px 20px;
+            margin: 10px;
+          }
+
+          .success-title {
+            font-size: 24px;
+          }
+
+          .application-id-card {
+            flex-direction: column;
+            gap: 8px;
+            text-align: center;
+          }
+
+          .return-dashboard-btn {
+            width: 100%;
+            justify-content: center;
           }
 
           .progress-bar {

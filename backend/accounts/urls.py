@@ -26,6 +26,22 @@ urlpatterns = [
     path('api/applications/<int:application_id>/status/', views.update_application_status, name='update_application_status'),
     path('api/applications/<int:application_id>/delete/', views.delete_application, name='delete_application'),
     path('api/applications/statistics/', views.get_application_statistics, name='get_application_statistics'),
+    path('api/orientation-test/save/', views.save_orientation_test, name='save_orientation_test'),
+    
+    # Récupération des résultats du dernier test de l'utilisateur
+    path('api/orientation-test/results/', views.get_orientation_test_results, name='get_orientation_test_results'),
+    
+    # Historique complet des tests de l'utilisateur
+    path('api/orientation-test/history/', views.get_all_orientation_tests, name='get_all_orientation_tests'),
+    
+    # Suppression d'un test spécifique
+    path('api/orientation-test/delete/<int:test_id>/', views.delete_orientation_test, name='delete_orientation_test'),
+    
+    # Statistiques des tests (admin uniquement)
+    path('api/orientation-test/stats/', views.get_orientation_test_stats, name='get_orientation_test_stats'),
+    
+    # Historique d'un utilisateur spécifique (admin uniquement)
+    path('api/orientation-test/user/<int:user_id>/history/', views.get_user_orientation_history, name='get_user_orientation_history'),
 ]
 
 

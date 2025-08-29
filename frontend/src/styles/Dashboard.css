@@ -948,36 +948,64 @@
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   z-index: 10;
 }
-/*
-  ========================================
-  9. Section "Our Partners"
-  ========================================
-*/
-.partners-container {
+
+.partners-section {
+  text-align: center;
+  margin: 50px 0;
+  overflow: hidden;
+}
+
+.partners-title {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  color: #541652;
+}
+
+.partners-slider {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.partners-track {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 50px;
+  width: calc(200%); /* double pour le scroll infini */
+  animation: scroll 25s linear infinite;
+}
+
+.partners-slider:hover .partners-track {
+  animation-play-state: paused; /* pause au hover */
 }
 
 .partner-item {
-  width: 200px;
-  height: auto;
-  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-  cursor: pointer;
+  flex: 0 0 calc(100% / 6); /* 6 logos visibles en même temps */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
 }
 
-.partner-item:hover {
-  transform: scale(1.05);
-  opacity: 0.8;
+.program-logo {
+  max-width: 120px;
+  max-height: 80px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
 }
 
-.partner-logo {
-  max-width: 100%;
-  height: auto;
-  top:-80px;
+.program-logo:hover {
+  transform: scale(1.1);
 }
+
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%); /* défile la moitié car on a cloné */
+  }
+}
+
+
 
 .destinations-title,
 .partners-title {
@@ -1052,9 +1080,6 @@
   transform: translateY(-2px) !important;
   box-shadow: 0 4px 12px rgba(84, 22, 82, 0.4) !important;
 }
-
-
-
 
 .apply-button {
   background-color: #f5B400;

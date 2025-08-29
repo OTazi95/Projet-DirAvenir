@@ -179,3 +179,77 @@ class Application(models.Model):
     @property
     def user_email(self):
         return self.user.email
+    
+
+
+
+
+
+    # models.py - Ajoutez ce modèle à votre fichier models.py existant
+
+from django.db import models
+from django.contrib.auth.models import User
+from django.utils import timezone
+import json
+
+class OrientationTest(models.Model):
+    """
+    Modèle pour stocker les résultats des tests d'orientation des utilisateurs
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orientation_tests')
+    
+    # Données du test
+    answers = models.JSONField(help_text="Réponses complètes au test d'orientation")
+    raw_scores = models.JSONField(help_text="Scores bruts calculés")
+    max_scores = models.JSONField(help_text="Scores maximum théoriques")
+    normalized_scores = models.JSONField(help_text="Scores normalisés de 0 à 100")
+    pillar_keys = models.JSONField(help_text="Clés des piliers utilisés")
+    
+    # Métadonnées
+    completed_at = models.DateTimeField(default=timezone.now, help_text="Date et heure de completion du test")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    # Champs calculés pour faciliter les requêtes
+    total_questions = models.IntegerField(default=0, help_text="Nombre total de questions répondues")
+    completion_time_seconds = models.IntegerField(null=True, blank=True, help_text="Temps de completion en secondes")
+    
+    class Meta:
+        ordering = ['-completed_at']
+        verbose_name = "Test d'orientation"
+        verbose_name_plural = "Tests d'orientation"
+    
+    def __str__(self):
+        return f"Test de {self.user.get_full_name() or self.user.username} - {self.completed_at.strftime('%d/%m/%Y %H:%M')}"
+    
+    @property
+    def user_full_name(self):
+        """Retourne le nom complet de l'utilisateur"""
+        return self.user.get_full_name() or self.user.username
+    
+    @property
+    def is_recent(self):
+        """Vérifie si le test a été passé dans les 30 derniers jours"""
+        from django.utils import timezone
+        from datetime import timedelta
+        return self.completed_at >= timezone.now() - timedelta(days=30)
+    
+    def get_top_results(self, limit=3):
+        """
+        Retourne les top résultats basés sur les scores normalisés
+        Cette méthode devra être adaptée selon votre logique de calcul des majeures
+        """
+        # Pour l'instant, retournons des données d'exemple
+        # Vous devrez adapter cette méthode selon votre système de scoring
+        example_results = [
+            {'major': 'Informatique', 'score': 85},
+            {'major': 'Ingénierie', 'score': 78},
+            {'major': 'Sciences', 'score': 72}
+        ]
+        return example_results[:limit]
+    
+    def save(self, *args, **kwargs):
+        """Override save pour calculer automatiquement certains champs"""
+        if self.answers and isinstance(self.answers, dict):
+            self.total_questions = len(self.answers)
+        super().save(*args, **kwargs)

@@ -17,14 +17,6 @@ function UserProfileModal({ isOpen, onClose }) {
 
   return (
     <div className="profile-dropdown">
-      <div className="profile-header">
-        <h3>Mes Informations</h3>
-      </div>
-      <div className="profile-body">
-        <p><strong>Prénom:</strong> {user.prenom}</p>
-        <p><strong>Nom:</strong> {user.nom}</p>
-        <p><strong>Email:</strong> {user.email}</p>
-      </div>
       <div className="profile-actions">
         <button onClick={handleNavigateToDashboard} className="dashboard-btn">
           My Personal Dashboard

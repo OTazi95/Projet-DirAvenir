@@ -1,7 +1,7 @@
-// Login.jsx - Avec redirection basée sur le rôle
-import React, { useState, useContext } from 'react';
+// Login.jsx - Avec redirection basée sur le rôle et gestion des paramètres de redirection
+import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import '../styles/Login.css';
 import loginImage from '../assets/register-illustration.png';
@@ -12,9 +12,23 @@ function Login() {
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [redirectMessage, setRedirectMessage] = useState('');
 
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Récupérer le paramètre de redirection
+  const redirectPath = searchParams.get('redirect');
+
+  useEffect(() => {
+    // Afficher un message si l'utilisateur est redirigé depuis le test d'orientation
+    if (redirectPath === '/orientation-test') {
+      setRedirectMessage('Vous devez vous connecter pour passer le test d\'orientation.');
+    } else if (redirectPath) {
+      setRedirectMessage(`Vous devez vous connecter pour accéder à cette page.`);
+    }
+  }, [redirectPath]);
 
   const handleChange = (e) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
@@ -105,11 +119,21 @@ function Login() {
         role: storage.getItem('role')
       });
       
-      // REDIRECTION BASÉE SUR LE RÔLE
+      // REDIRECTION BASÉE SUR LE PARAMÈTRE OU LE RÔLE
       console.log('=== REDIRECTION ===');
+      console.log('Paramètre de redirection:', redirectPath);
       console.log('Rôle pour redirection:', userInfo.role);
       
-      // Vérification du rôle avec différentes variantes possibles
+      // Si il y a un paramètre de redirection et que c'est un étudiant, rediriger vers la page demandée
+      if (redirectPath && (userInfo.role.toLowerCase().trim() === 'etudiant' || 
+                          userInfo.role.toLowerCase().trim() === 'student' || 
+                          userInfo.role.toLowerCase().trim() === 'étudiant')) {
+        console.log('✅ Redirection vers la page demandée:', redirectPath);
+        navigate(redirectPath);
+        return;
+      }
+      
+      // Sinon, redirection basée sur le rôle
       const role = userInfo.role.toLowerCase().trim();
       
       if (role === 'admin' || role === 'administrateur') {
@@ -154,15 +178,18 @@ function Login() {
   };
 
   const handleSocialLogin = (provider) => {
+    // Ajouter le paramètre de redirection aux URLs de connexion sociale
+    const redirectParam = redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : '';
+    
     switch(provider) {
       case 'Google':
-        window.location.href = 'http://localhost:8000/api/auth/google/';
+        window.location.href = `http://localhost:8000/api/auth/google/${redirectParam}`;
         break;
       case 'Facebook':
-        window.location.href = 'http://localhost:8000/api/auth/facebook/';
+        window.location.href = `http://localhost:8000/api/auth/facebook/${redirectParam}`;
         break;
       case 'Apple':
-        window.location.href = 'http://localhost:8000/api/auth/apple/';
+        window.location.href = `http://localhost:8000/api/auth/apple/${redirectParam}`;
         break;
       default:
         console.log(`Connexion avec ${provider}`);
@@ -172,7 +199,15 @@ function Login() {
   return (
     <div className="login-container">
       <div className="login-form">
-        <h2>Log In</h2>
+        <h2>Connexion</h2>
+        
+        {/* Message de redirection */}
+        {redirectMessage && (
+          <div className="redirect-message">
+            <div className="redirect-icon">ℹ️</div>
+            <span>{redirectMessage}</span>
+          </div>
+        )}
         
         {error && <div className="error-message">{error}</div>}
           
@@ -184,7 +219,7 @@ function Login() {
               value={credentials.email}
               onChange={handleChange}
               required
-              placeholder="Email Address"
+              placeholder="Adresse email"
               disabled={isLoading}
             />
             <div className="line-input"></div>
@@ -197,7 +232,7 @@ function Login() {
               value={credentials.password}
               onChange={handleChange}
               required
-              placeholder="Password"
+              placeholder="Mot de passe"
               disabled={isLoading}
             />
             <div className="line-input"></div>
@@ -211,21 +246,21 @@ function Login() {
               disabled={isLoading}
             />
             <span></span>
-            Remember me
+            Se souvenir de moi
           </label>
 
           <button type="submit" className="login-button" disabled={isLoading}>
-            {isLoading ? 'Connexion...' : 'Login'}
+            {isLoading ? 'Connexion...' : 'Se connecter'}
           </button>
         </form>
            
         <p className="already-text">
-          Don't have an account? <Link to="/register">Register Here</Link>
+          Vous n'avez pas de compte ? <Link to={`/register${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ''}`}>Créer un compte</Link>
         </p>
          
         <div className="separator">
           <hr className="line" />
-          <span>or</span>
+          <span>ou</span>
           <hr className="line" />
         </div>
 
@@ -236,7 +271,7 @@ function Login() {
             onClick={() => handleSocialLogin('Google')}
             disabled={isLoading}
           >
-            <FaGoogle style={{ color: '#DB4437' }}/> Login with Google
+            <FaGoogle style={{ color: '#DB4437' }}/> Connexion avec Google
           </button>
           <button 
             type="button"
@@ -244,7 +279,7 @@ function Login() {
             onClick={() => handleSocialLogin('Facebook')}
             disabled={isLoading}
           >
-            <FaFacebookF /> Login with Facebook
+            <FaFacebookF /> Connexion avec Facebook
           </button>
           <button 
             type="button"
@@ -252,19 +287,19 @@ function Login() {
             onClick={() => handleSocialLogin('Apple')}
             disabled={isLoading}
           >
-            <FaApple /> Login with Apple
+            <FaApple /> Connexion avec Apple
           </button>
         </div>
 
         <p className="terms-text">
-          By continuing, you agree to the{' '}
-          <Link to="/terms" className="terms-yellow">Terms of Service</Link>         {" "}and{" "}
-          <Link to="/privacy" className="terms-orange">Privacy Policy</Link>
+          En continuant, vous acceptez les{' '}
+          <Link to="/terms" className="terms-yellow">Conditions d'utilisation</Link>{' '}et la{' '}
+          <Link to="/privacy" className="terms-orange">Politique de confidentialité</Link>
         </p>
       </div>
 
       <div className="login-image">
-        <img src={loginImage} alt="Login Visual" />
+        <img src={loginImage} alt="Illustration de connexion" />
       </div>
     </div>
   );
