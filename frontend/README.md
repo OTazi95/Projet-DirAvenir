@@ -1,70 +1,100 @@
-# Getting Started with Create React App
+# 🎓 Plateforme web d’Orientation Scolaire 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 📖 Présentation du projet  
+Ce projet a été développé dans le cadre d’un stage chez **DirAvenir**.  
+Il s’agit d’une plateforme web qui accompagne les étudiants dans leur parcours académique :  
+- Identification de leur profil via un test d’orientation.  
+- Obtention de recommandations personnalisées de filiére en fonction de chaque profil.  
+- Consultation des programmes disponibles à l’**international** (notamment en **Chine** et au **Chypre**).  
+- Dépôt et suivi des candidatures en ligne.  
 
-## Available Scripts
 
-In the project directory, you can run:
+## 🎯 Objectifs  
+- Fournir un outil **simple, moderne et efficace** pour l’orientation scolaire.  
+- Faciliter la **gestion des candidatures** des étudiants.  
+- Centraliser les informations des établissements internationaux.  
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## ⚙️ Fonctionnalités principales  
+- ✅ **Inscription & authentification** (classique + via Google, Facebook, Apple).  
+- ✅ Passage du **test d’orientation** et affichage des résultats.  
+- ✅ Génération de **recommandations de filiére personnalisées**.  
+- ✅ Consultation des **programmes & établissements partenaires**.  
+- ✅ **Dépôt et suivi du statut** des candidatures en ligne.  
+- ✅ Tableau de bord administrateur (gestion des étudiants, administrateurs et candidatures).  
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
 
-### `npm test`
+## 🛠️ Technologies utilisées  
+- **Backend** : Django (Python 3.13.2)  
+- **Frontend** : React.js  
+- **Base de données** : MySQL  
+- **UI & Design** : Bootstrap 5, TailwindCSS, Framer Motion  
+- **Graphiques** : Chart.js  
+- **Multilingue** : i18next  
+- **Outils** : GitHub, VS Code  
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
+## 🚀 Installation & lancement  
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 🔧 Prérequis  
+- Python 3.13.2 
+- Node.js & npm  
+- MySQL installé et configuré  
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 📥 Étapes d’installation  
+1. Cloner le projet :  
+   git clone https://github.com/OTazi95/Projet-DirAvenir/
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2. Installer les dépendances backend :  
+   pip install -r requirements.txt
 
-### `npm run eject`
+3. Installer les dépendances frontend : :  
+   cd frontend
+   npm install
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+4. Lancer le backend (Django) : :  
+   python manage.py runserver
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+5. Lancer le frontend (React) :  
+   npm start
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+#### 🖥️ Guide d’utilisation rapide
 
-## Learn More
+🔑 Créer un compte ou se connecter (classique ou via Google/Facebook/Apple).
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+📝 Passer le test d’orientation → obtenir résultats et recommandations.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+🎯 Consulter les programmes proposés → choisir un établissement.
 
-### Code Splitting
+📤 Postuler en ligne et suivre l’évolution de la candidature.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+👩‍💼 L’administrateur peut gérer utilisateurs, autres administrateurs et candidatures.
 
-### Analyzing the Bundle Size
+##### 🚧 Améliorations futures
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Authentification à deux facteurs (2FA).
 
-### Making a Progressive Web App
+Génération de rapports PDF/Excel.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Extension vers de nouveaux pays partenaires.
 
-### Advanced Configuration
+Développement d’une application mobile.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+###### 👥 Auteurs & encadrants
 
-### Deployment
+Étudiants : Mr.Omar Tazi & Mlle.Meriam Erragragui
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Entreprise d’accueil : DirAvenir
 
-### `npm run build` fails to minify
+Encadrement académique : EMSI – Pr.Chaimae Taoussi
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+###### 📩 Contact
+
+📧 Email : omart4437@gmail.com | merragragui3@gmail.com
+
+🔗 LinkedIn : www.linkedin.com/in/omar-tazi-b0a131284 | www.linkedin.com/in/meryem-erragragui-23b02929a
+
+💻 GitHub : https://github.com/OTazi95 | https://github.com/merragragui
+

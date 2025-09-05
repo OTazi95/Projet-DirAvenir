@@ -209,9 +209,11 @@ const AboutUs = () => {
           <div className="team-members">
             {visibleMembers.map((member, index) => (
               <div className="team-member" key={index} data-aos="fade-up">
+                      <a href={member.linkedin} target="_blank" rel="noopener noreferrer">
                 <img className="team-photo" src={member.img} alt={member.name} />
                 <h4>{member.name}</h4>
                 <p>{member.role}</p>
+                </a>
               </div>
             ))}
           </div>

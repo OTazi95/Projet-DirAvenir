@@ -528,3 +528,8 @@ html[lang="fr"] .value h4 {
     gap: 20px;
   }
 }
+
+.team-member a {
+  text-decoration: none; /* Supprime le soulignement */
+  color: inherit;        /* Garde la même couleur que le texte parent */
+}

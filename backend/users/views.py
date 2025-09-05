@@ -6,6 +6,21 @@ from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from rest_framework.permissions import AllowAny
+import os
+from django.http import JsonResponse
+from django.conf import settings
+
+def list_logos(request):
+    logos_dir = os.path.join(settings.MEDIA_ROOT, "logo")
+    files = []
+    if os.path.exists(logos_dir):
+        files = [
+            f"{file}"
+            for file in os.listdir(logos_dir)
+            if os.path.isfile(os.path.join(logos_dir, file))
+        ]
+    return JsonResponse({"logos": files})
+
 
 class RegisterView(APIView):
    permission_classes = [AllowAny]
@@ -28,4 +43,7 @@ class RegisterView(APIView):
 
         user = User.objects.create_user(username=email, email=email, password=password, first_name=prenom, last_name=nom)
         return Response({'message': 'Utilisateur créé avec succès'}, status=201)
+
+
+
 

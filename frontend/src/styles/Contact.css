@@ -74,6 +74,9 @@ body {
   flex-direction: column;
 }
 
+#phone::placeholder, #email::placeholder, #name::placeholder {
+  color: #666666; 
+}
 
 .contact-form input,
 .contact-form select,

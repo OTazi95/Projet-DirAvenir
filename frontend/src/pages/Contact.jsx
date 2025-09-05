@@ -232,9 +232,18 @@ function Contact() {
             ></textarea>
           </div>
           
-          <p>
-            {t('contact.termsText')}
-          </p>
+<p>
+  {t('contact.termsPrefix')}{' '}
+  <a href="/terms" className="terms-link">
+    {t('contact.termsLink')}
+  </a>{' '}
+  {t('contact.and')}{' '}
+  <a href="/privacy" className="privacy-link">
+    {t('contact.privacyLink')}
+  </a>
+  .
+</p>
+
           
           {/* 🔄 MODIFIÉ : Bouton avec état de chargement */}
           <button 

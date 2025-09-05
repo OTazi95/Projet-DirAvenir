@@ -130,6 +130,7 @@ function Dashboard() {
   const [searchCategory, setSearchCategory] = useState('');
   const [searchCountry, setSearchCountry] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const [logos, setLogos] = useState([]);
 
   const [activeDot, setActiveDot] = useState(0);
   const containerRef = useRef(null);
@@ -142,6 +143,15 @@ function Dashboard() {
       setPrenom(prenomLocal);
       setNom(nomLocal);
     }
+  }, []);
+
+  useEffect(() => {
+    axios.get("http://localhost:8000/api/logos/")
+      .then((res) => {
+        console.log("Logos API:", res.data);
+        setLogos(res.data.logos);
+      })
+      .catch((err) => console.error("Erreur logos :", err));
   }, []);
 
   // Charger toutes les filières uniques et les 5 premiers programmes
@@ -630,19 +640,30 @@ const handleProgramDetail = (programId) => {
     Our <span className="yellow-text">Partners</span>
   </h2>
 
-  <div className="partners-slider">
-    <div className="partners-track">
-      {[...partners, ...partners].map((partner, index) => (
-        <div className="partner-item" key={index}>
-          <img 
-            src={partner.logo ? `http://localhost:8000/media/logo/${partner.logo}` : '/default-logo.png'} 
-            alt={partner.name} 
+<Slider
+ dots={false}
+  infinite={true}
+  speed={4000}        
+  slidesToShow={5}
+  slidesToScroll={1}
+  autoplay={true}
+  autoplaySpeed={0}    
+  cssEase="linear"     
+  pauseOnHover={true}
+  arrows={false}
+>
+  {logos.map((logo, index) => (
+    <div className="partner-item" key={index}>
+      <div className="partner-logo-wrapper">
+        <img
+          src={`http://localhost:8000/media/logo/${logo}`}
+            alt={`Partner ${index}`} 
             className="program-logo" 
           />
         </div>
+        </div>
       ))}
-    </div>
-  </div>
+</Slider>
 </section>
     </div>
   );

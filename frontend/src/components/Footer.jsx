@@ -59,7 +59,7 @@ function Footer() {
         </div>
       </div>
       <div className="footer-bottom">
-        <p>{t('footer.termsText')} <Link to="/terms" className="terms-link">{t('footer.termsLink')}</Link> | {t('footer.privacyText')} <Link to="/privacy" className="privacy-link">{t('footer.privacyLink')}</Link></p>
+        <p> <Link to="/terms" className="terms-link" id='fot'>{t('footer.terms')}</Link> | <Link to="/privacy" className="privacy-link" id='fot'>{t('footer.privacy')}</Link></p>
         <p>&copy; 2025 DirAvenir. {t('footer.rights')}</p>
       </div>
     </footer>

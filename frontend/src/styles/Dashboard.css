@@ -952,7 +952,6 @@
 .partners-section {
   text-align: center;
   margin: 50px 0;
-  overflow: hidden;
 }
 
 .partners-title {
@@ -961,28 +960,45 @@
   color: #541652;
 }
 
-.partners-slider {
-  width: 100%;
-  overflow: hidden;
-  position: relative;
-}
-
-.partners-track {
-  display: flex;
-  width: calc(200%); /* double pour le scroll infini */
-  animation: scroll 25s linear infinite;
-}
-
-.partners-slider:hover .partners-track {
-  animation-play-state: paused; /* pause au hover */
-}
-
 .partner-item {
-  flex: 0 0 calc(100% / 6); /* 6 logos visibles en même temps */
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+.partner-logo-wrapper {
+  width: 180px;              /* taille du cercle */
+  height: 180px;
+  border-radius: 50%;        /* cercle parfait */
+  background: white;         
+  border: 10px solid #541652; /* bordure violette */
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 15px;
+  overflow: hidden;          /* cache ce qui dépasse */
+}
+
+.partner-logo {
+  max-width: 80%;   /* garde une marge interne */
+  max-height: 80%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.partner-logo:hover {
+  transform: scale(1.1);
+}
+
+.destinations-title,
+.partners-title {
+  font-size: 2.8rem !important;
+  font-weight: bold !important;
+  font-family: 'Poppins', sans-serif !important;
+  margin-bottom: 50px !important;
+  text-align: center !important;
+  color: #541652 !important;
+  margin-top: -60px;
 }
 
 .program-logo {

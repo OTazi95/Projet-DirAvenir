@@ -22,7 +22,7 @@ import ProgramDetail from './pages/ProgramDetail';
 import ApplicationForm from "./pages/ApplicationForm";
 import StudentWelcomeDashboard from './components/WelcomeEtudiant';
 import AdminWelcomeDashboard from './components/WelcomeAdmin';
-import TermsOfService from './components/TermsOfService';
+import TermsOfService from './components/TermsConditions';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import Results from './components/OrientationTest/Results';
 

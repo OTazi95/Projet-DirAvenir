@@ -35,7 +35,10 @@
     "subjectOption3": "Other",
     "messageLabel": "Your message*",
     "messagePlaceholder": "Type your message...",
-    "termsText": "By submitting this form, you agree to our terms and conditions and our privacy policy, which explains how we can collect , use and disclose your personal information, including to third parties.",
+  "termsPrefix": "By submitting this form, you agree to our",
+  "termsLink": "Terms of Condition",
+  "and": "and",
+  "privacyLink": "Privacy Policy",
     "sendButton": "Send",
     "infoTitle": "Our Information",
     "infoAddressLabel": "Address",
@@ -133,14 +136,16 @@
     ],
     "teamTitle": "Our Team",
     "teamMembers": [
-      { "name": "Meryem Derni", "role": "Co-Founder" },
-      { "name": "Nadia Boukdir", "role": "Co-Founder" },
-      { "name": "Bouchra Lyass", "role": "Marketing Coordinator" },
-      { "name": "Rania Jamoudi", "role": "Admission Coordinator" },
-      { "name": "Abdellah Louadi", "role": "Educational Consultant" },
-      { "name": "Hamza Aomari", "role": "Educational Consultant" },
-      { "name": "Wiam Farih", "role": "Educational Consultant" },
-      { "name": "Marouane Zahid", "role": "Educational Consultant" }
+      { "name": "Meryem Derni", "role": "Co-Founder", "linkedin" : "https://www.linkedin.com/in/meryem-derni"},
+      { "name": "Nadia Boukdir", "role": "Co-Founder",  "linkedin" : "https://www.linkedin.com/in/nadia-boukdir" },
+      { "name": "Ikbal Mountassir", "role": "Marketing Manager", "linkedin" : "https://www.linkedin.com/in/ikbal-mountassir-5a31a1262" },
+      { "name": "Bouchra Lyass", "role": "Marketing Coordinator", "linkedin" :  "https://www.linkedin.com/in/bouchra-lyass-9b55b8250/"},
+      { "name": "Rania Jamoudi", "role": "Admission Coordinator", "linkedin" : "https://www.linkedin.com/in/rania-jamaudi-158b4b277" },
+      { "name": "Hafssa Hallioui", "role": "Orientation Coordinator", "linkedin" : "https://www.linkedin.com/in/hafsah-a-54966022b" },
+      { "name": "Abdellah Louadi", "role": "Educational Consultant", "linkedin" : "https://www.linkedin.com/in/abdellah-louadi-a37501202"},
+      { "name": "Hamza Aomari", "role": "Educational Consultant", "linkedin" : "www.linkedin.com/in/ACoAAD71zoYBHaduxf7I85CfaKeT-dWkVEznME8" },
+      { "name": "Wiam Farih", "role": "Educational Consultant", "linkedin" : "https://www.linkedin.com/in/wiam-farih-041274249" },
+      { "name": "Marouane Zahid", "role": "Educational Consultant", "linkedin" : "https://www.linkedin.com/in/marouane-zahid-0960b4167" }
     ]
   },
 

@@ -1,4 +1,4 @@
-// Login.jsx - Avec redirection basée sur le rôle et gestion des paramètres de redirection
+// Login.jsx - With role-based redirection and rememberMe
 import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
@@ -18,15 +18,14 @@ function Login() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  // Récupérer le paramètre de redirection
+  // Get redirect param
   const redirectPath = searchParams.get('redirect');
 
   useEffect(() => {
-    // Afficher un message si l'utilisateur est redirigé depuis le test d'orientation
     if (redirectPath === '/orientation-test') {
-      setRedirectMessage('Vous devez vous connecter pour passer le test d\'orientation.');
+      setRedirectMessage('You must log in to take the orientation test.');
     } else if (redirectPath) {
-      setRedirectMessage(`Vous devez vous connecter pour accéder à cette page.`);
+      setRedirectMessage(`You must log in to access this page.`);
     }
   }, [redirectPath]);
 
@@ -44,133 +43,73 @@ function Login() {
     setError('');
 
     try {
-      console.log('=== DEBUG FRONTEND LOGIN ===');
-      console.log('Données à envoyer:', {
-        email: credentials.email,
-        password: credentials.password ? '***' : 'empty'
-      });
-
-      const response = await axios.post('http://localhost:8000/api/login/', {
-        email: credentials.email,
-        password: credentials.password
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await axios.post(
+        'http://localhost:8000/api/login/',
+        {
+          email: credentials.email,
+          password: credentials.password,
+        },
+        {
+          headers: { 'Content-Type': 'application/json' },
         }
-      });
+      );
 
-      console.log('Statut de la réponse:', response.status);
-      console.log('Réponse complète:', response.data);
-
-      // Vérifier la structure de la réponse
-      if (!response.data) {
-        throw new Error('Réponse vide du serveur');
+      if (!response.data?.token || !response.data?.user) {
+        throw new Error('Invalid login data');
       }
 
-      if (response.data.error) {
-        throw new Error(response.data.error);
-      }
+      const { token, user } = response.data;
 
-      if (!response.data.token) {
-        throw new Error('Aucun token reçu du serveur');
-      }
-
-      if (!response.data.user) {
-        throw new Error('Aucune information utilisateur reçue');
-      }
-
-      console.log('Token reçu:', response.data.token.substring(0, 10) + '...');
-      console.log('Rôle utilisateur reçu:', response.data.user.role);
-
+      // ✅ Storage choice based on rememberMe
       const storage = rememberMe ? localStorage : sessionStorage;
-      storage.setItem('token', response.data.token);
+      storage.setItem('token', token);
 
-      // Appeler la fonction login du contexte si elle existe
-      if (login) {
-        login(response.data.token);
-      }
-
-      // Créer les informations utilisateur complètes
       const userInfo = {
-        id: response.data.user.id,
-        email: response.data.user.email,
-        username: response.data.user.username,
-        prenom: response.data.user.prenom,
-        nom: response.data.user.nom,
-        role: response.data.user.role,
-        first_name: response.data.user.prenom, // Pour compatibilité
-        last_name: response.data.user.nom      // Pour compatibilité
+        id: user.id,
+        email: user.email,
+        firstName: user.prenom,
+        lastName: user.nom,
+        role: user.role,
       };
 
-      console.log('Informations utilisateur à stocker:', userInfo);
+      storage.setItem('auth_user', JSON.stringify(userInfo));
+      storage.setItem('role', user.role);
 
-      // Stocker l'objet utilisateur complet
-      storage.setItem("auth_user", JSON.stringify(userInfo));
-      
-      // Stocker aussi individuellement pour compatibilité
-      storage.setItem('email', userInfo.email);
-      storage.setItem('prenom', userInfo.prenom);
-      storage.setItem('nom', userInfo.nom);
-      storage.setItem('role', userInfo.role);
+      if (login) login(token);
 
-      console.log('Données stockées avec succès');
-      console.log('Données stockées dans storage:', {
-        auth_user: storage.getItem("auth_user"),
-        role: storage.getItem('role')
-      });
-      
-      // REDIRECTION BASÉE SUR LE PARAMÈTRE OU LE RÔLE
-      console.log('=== REDIRECTION ===');
-      console.log('Paramètre de redirection:', redirectPath);
-      console.log('Rôle pour redirection:', userInfo.role);
-      
-      // Si il y a un paramètre de redirection et que c'est un étudiant, rediriger vers la page demandée
-      if (redirectPath && (userInfo.role.toLowerCase().trim() === 'etudiant' || 
-                          userInfo.role.toLowerCase().trim() === 'student' || 
-                          userInfo.role.toLowerCase().trim() === 'étudiant')) {
-        console.log('✅ Redirection vers la page demandée:', redirectPath);
+      // ✅ Redirection
+      const role = user.role.toLowerCase().trim();
+
+      if (
+        redirectPath &&
+        (role === 'student' || role === 'etudiant' || role === 'étudiant')
+      ) {
         navigate(redirectPath);
         return;
       }
-      
-      // Sinon, redirection basée sur le rôle
-      const role = userInfo.role.toLowerCase().trim();
-      
-      if (role === 'admin' || role === 'administrateur') {
-        console.log('✅ Redirection vers welcome-admin');
+
+      if (role === 'admin' || role === 'administrator') {
         navigate('/welcome-admin');
-      } else if (role === 'etudiant' || role === 'student' || role === 'étudiant') {
-        console.log('✅ Redirection vers welcome-etudiant');
-        navigate('/welcome-etudiant');
+      } else if (role === 'student' || role === 'etudiant' || role === 'étudiant') {
+        navigate('/welcome-etudiant'); 
       } else {
-        console.warn('⚠️ Rôle non reconnu:', role, '- Redirection par défaut vers welcome-etudiant');
-        navigate('/welcome-etudiant');
+        navigate('/welcome-student'); 
       }
-      
     } catch (err) {
-      console.error('=== ERREUR FRONTEND LOGIN ===');
-      console.error('Type d\'erreur:', err.constructor.name);
-      console.error('Message:', err.message);
-      
       if (err.response) {
-        console.error('Statut HTTP:', err.response.status);
-        console.error('Données d\'erreur complètes:', err.response.data);
-        
         if (err.response.status === 401) {
-          setError('Email ou mot de passe incorrect.');
+          setError('Incorrect email or password.');
         } else if (err.response.status === 400) {
-          setError(err.response.data.error || 'Données invalides.');
+          setError(err.response.data.error || 'Invalid data.');
         } else if (err.response.status === 404) {
-          setError('Endpoint non trouvé. Vérifiez que le serveur Django est démarré.');
+          setError('Endpoint not found. Please check if the Django server is running.');
         } else {
-          setError('Erreur serveur. Veuillez réessayer.');
+          setError('Server error. Please try again.');
         }
       } else if (err.request) {
-        console.error('Aucune réponse du serveur:', err.request);
-        setError('Impossible de se connecter au serveur. Vérifiez que Django est démarré sur le port 8000.');
+        setError('Unable to connect to the server. Please check if it is running.');
       } else {
-        console.error('Erreur de configuration:', err.message);
-        setError(err.message || 'Une erreur inattendue est survenue.');
+        setError('An unexpected error occurred.');
       }
     } finally {
       setIsLoading(false);
@@ -178,39 +117,24 @@ function Login() {
   };
 
   const handleSocialLogin = (provider) => {
-    // Ajouter le paramètre de redirection aux URLs de connexion sociale
     const redirectParam = redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : '';
-    
-    switch(provider) {
-      case 'Google':
-        window.location.href = `http://localhost:8000/api/auth/google/${redirectParam}`;
-        break;
-      case 'Facebook':
-        window.location.href = `http://localhost:8000/api/auth/facebook/${redirectParam}`;
-        break;
-      case 'Apple':
-        window.location.href = `http://localhost:8000/api/auth/apple/${redirectParam}`;
-        break;
-      default:
-        console.log(`Connexion avec ${provider}`);
-    }
+    window.location.href = `http://localhost:8000/api/auth/${provider.toLowerCase()}/${redirectParam}`;
   };
 
   return (
     <div className="login-container">
       <div className="login-form">
-        <h2>Connexion</h2>
-        
-        {/* Message de redirection */}
+        <h2>Login</h2>
+
         {redirectMessage && (
           <div className="redirect-message">
             <div className="redirect-icon">ℹ️</div>
             <span>{redirectMessage}</span>
           </div>
         )}
-        
+
         {error && <div className="error-message">{error}</div>}
-          
+
         <form onSubmit={handleLogin}>
           <div className="input-group">
             <input
@@ -219,8 +143,9 @@ function Login() {
               value={credentials.email}
               onChange={handleChange}
               required
-              placeholder="Adresse email"
+              placeholder="Email address"
               disabled={isLoading}
+              autoComplete="off"
             />
             <div className="line-input"></div>
           </div>
@@ -232,8 +157,9 @@ function Login() {
               value={credentials.password}
               onChange={handleChange}
               required
-              placeholder="Mot de passe"
+              placeholder="Password"
               disabled={isLoading}
+              autoComplete="new-password"
             />
             <div className="line-input"></div>
           </div>
@@ -246,60 +172,70 @@ function Login() {
               disabled={isLoading}
             />
             <span></span>
-            Se souvenir de moi
+            Remember me
           </label>
 
           <button type="submit" className="login-button" disabled={isLoading}>
-            {isLoading ? 'Connexion...' : 'Se connecter'}
+            {isLoading ? 'Logging in...' : 'Login'}
           </button>
         </form>
-           
+
         <p className="already-text">
-          Vous n'avez pas de compte ? <Link to={`/register${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ''}`}>Créer un compte</Link>
+          Don’t have an account?{' '}
+          <Link
+            to={`/register${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ''}`}
+          >
+            Create an account
+          </Link>
         </p>
-         
+
         <div className="separator">
           <hr className="line" />
-          <span>ou</span>
+          <span>or</span>
           <hr className="line" />
         </div>
 
         <div className="social-buttons">
-          <button 
+          <button
             type="button"
             className="google"
             onClick={() => handleSocialLogin('Google')}
             disabled={isLoading}
           >
-            <FaGoogle style={{ color: '#DB4437' }}/> Connexion avec Google
+            <FaGoogle style={{ color: '#DB4437' }} /> Login with Google
           </button>
-          <button 
+          <button
             type="button"
             className="facebook"
             onClick={() => handleSocialLogin('Facebook')}
             disabled={isLoading}
           >
-            <FaFacebookF /> Connexion avec Facebook
+            <FaFacebookF /> Login with Facebook
           </button>
-          <button 
+          <button
             type="button"
             className="apple"
             onClick={() => handleSocialLogin('Apple')}
             disabled={isLoading}
           >
-            <FaApple /> Connexion avec Apple
+            <FaApple /> Login with Apple
           </button>
         </div>
 
         <p className="terms-text">
-          En continuant, vous acceptez les{' '}
-          <Link to="/terms" className="terms-yellow">Conditions d'utilisation</Link>{' '}et la{' '}
-          <Link to="/privacy" className="terms-orange">Politique de confidentialité</Link>
+          By continuing, you agree to the{' '}
+          <Link to="/terms" className="terms-yellow">
+            Terms of Service
+          </Link>{' '}
+          and{' '}
+          <Link to="/privacy" className="terms-orange">
+            Privacy Policy
+          </Link>
         </p>
       </div>
 
       <div className="login-image">
-        <img src={loginImage} alt="Illustration de connexion" />
+        <img src={loginImage} alt="Login illustration" />
       </div>
     </div>
   );

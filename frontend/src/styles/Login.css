@@ -20,7 +20,7 @@
   margin-left: 120px; 
   max-width: 100;
   padding-bottom: 20px;
-  margin-top: 40px;
+  margin-top: 30px;
 }
 
 h2 {
@@ -37,7 +37,8 @@ h2 {
   flex-direction: column;
   gap: 10px;
   margin-bottom: 25px;
-  align-items: center; /* ✅ Centre les boutons horizontalement */
+  width: 100%;          /* occupe toute la largeur dispo */
+  align-items: center;  /* centre les enfants */
 }
 
 .social-buttons button {
@@ -45,14 +46,20 @@ h2 {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding: 8px 16px;
+  padding: 10px 16px;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-weight: 500;
   cursor: pointer;
   font-size: 14px;
-  width: 250px; /* largeur fixe plus courte */
-  max-width: 100%; /* responsive */
+
+  width: 250px;        /* largeur fixe */
+  margin: 0 auto;      
+}
+
+.social-buttons button:hover {
+  transform: scale(1.05); 
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15); 
 }
 
 .google {
@@ -124,6 +131,8 @@ form {
 
 .login-button:hover {
   background-color: #541652;
+    transform: scale(1.05); 
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15); 
 }
 
 .login-footer {
@@ -148,9 +157,10 @@ form {
 }
 
 .login-image img {
-  width: 630px;
+  width: 780px;
   height: auto;
   border-radius: 25px;
+  margin-top: -55px;
 }
 
 .already-text {
@@ -158,6 +168,7 @@ form {
   color: gray;
   margin-bottom: 20px;
   text-align: center;  /* CENTRAGE */
+  margin-top: 15px;
 }
 
 .already-text a {
@@ -233,8 +244,8 @@ form {
 
 /* Fond gris clair si coché */
 .remember-me input:checked + span {
-  background-color: #6A0DAD; /* couleur violet par exemple */
-  border-color: #6A0DAD;
+  background-color: #541652; /* couleur violet par exemple */
+  border-color: #541652;
 }
 
 /* La coche blanche */

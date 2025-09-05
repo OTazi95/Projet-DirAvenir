@@ -1,117 +1,84 @@
-/* Import de la police Poppins */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-
-/* Reset et base */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Poppins', sans-serif;
-  line-height: 1.6;
-  color: #333;
-}
-
-/* Container principal - similaire à login-container */
+/* Container principal - mêmes alignements que login */
 .register-container {
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
   min-height: 100vh;
-  height: auto;
   background-color: #f2f2f2;
+  gap: 60px;
   padding-left: 60px;
-  gap: 60px;
-  padding-bottom: 50px; /* Espace avant le footer */
+  padding-top: 20px;
 }
 
-/* Contenu principal */
-.main-content {
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  width: 100%;
-  gap: 60px;
-}
-
-/* Section formulaire - similaire à login-form */
-.form-section {
-  flex: none;
-}
-
+/* Card Register */
 .register-card {
-  width: 350px;
-  height: auto;
+  width: 480px;
   background-color: #FDFDFD;
   border-radius: 23px;
   box-shadow: 3px 4px 7px 6px rgba(0, 0, 0, 0.09);
-  padding: 10px 20px;
-  margin-left: 120px;
+  padding: 10px 20px 20px;
+  margin-left: 70px;
   max-width: 100%;
-  padding-bottom: 20px;
-  margin-top: 20px; /* Réduit de 40px à 20px */
-  margin-bottom: 20px; /* Ajout d'une marge en bas */
+  margin-top: -2px;
 }
 
-.card-decoration {
-  display: none; /* On enlève la décoration pour ressembler au login */
-}
-
+/* Titre */
 .form-title {
   margin-bottom: 25px;
   color: #541652;
   font-weight: 600;
   text-align: center;
   font-family: 'Arial', sans-serif;
-  font-size: 24px;
 }
 
-/* Formulaire */
-.register-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+/* Style pour les champs de Register */
+.register-form .form-input {
+  width: 100%;
+  border: none;                  /* Supprime les bordures */
+  border-bottom: 2px solid #ccc; /* Juste une ligne en bas */
+  outline: none;
+  background: transparent;       /* Pas de fond */
+   padding: 4px 2px;   /* encore plus fin */
+  font-size: 15px;    /* texte un peu réduit */
+  line-height: 1.1;
+  color: #000;
+  border-radius: 0;              /* Pas d’arrondi */
+  transition: border-color 0.3s ease;
 }
+
+/* Placeholder */
+.register-form .form-input::placeholder {
+  color: #9ca3af;
+  opacity: 1;
+}
+
+/* Effet focus (quand on clique dans le champ) */
+.register-form .form-input:focus {
+  border: none;                  /* supprime toute bordure */
+  border-bottom: 2px solid #9ca3af; /* une couleur personnalisée si tu veux */
+  outline: none;                 /* enlève le cadre par défaut */
+  box-shadow: none;              /* supprime le halo violet */
+}
+
 
 .form-row {
   display: flex;
-  gap: 10px;
+  gap: 10px; /* réduit l’espace horizontal entre les deux champs */
+  margin-bottom: -10px !important; /* réduit l’espace avec le champ suivant */
 }
 
-.form-group {
-  position: relative;
-  flex: 1;
+.register-form .form-group {
+  margin-bottom: 8px; /* Réduit l’écart entre les champs */
 }
 
-.form-input {
-  width: 100%;
-  border: none;
-  outline: none;
-  font-size: 16px;
-  background: transparent;
-  padding: 4px 0;
-  font-family: 'Poppins', sans-serif;
-  color: #000;
-  border-bottom: 0.5px solid rgba(177, 177, 177, 0.4);
-  margin-bottom: 5px;
-}
-
-.form-input::placeholder {
-  font-family: 'Poppins', sans-serif;
-  color: #B1B1B1;
-  font-size: 15.4px;
-  line-height: 31px;
-  font-weight: 400;
-  font-style: normal;
-}
-
-/* Checkbox Remember Me - style identique au login */
+/* Checkbox stylée comme login */
 .checkbox-group {
-  display: flex;
+  position: relative;
+  display: inline-flex;
   align-items: center;
-  margin: 10px 0 20px 0;
+  gap: 10px;
+  margin: 0px 0 1px 0;
+  cursor: pointer;
 }
 
 .checkbox-input {
@@ -120,51 +87,43 @@ body {
   cursor: pointer;
   height: 16px;
   width: 16px;
-}
-
-.checkbox-label {
-  position: relative;
-  padding-left: 28px;
-  cursor: pointer;
-  font-family: 'Poppins', sans-serif;
-  user-select: none;
-  font-size: 14.4266px;
-  color: #B1B1B1;
-  font-style: normal;
-}
-
-.checkbox-label::before {
-  content: "";
-  position: absolute;
-  top: 0;
   left: 0;
+}
+
+.checkbox-custom {
   height: 16px;
   width: 16px;
   border: 2px solid #B1B1B1;
   border-radius: 4px;
+  background-color: #fff;
   box-sizing: border-box;
-  background-color: white;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-.checkbox-input:checked + .checkbox-label::before {
-  background-color: #6A0DAD;
-  border-color: #6A0DAD;
+.checkbox-input:checked + .checkbox-custom {
+  background-color: #541652;
+  border-color: #541652;
 }
 
-.checkbox-input:checked + .checkbox-label::after {
+.checkbox-input:checked + .checkbox-custom::after {
   content: "";
   position: absolute;
   left: 5px;
   top: 1px;
   width: 4px;
   height: 8px;
-  border: solid white;
+  border: solid #fff;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }
 
-/* Bouton principal - identique au login-button */
+.checkbox-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  color: #B1B1B1;
+}
+
+/* Bouton submit */
 .btn-submit {
   padding: 12px;
   border: none;
@@ -182,21 +141,40 @@ body {
 
 .btn-submit:hover {
   background-color: #541652;
+  transform: scale(1.05); 
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15); 
 }
 
-/* Divider - identique au separator du login */
+/* Switch text + lien */
+.switch-text {
+  font-size: 14px;
+  color: gray;
+  margin: 14px 0;
+  text-align: center;
+}
+
+.switch-link {
+  color: #ff6600;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.switch-link:hover {
+  text-decoration: underline;
+}
+
+/* Divider */
 .divider {
   display: flex;
   align-items: center;
-  text-align: center;
   justify-content: center;
-  margin: 20px 0;
+  margin: 18px 0;
 }
 
 .divider-line {
   flex: 0 0 100px;
   height: 0.5px;
-  background-color: #ccc;
+  background: #ccc;
   margin: 0 10px;
 }
 
@@ -204,185 +182,127 @@ body {
   color: #999;
   font-weight: 500;
 }
-
-/* Boutons sociaux - identique à login */
 .social-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 25px;
-  align-items: center;
+  display: flex !important;
+  flex-direction: row !important;   /* en ligne */
+  justify-content: space-between;
+  align-items: center !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;       /* passe à la ligne si trop serré */
 }
 
 .social-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 8px;
-  font-weight: 500;
-  cursor: pointer;
-  font-size: 14px;
-  width: 250px;
-  max-width: 100%;
+  flex: 1!important;        /* largeur auto */
+  padding: 10px 14px !important;
+  border-radius: 18px !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  border: none !important;
+  cursor: pointer !important;
+  width: auto !important;           
+  min-width: 140px !important;      
+  text-align: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
 }
 
+.social-btn:hover {
+  transform: scale(1.05); 
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15); 
+}
+
+/* Google */
 .social-btn-google {
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  color: #444;
+  background: #f2f2f2 !important;
+  border: 1px solid #E5E7EB !important;
+  color: #111 !important;
 }
 
+/* Facebook */
 .social-btn-facebook {
-  background-color: #3575DC;
-  color: white;
+  background: #1877F2 !important;
+  color: #fff !important;
 }
 
+/* Apple */
 .social-btn-apple {
-  background-color: black;
-  color: white;
+  background: #000 !important;
+  color: #fff !important;
 }
 
-.social-icon {
-  width: 16px;
-  height: 16px;
-}
-
-/* Textes - identique à login */
-.switch-text {
-  font-size: 14px;
-  color: gray;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.switch-link {
-  text-decoration: none;
-  color: #555;
-}
-
-.switch-link:hover {
-  text-decoration: underline;
-}
-
+/* Terms / Privacy */
 .terms-text {
   font-family: 'Poppins', sans-serif;
   font-style: normal;
   font-weight: 500;
-  font-size: 13.75px;
-  line-height: 138%;
+  font-size: 13.5px;
+  line-height: 1.38;
   text-align: center;
-  color: #B1B1B1;
+  color: #9CA3AF;
   margin-top: 15px;
   max-width: 300px;
   margin-left: auto;
   margin-right: auto;
 }
 
-.terms-link {
-  color: #FFD700; /* Jaune comme dans login */
+.terms-link, .privacy-link {
+  text-decoration: none;
+  font-weight: 600;
 }
 
-.terms-link:first-of-type {
-  color: #FFD700; /* Terms of Service en jaune */
+.terms-link:hover, .privacy-link:hover {
+  text-decoration: underline;
 }
 
-.terms-link:last-of-type {
-  color: #FFA500; /* Privacy Policy en orange */
-}
+.terms-service { color: #FFD700; } 
+.terms-privacy { color: #FFA500; }
 
-/* Section illustration - identique à login-image */
+/* Illustration */
 .illustration-section {
   margin-left: 600px;
   position: absolute;
-  top: 180px; /* Réduit de 230px à 180px */
-}
-
-.illustration-container {
-  position: relative;
+  top: 230px;
 }
 
 .illustration-image {
-  width: 630px;
+  width: 780px;
   height: auto;
   border-radius: 25px;
+  margin-top: -65px;
+  margin-left: 20px;
 }
 
-/* Suppression des décorations flottantes */
-.illustration-decoration,
-.illustration-decoration-1,
-.illustration-decoration-2 {
-  display: none;
-}
-
-/* Responsive Design simplifié pour correspondre au login */
+/* Responsive */
 @media (max-width: 1024px) {
-  .register-container {
-    padding-left: 30px;
-  }
-  
-  .register-card {
-    margin-left: 60px;
-  }
-  
-  .illustration-section {
-    margin-left: 400px;
-  }
-  
-  .illustration-image {
-    width: 500px;
-  }
+  .illustration-image { width: 500px; }
 }
 
 @media (max-width: 768px) {
   .register-container {
     flex-direction: column;
     padding-left: 20px;
-    height: auto;
+    gap: 30px;
   }
-  
-  .main-content {
-    flex-direction: column;
-  }
-  
   .register-card {
     margin-left: 0;
     width: 100%;
     max-width: 350px;
   }
-  
   .illustration-section {
     position: relative;
     margin-left: 0;
     top: 0;
     display: flex;
     justify-content: center;
-    margin-top: 20px;
   }
-  
   .illustration-image {
     width: 100%;
     max-width: 400px;
   }
-  
   .form-row {
     flex-direction: column;
     gap: 15px;
-  }
-}
-
-@media (max-width: 480px) {
-  .register-card {
-    padding: 15px;
-  }
-  
-  .form-title {
-    font-size: 20px;
-  }
-  
-  .social-btn {
-    width: 200px;
   }
 }
