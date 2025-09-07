@@ -82,7 +82,6 @@ export default function Results() {
         >
           <span className="check-icon">✓</span>
           <span style={{ textAlign: "left"}}>{strength.title}</span>
-          <span>{strength.icon}</span>
         </div>
 
         <div className="major-description"

@@ -110,7 +110,7 @@
 }
 
 .logout-btn {
-  background: linear-gradient(135deg, #fd79a8, #fdcb6e);
+  background: #FCBE1C;
   border: none;
   padding: 0.8rem 1.5rem;
   border-radius: 15px;
@@ -127,6 +127,7 @@
 .logout-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(253, 121, 168, 0.6);
+  background-color: #4b014e;
 }
 
 /* Stats Section */
