@@ -116,19 +116,201 @@ input[type="range"] { width: 100%; }
 
 /* Results */
 .results-container {
-  max-width: 980px; margin: 40px auto; padding: 20px;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  text-align: center;
 }
-.top3-grid {
-  display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(280px,1fr));
+
+.orientation-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #541652;
+  margin-bottom: 40px;
 }
-.result-card {
-  background: #fff; border-radius: 14px; padding: 16px; border: 1px solid #e8eefc;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+
+.highlight {
+  color: #FCBE1C;
 }
-.result-head { display: flex; justify-content: space-between; align-items: baseline; }
-.result-major { font-size: 20px; font-weight: 800; color: #1f2b44; }
-.result-score { font-size: 22px; font-weight: 900; color: #2f63d7; }
-.result-desc { color: #405067; margin-top: 8px; line-height: 1.5; }
-.why { margin-top: 12px; }
-.bullets { padding-left: 18px; }
-.actions-bottom { margin-top: 18px; display: flex; justify-content: flex-end; }
+
+/* Chaque bloc de résultat est séparé */
+.major-section {
+  background-color: #541652;
+  border-radius: 20px;
+  margin-bottom: 40px;
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.major-card {
+  background: rgba(77, 82, 85, 0.2);
+  padding: 30px;
+  border-radius: 16px;
+  max-width: 600px;
+  width: 100%;
+  color: white;
+  text-align: center;
+}
+
+/* Cercle score */
+.circle-score {
+  width: 160px;
+  height: 160px;
+  background: linear-gradient(180deg, #DDC9DB 0%, rgba(255, 255, 255, 0) 100%);
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.score-text strong {
+  font-size: 32px;
+  display: block;
+}
+
+.score-text span {
+  display: block;
+  font-size: 14px;
+}
+
+.major-name {
+  font-size: 16px;
+  font-weight: bold;
+  color: #facc15;
+}
+
+.major-title {
+  font-size: 22px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.compatibility-text {
+  font-size: 14px;
+  margin: 10px 0;
+  color: #facc15;
+}
+
+.major-description {
+  font-size: 15px;
+  color: #ddd;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.why-bullets {
+  text-align: left;
+  padding: 0;
+  margin-top: 20px;
+  list-style: none;
+  color: #eee;
+}
+
+.why-bullets li {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.check-icon {
+  background: #22c55e;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 12px;
+  text-align: center;
+  line-height: 18px;
+  margin-right: 10px;
+}
+
+/* Boutons */
+.actions-bottom {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.nav-btn {
+  padding: 12px 24px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  background: #facc15;
+  color: #541652;
+  transition: 0.2s ease;
+
+}
+
+.nav-btn:hover {
+  background: #ffe45e;
+}
+
+.nav-btn.ghost {
+  background: transparent;
+  border: 2px solid #facc15;
+  color: #facc15;
+}
+
+.results-cta-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #541652;
+  padding: 2rem 2.5rem;
+  border-radius: 1rem;
+  margin-top: 3rem;
+  flex-wrap: wrap;
+}
+
+.results-cta-text {
+  color: white;
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.results-cta-button {
+  background: #fdb813; /* bouton jaune */
+  color: #fff;
+  border: none;
+  padding: 20px 160px;
+  border-radius: 18px; /* arrondi léger comme sur l’image */
+  font-size: 20px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+  margin-left: 120px;
+  font-family: 'Poppins', sans-serif;
+
+}
+
+.results-cta-button:hover {
+  transform: translateY(-2px);
+  background: #e5a60f;
+}
+
+@media (max-width: 600px) {
+  .results-cta-container {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .results-cta-text {
+    font-size: 1.5rem;
+  }
+
+  .results-cta-button {
+    width: 100%;
+  }
+}

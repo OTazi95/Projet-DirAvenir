@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import '../styles/Programs.css';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext'; // Ajouter l'import
 
 function Programs() {
   const [programs, setPrograms] = useState([]);
@@ -12,6 +13,7 @@ function Programs() {
   const [selectedCountry, setSelectedCountry] = useState('');
   const [filters, setFilters] = useState({ category: '', country: '' });
   const navigate = useNavigate();
+  const { isLoggedIn } = useContext(AuthContext); // Ajouter le contexte
 
   useEffect(() => {
     fetchPrograms(currentPage, filters.category, filters.country);
@@ -55,15 +57,22 @@ function Programs() {
     setCurrentPage(1);
   };
 
-const handleProgramDetail = (programId) => {
+  const handleProgramDetail = (programId) => {
     navigate(`/program-detail/${programId}`);
   };
 
-const handleApply = (programId) => {
-  navigate(`/application/${programId}`);
-};
+  // Fonction modifiée pour gérer l'authentification
+  const handleApply = (programId) => {
+    if (isLoggedIn) {
+      // L'utilisateur est connecté, aller directement au formulaire
+      navigate(`/application/${programId}`);
+    } else {
+      // L'utilisateur n'est pas connecté, rediriger vers login avec le bon redirect
+      navigate(`/login?redirect=/application/${programId}`);
+    }
+  };
 
-  // Fonction pour générer la pagination responsive et dynamique
+  // Fonction pour générer la pagination 
   const renderPagination = () => {
     const items = [];
     
@@ -94,26 +103,45 @@ const handleApply = (programId) => {
     );
 
     // Affichage des numéros de pages
-   
-      // Pagination dynamique intelligente
-      let startPage, endPage;
+    // Pagination dynamique intelligente
+    let startPage, endPage;
 
-      if (currentPage <= 3) {
-        // Si on est au début (pages 1, 2, 3)
-        startPage = 1;
-        endPage = 5;
-      } else if (currentPage >= totalPages - 2) {
-        // Si on est à la fin (3 dernières pages)
-        startPage = totalPages - 4;
-        endPage = totalPages;
-      } else {
-        // Au milieu : afficher la page courante au centre
-        startPage = currentPage - 2;
-        endPage = currentPage + 2;
-      }
+    if (currentPage <= 3) {
+      // Si on est au début (pages 1, 2, 3)
+      startPage = 1;
+      endPage = 5;
+    } else if (currentPage >= totalPages - 2) {
+      // Si on est à la fin (3 dernières pages)
+      startPage = totalPages - 4;
+      endPage = totalPages;
+    } else {
+      // Au milieu : afficher la page courante au centre
+      startPage = currentPage - 2;
+      endPage = currentPage + 2;
+    }
 
-      // Afficher les pages calculées
-      for (let i = startPage; i <= endPage; i++) {
+    // Afficher les pages calculées
+    for (let i = startPage; i <= endPage; i++) {
+      items.push(
+        <button
+          key={i}
+          className={currentPage === i ? 'active' : ''}
+          onClick={() => handlePageChange(i)}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    if (endPage < totalPages - 1) {
+      items.push(
+        <span key="dots" className="pagination-dots">
+          ...
+        </span>
+      );
+      
+      // Afficher les 2 dernières pages
+      for (let i = totalPages - 1; i <= totalPages; i++) {
         items.push(
           <button
             key={i}
@@ -124,29 +152,7 @@ const handleApply = (programId) => {
           </button>
         );
       }
-
-      // Ajouter les points de suspension et dernières pages si nécessaire
-      if (endPage < totalPages - 1) {
-        items.push(
-          <span key="dots" className="pagination-dots">
-            ...
-          </span>
-        );
-        
-        // Afficher les 2 dernières pages
-        for (let i = totalPages - 1; i <= totalPages; i++) {
-          items.push(
-            <button
-              key={i}
-              className={currentPage === i ? 'active' : ''}
-              onClick={() => handlePageChange(i)}
-            >
-              {i}
-            </button>
-          );
-        }
-      }
-    
+    }
 
     // Bouton page suivante (>)
     items.push(

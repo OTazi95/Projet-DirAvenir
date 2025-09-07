@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import '../styles/ProgramDetail.css';
 import fleche from '../assets/fleche.png';
+import { AuthContext } from '../context/AuthContext'; // Ajouter l'import
 
 function ProgramDetail() {
   const { programId } = useParams();
@@ -11,6 +12,7 @@ function ProgramDetail() {
   const [program, setProgram] = useState(null);
   const [similarPrograms, setSimilarPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { isLoggedIn } = useContext(AuthContext); // Ajouter le contexte
 
   useEffect(() => {
     fetchProgramDetail();
@@ -35,8 +37,15 @@ function ProgramDetail() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // Fonction modifiée pour gérer l'authentification
   const handleApply = (programId) => {
-    navigate(`/application/${programId}`);
+    if (isLoggedIn) {
+      // L'utilisateur est connecté, aller directement au formulaire
+      navigate(`/application/${programId}`);
+    } else {
+      // L'utilisateur n'est pas connecté, rediriger vers login avec le bon redirect
+      navigate(`/login?redirect=/application/${programId}`);
+    }
   };
 
   if (loading) {

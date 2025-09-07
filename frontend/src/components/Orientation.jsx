@@ -1,15 +1,24 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import '../styles/Orientation.css';
 import orientationImage from '../assets/orien.png';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next'; // Importez le hook de traduction
+import { useTranslation } from 'react-i18next';
+import { AuthContext } from '../context/AuthContext'; // Votre AuthContext
 
 function Orientation() {
   const navigate = useNavigate();
-  const { t } = useTranslation(); // Initialisez le hook de traduction
+  const { t } = useTranslation();
+  const { isLoggedIn } = useContext(AuthContext); // Utilisez votre propriété isLoggedIn
 
+  // Fonction pour démarrer le test avec vérification d'authentification
   const startTest = () => {
-    navigate('/orientation/test');
+    if (isLoggedIn) {
+      // L'utilisateur est connecté, il peut passer le test directement
+      navigate('/orientation/test');
+    } else {
+      // L'utilisateur n'est pas connecté, redirection vers login avec redirect parameter
+      navigate('/login?redirect=/orientation/test');
+    }
   };
 
   return (

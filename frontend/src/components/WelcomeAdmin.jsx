@@ -78,8 +78,18 @@ const WelcomeAdmin = () => {
       return;
     }
     
-    console.log('✅ Utilisateur admin vérifié');
-    setUserInfo(authUser);
+console.log('✅ Utilisateur admin vérifié');
+const userInfoFormatted = {
+  prenom: authUser.firstName || '',
+  nom: authUser.lastName || '',
+  email: authUser.email || '',
+  role: authUser.role || ''
+};
+
+setUserInfo(userInfoFormatted); // <-- garder seulement ça
+fetchData();
+fetchApplications();
+
     fetchData();
     fetchApplications(); // Ajoutez cette ligne
   }, [navigate]);
@@ -456,12 +466,6 @@ const WelcomeAdmin = () => {
       console.error('Erreur lors de l\'ajout:', error);
       alert('Erreur lors de l\'ajout de l\'admin');
     }
-  };
-
-  const handleLogout = () => {
-    localStorage.clear();
-    sessionStorage.clear();
-    navigate('/login');
   };
 
   if (isLoading) {

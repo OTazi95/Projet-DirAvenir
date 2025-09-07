@@ -263,12 +263,13 @@ const getTopResults = (answers) => {
           return;
         }
         
-        const userInfo = {
-          prenom: userData.prenom || userData.first_name || '',
-          nom: userData.nom || userData.last_name || '',
-          email: userData.email || '',
-          role: userData.role || 'etudiant'
-        };
+const userInfo = {
+  prenom: userData.firstName || '',
+  nom: userData.lastName || '',
+  email: userData.email || '',
+  role: userData.role || 'etudiant'
+};
+
         
         console.log('Données utilisateur extraites:', userInfo);
         setUserInfo(userInfo);

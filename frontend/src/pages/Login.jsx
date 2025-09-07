@@ -64,7 +64,7 @@ function Login() {
       const storage = rememberMe ? localStorage : sessionStorage;
       storage.setItem('token', token);
 
-      const userInfo = {
+    const userInfo = {
         id: user.id,
         email: user.email,
         firstName: user.prenom,
@@ -72,10 +72,7 @@ function Login() {
         role: user.role,
       };
 
-      storage.setItem('auth_user', JSON.stringify(userInfo));
-      storage.setItem('role', user.role);
-
-      if (login) login(token);
+      if (login) login(token, userInfo, rememberMe);
 
       // ✅ Redirection
       const role = user.role.toLowerCase().trim();
