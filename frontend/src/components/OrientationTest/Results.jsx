@@ -17,7 +17,7 @@ export default function Results() {
   const { state } = useLocation() || {};
   const safeAnswers = state?.answers || {};
 
-  const { normalizedUserProfile, ranked } = useMemo(() => {
+  const {ranked } = useMemo(() => {
     const raw = computeRawScoresFromAnswers(safeAnswers);
     const max = computeMaxScoresTheoretical();
     const normalized = normalizeScores0to100(raw, max);
@@ -61,15 +61,40 @@ export default function Results() {
                 <p className="major-description">{desc.description}</p>
               )}
 
-              {desc.strengths && desc.strengths.length > 0 && (
-                <ul className="why-bullets">
-                  {desc.strengths.map((strength, i) => (
-                    <li key={i}>
-                      <span className="check-icon">✓</span> {strength.description}
-                    </li>
-                  ))}
-                </ul>
-              )}
+
+{desc.strengths && desc.strengths.length > 0 && (
+  <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+    {desc.strengths.map((strength, i) => (
+      <li
+        key={i}
+        style={{
+          marginBottom: "1rem",
+        }}
+      >
+        {/* Ligne 1 : Check + Titre + Icon */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "1px",
+            fontWeight: "bold",
+          }}
+        >
+          <span className="check-icon">✓</span>
+          <span style={{ textAlign: "left"}}>{strength.title}</span>
+          <span>{strength.icon}</span>
+        </div>
+
+        <div className="major-description"
+        style={{ textAlign: "left", marginLeft: "1.5rem"}}
+        >
+          {strength.description}
+        </div>
+      </li>
+    ))}
+  </ul>
+)}
+
             </div>
           </section>
         );
@@ -103,39 +128,3 @@ export default function Results() {
   );
 }
 
-function explainWhy(major, userProfile) {
-  const ideal = MAJOR_PROFILES[major] || {};
-  const scored = Object.keys(ideal).map((p) => {
-    const diff = Math.abs((userProfile[p] ?? 0) - ideal[p]);
-    const weight = ideal[p];
-    const val = (100 - diff) * weight;
-    return { pillar: p, val };
-  });
-
-  scored.sort((a, b) => b.val - a.val);
-  const best = scored.slice(0, 3).map((x) => x.pillar);
-
-  const humanReadable = {
-    Interet_Scientifique_Tech: "scientific and technological interest",
-    Interet_Artistique_Creatif: "artistic creativity",
-    Interet_Social_Humain: "social and human sense",
-    Interet_Business_Gestion: "business and management aptitude",
-    Interet_Logique_Analytique: "logic and analysis",
-    Competence_Resolution_Problemes: "problem-solving ability",
-    Competence_Communication: "communication",
-    Competence_Organisation: "organization",
-    Competence_Manuel_Technique: "technical and manual skill",
-    Valeur_Impact_Societal: "desire for societal impact",
-    Valeur_Innovation_Challenge: "taste for innovation and challenges",
-    Valeur_Stabilite_Securite: "search for stability and security",
-    Valeur_Autonomie: "search for autonomy",
-    Pref_Travail_Equipe_Collab: "preference for teamwork and collaboration",
-    Pref_Travail_Autonome: "preference for autonomous work",
-    Pref_Pratique_Terrain: "taste for fieldwork and practice",
-    Pref_Theorie_Recherche: "interest in theory and research",
-  };
-
-  return best.map(
-    (p) => `Your ${humanReadable[p]} is particularly aligned with this major.`
-  );
-}
