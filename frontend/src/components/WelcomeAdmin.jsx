@@ -1,52 +1,173 @@
-// WelcomeAdmin.jsx - Design moderne et responsive avec gestion des administrateurs
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-// Ajoutez ces imports en haut du fichier WelcomeAdmin.jsx
-import { Clock, CheckCircle, XCircle, Eye, Check, X, User, GraduationCap, FileText } from 'lucide-react';
+import {
+  Clock, CheckCircle, XCircle, Eye, Check, X, User, GraduationCap, FileText, Bell, LogOut, Search
+} from 'lucide-react';
 import "../styles/WelcomeAdmin.css";
+import logo from '../assets/logo.png';
 
 const WelcomeAdmin = () => {
   const [userInfo, setUserInfo] = useState({});
   const [students, setStudents] = useState([]);
   const [admins, setAdmins] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  // Modifiez les onglets existants pour ajouter l'onglet applications
-  const [activeTab, setActiveTab] = useState('students'); // students, admins, applications
-  // Ajoutez ces états dans le component WelcomeAdmin
+  const [activeTab, setActiveTab] = useState('students');
   const [applications, setApplications] = useState([]);
   const [selectedApp, setSelectedApp] = useState(null);
   const [applicationFilter, setApplicationFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState(''); // État pour la recherche
   const navigate = useNavigate();
 
-  // Ajoutez cette fonction pour charger les candidatures
+  // Navigation items pour le sidebar
+  const navigationItems = [
+    { id: 'students', label: 'Students', icon: User, color: '#541652' },
+    { id: 'admins', label: 'Admins', icon: User, color: '#541652' },
+    { id: 'applications', label: 'Applications', icon: FileText, color: '#541652' },
+    { id: 'notifications', label: 'Notifications', icon: Bell, color: '#541652', badge: 0 },
+  ];
+
+  // Bottom navigation items
+  const bottomNavigationItems = [
+    { id: 'logout', label: 'Log Out', icon: LogOut, color: '#ef4444' },
+  ];
+
+  // Charger les applications
   const fetchApplications = async () => {
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      const headers = token ? { 'Authorization': `Token ${token}` } : {};
-      
+      const headers = token ? { 'Authorization': `Token ${token} `} : {};
       const response = await axios.get("http://localhost:8000/api/applications/all/", { headers });
-      console.log('Candidatures récupérées:', response.data);
       setApplications(response.data);
-      
     } catch (error) {
       console.error('Erreur lors du chargement des candidatures:', error);
     }
   };
 
-  // Modifiez le useEffect existant pour inclure le chargement des candidatures
+  // Charger les données (étudiants et admins)
+  const fetchData = async () => {
+    try {
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      const headers = token ? { 'Authorization': `Token ${token} `} : {};
+      const studentsRes = await axios.get("http://localhost:8000/api/students/", { headers });
+      setStudents(studentsRes.data);
+      const adminsRes = await axios.get("http://localhost:8000/api/admins/", { headers });
+      setAdmins(adminsRes.data);
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Erreur lors du chargement des données:', error);
+      setIsLoading(false);
+    }
+  };
+
+  // Fonction pour filtrer les étudiants selon le terme de recherche
+  const filteredStudents = students.filter(student =>
+    student.user__first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    student.user__last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    student.user__email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Fonction pour filtrer les administrateurs selon le terme de recherche
+  const filteredAdmins = admins.filter(admin =>
+    admin.user__first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    admin.user__last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    admin.user__email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Mettre à jour le statut d'une candidature
+  const handleApplicationStatusChange = async (appId, newStatus) => {
+    try {
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      const headers = token ? { 'Authorization': `Token ${token} `} : {};
+      await axios.patch(`http://localhost:8000/api/applications/${appId}/status/`, {
+        status: newStatus
+      }, { headers });
+      setApplications(prev =>
+        prev.map(app =>
+          app.id === appId ? { ...app, status: newStatus } : app
+        )
+      );
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du statut:', error);
+      alert('Erreur lors de la mise à jour du statut');
+    }
+  };
+
+  // Supprimer un étudiant
+  const handleDeleteStudent = async (id) => {
+    if (!window.confirm("Voulez-vous vraiment supprimer cet étudiant ?")) return;
+    try {
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      const headers = token ? { 'Authorization': `Token ${token} `} : {};
+      await axios.delete(`http://localhost:8000/api/students/${id}/delete/`, { headers });
+      fetchData();
+      alert('Étudiant supprimé avec succès');
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error);
+      alert('Erreur lors de la suppression');
+    }
+  };
+
+  // Supprimer un administrateur
+  const handleDeleteAdmin = async (id) => {
+    if (!window.confirm("Voulez-vous vraiment supprimer cet administrateur ?")) return;
+    try {
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      const headers = token ? { 'Authorization': `Token ${token} `} : {};
+      await axios.delete(`http://localhost:8000/api/admins/${id}/delete/`, { headers });
+      fetchData();
+      alert('Administrateur supprimé avec succès');
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error);
+      alert('Erreur lors de la suppression');
+    }
+  };
+
+  // Ajouter un administrateur
+  const handleAddAdmin = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    try {
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      const headers = token ? { 'Authorization': `Token ${token} `} : {};
+      await axios.post("http://localhost:8000/api/admins/add/", {
+        first_name: formData.get("prenom"),
+        last_name: formData.get("nom"),
+        email: formData.get("email"),
+        password: formData.get("password"),
+      }, { headers });
+      alert("Nouvel admin ajouté !");
+      e.target.reset();
+      fetchData();
+    } catch (error) {
+      console.error('Erreur lors de l\'ajout:', error);
+      alert('Erreur lors de l\'ajout de l\'admin');
+    }
+  };
+
+  // Déconnexion
+  const handleLogout = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    navigate('/login');
+  };
+
+  // Gestion de la navigation
+  const handleNavigation = (itemId) => {
+    if (itemId === 'logout') {
+      handleLogout();
+    } else {
+      setActiveTab(itemId);
+      setSearchTerm(''); // Réinitialiser la recherche lors du changement d'onglet
+    }
+  };
+
+  // Chargement initial des données
   useEffect(() => {
-    console.log('=== DEBUG WELCOME ADMIN ===');
-    
-    // Vérifier l'authentification et le rôle
     const authUserLocal = localStorage.getItem("auth_user");
     const authUserSession = sessionStorage.getItem("auth_user");
-    
-    console.log('localStorage auth_user:', authUserLocal);
-    console.log('sessionStorage auth_user:', authUserSession);
-    
     let authUser = null;
-    
+
     if (authUserLocal) {
       try {
         authUser = JSON.parse(authUserLocal);
@@ -60,89 +181,24 @@ const WelcomeAdmin = () => {
         console.error('Erreur parsing sessionStorage:', error);
       }
     }
-    
-    console.log('AuthUser récupéré:', authUser);
-    
+
     if (!authUser || !authUser.email) {
-      console.log('❌ Pas d\'utilisateur connecté - redirection vers login');
       navigate('/login');
       return;
     }
-    
+
     const userRole = (authUser.role || '').toLowerCase().trim();
-    console.log('Rôle utilisateur:', userRole);
-    
     if (userRole !== 'admin' && userRole !== 'administrateur') {
-      console.log('❌ Utilisateur pas admin - redirection vers welcome-etudiant');
       navigate('/welcome-etudiant');
       return;
     }
-    
-console.log('✅ Utilisateur admin vérifié');
-const userInfoFormatted = {
-  prenom: authUser.firstName || '',
-  nom: authUser.lastName || '',
-  email: authUser.email || '',
-  role: authUser.role || ''
-};
 
-setUserInfo(userInfoFormatted); // <-- garder seulement ça
-fetchData();
-fetchApplications();
-
+    setUserInfo(authUser);
     fetchData();
-    fetchApplications(); // Ajoutez cette ligne
+    fetchApplications();
   }, [navigate]);
 
-  const fetchData = async () => {
-    try {
-      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      console.log('Token pour requêtes:', token ? 'présent' : 'absent');
-      
-      const headers = token ? { 'Authorization': `Token ${token}` } : {};
-      
-      // Récupérer les étudiants
-      const studentsRes = await axios.get("http://localhost:8000/api/students/", { headers });
-      console.log('Étudiants récupérés:', studentsRes.data);
-      setStudents(studentsRes.data);
-      
-      // Récupérer les administrateurs
-      const adminsRes = await axios.get("http://localhost:8000/api/admins/", { headers });
-      console.log('Administrateurs récupérés:', adminsRes.data);
-      setAdmins(adminsRes.data);
-      
-      setIsLoading(false);
-    } catch (error) {
-      console.error('Erreur lors du chargement des données:', error);
-      setIsLoading(false);
-    }
-  };
-
-  // Ajoutez cette fonction pour changer le statut des candidatures
-  const handleApplicationStatusChange = async (appId, newStatus) => {
-    try {
-      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      const headers = token ? { 'Authorization': `Token ${token}` } : {};
-      
-      await axios.patch(`http://localhost:8000/api/applications/${appId}/status/`, {
-        status: newStatus
-      }, { headers });
-      
-      // Mettre à jour l'état local
-      setApplications(prev => 
-        prev.map(app => 
-          app.id === appId ? { ...app, status: newStatus } : app
-        )
-      );
-      
-      alert(`Statut de la candidature mis à jour: ${newStatus}`);
-    } catch (error) {
-      console.error('Erreur lors de la mise à jour du statut:', error);
-      alert('Erreur lors de la mise à jour du statut');
-    }
-  };
-
-  // Ajoutez ce component AdminApplicationManager avant le return principal
+  // Composant pour gérer les candidatures
   const AdminApplicationManager = ({ applications, onStatusChange, selectedApp, setSelectedApp }) => {
     const filteredApplications = applications.filter(app => {
       if (applicationFilter === 'all') return true;
@@ -171,11 +227,8 @@ fetchApplications();
         <div className="application-detail-modal" onClick={e => e.stopPropagation()}>
           <div className="modal-header">
             <h3>Détails de la Candidature #{application.id}</h3>
-            <button className="modal-close" onClick={onClose}>
-              <X size={24} />
-            </button>
+            <button className="modal-close" onClick={onClose}><X size={24} /></button>
           </div>
-          
           <div className="modal-content">
             <div className="detail-section">
               <h4><User size={18} /> Informations Personnelles</h4>
@@ -206,7 +259,6 @@ fetchApplications();
                 </div>
               </div>
             </div>
-
             <div className="detail-section">
               <h4><GraduationCap size={18} /> Formation</h4>
               {application.formData.educationalBackground?.map((edu, index) => (
@@ -226,7 +278,6 @@ fetchApplications();
                 </div>
               ))}
             </div>
-
             <div className="detail-section">
               <h4><FileText size={18} /> Programme Demandé</h4>
               <div className="program-info">
@@ -235,35 +286,30 @@ fetchApplications();
               </div>
             </div>
           </div>
-          
           <div className="modal-actions">
             {application.status === 'reviewing' && (
               <>
-                <button 
+                <button
                   className="action-btn approve-btn"
                   onClick={() => {
                     onStatusChange(application.id, 'approved');
                     onClose();
                   }}
                 >
-                  <Check size={16} />
-                  Approuver
+                  <Check size={16} /> Approuver
                 </button>
-                <button 
+                <button
                   className="action-btn reject-btn"
                   onClick={() => {
                     onStatusChange(application.id, 'rejected');
                     onClose();
                   }}
                 >
-                  <X size={16} />
-                  Rejeter
+                  <X size={16} /> Rejeter
                 </button>
               </>
             )}
-            <button className="cancel-btn" onClick={onClose}>
-              Fermer
-            </button>
+            <button className="cancel-btn" onClick={onClose}>Fermer</button>
           </div>
         </div>
       </div>
@@ -274,31 +320,31 @@ fetchApplications();
         <div className="section-header">
           <h2>Gestion des Candidatures</h2>
           <div className="filter-tabs">
-            <button 
+            <button
               className={`filter-tab ${applicationFilter === 'all' ? 'active' : ''}`}
               onClick={() => setApplicationFilter('all')}
             >
               Toutes ({applications.length})
             </button>
-            <button 
+            <button
               className={`filter-tab ${applicationFilter === 'sent' ? 'active' : ''}`}
               onClick={() => setApplicationFilter('sent')}
             >
               Envoyées ({applications.filter(a => a.status === 'sent').length})
             </button>
-            <button 
+            <button
               className={`filter-tab ${applicationFilter === 'reviewing' ? 'active' : ''}`}
               onClick={() => setApplicationFilter('reviewing')}
             >
               En examen ({applications.filter(a => a.status === 'reviewing').length})
             </button>
-            <button 
+            <button
               className={`filter-tab ${applicationFilter === 'approved' ? 'active' : ''}`}
               onClick={() => setApplicationFilter('approved')}
             >
               Approuvées ({applications.filter(a => a.status === 'approved').length})
             </button>
-            <button 
+            <button
               className={`filter-tab ${applicationFilter === 'rejected' ? 'active' : ''}`}
               onClick={() => setApplicationFilter('rejected')}
             >
@@ -306,7 +352,6 @@ fetchApplications();
             </button>
           </div>
         </div>
-        
         {filteredApplications.length === 0 ? (
           <div className="empty-state">
             <FileText size={48} color="#9CA3AF" />
@@ -322,14 +367,11 @@ fetchApplications();
               <div className="header-cell">Statut</div>
               <div className="header-cell">Actions</div>
             </div>
-            
             {filteredApplications.map((app) => (
               <div key={app.id} className="table-row">
                 <div className="table-cell">
                   <div className="student-info">
-                    <div className="student-avatar">
-                      {app.userName?.charAt(0) || 'U'}
-                    </div>
+                    <div className="student-avatar">{app.userName?.charAt(0) || 'U'}</div>
                     <div>
                       <div className="student-name">{app.userName}</div>
                       <div className="student-email">{app.userEmail}</div>
@@ -346,19 +388,19 @@ fetchApplications();
                   <div className="date-info">
                     {new Date(app.submissionDate).toLocaleDateString('fr-FR')}
                     <div className="time-info">
-                      {new Date(app.submissionDate).toLocaleTimeString('fr-FR', { 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
+                      {new Date(app.submissionDate).toLocaleTimeString('fr-FR', {
+                        hour: '2-digit',
+                        minute: '2-digit'
                       })}
                     </div>
                   </div>
                 </div>
                 <div className="table-cell">
-                  <div className="status-badge" style={{ 
-                    backgroundColor: app.status === 'sent' ? '#3B82F620' : 
+                  <div className="status-badge" style={{
+                    backgroundColor: app.status === 'sent' ? '#3B82F620' :
                                    app.status === 'reviewing' ? '#F59E0B20' :
                                    app.status === 'approved' ? '#10B98120' : '#EF444420',
-                    color: app.status === 'sent' ? '#3B82F6' : 
+                    color: app.status === 'sent' ? '#3B82F6' :
                            app.status === 'reviewing' ? '#F59E0B' :
                            app.status === 'approved' ? '#10B981' : '#EF4444'
                   }}>
@@ -372,21 +414,18 @@ fetchApplications();
                 </div>
                 <div className="table-cell">
                   <div className="action-buttons">
-                    <button 
-                      className="view-btn"
-                      onClick={() => handleView(app)}
-                    >
+                    <button className="view-btn" onClick={() => handleView(app)}>
                       <Eye size={16} />
                     </button>
                     {app.status === 'reviewing' && (
                       <>
-                        <button 
+                        <button
                           className="approve-btn-small"
                           onClick={() => onStatusChange(app.id, 'approved')}
                         >
                           <Check size={16} />
                         </button>
-                        <button 
+                        <button
                           className="reject-btn-small"
                           onClick={() => onStatusChange(app.id, 'rejected')}
                         >
@@ -400,72 +439,15 @@ fetchApplications();
             ))}
           </div>
         )}
-        
         {selectedApp && (
-          <ApplicationDetail 
-            application={selectedApp} 
+          <ApplicationDetail
+            application={selectedApp}
             onClose={() => setSelectedApp(null)}
             onStatusChange={onStatusChange}
           />
         )}
       </>
     );
-  };
-
-  const handleDeleteStudent = async (id) => {
-    if (!window.confirm("Voulez-vous vraiment supprimer cet étudiant ?")) return;
-    
-    try {
-      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      const headers = token ? { 'Authorization': `Token ${token}` } : {};
-      
-      await axios.delete(`http://localhost:8000/api/students/${id}/delete/`, { headers });
-      fetchData();
-      alert('Étudiant supprimé avec succès');
-    } catch (error) {
-      console.error('Erreur lors de la suppression:', error);
-      alert('Erreur lors de la suppression');
-    }
-  };
-
-  const handleDeleteAdmin = async (id) => {
-    if (!window.confirm("Voulez-vous vraiment supprimer cet administrateur ?")) return;
-    
-    try {
-      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      const headers = token ? { 'Authorization': `Token ${token}` } : {};
-      
-      await axios.delete(`http://localhost:8000/api/admins/${id}/delete/`, { headers });
-      fetchData();
-      alert('Administrateur supprimé avec succès');
-    } catch (error) {
-      console.error('Erreur lors de la suppression:', error);
-      alert('Erreur lors de la suppression');
-    }
-  };
-
-  const handleAddAdmin = async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    
-    try {
-      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      const headers = token ? { 'Authorization': `Token ${token}` } : {};
-      
-      await axios.post("http://localhost:8000/api/admins/add/", {
-        first_name: formData.get("prenom"),
-        last_name: formData.get("nom"),
-        email: formData.get("email"),
-        password: formData.get("password"),
-      }, { headers });
-      
-      alert("Nouvel admin ajouté !");
-      e.target.reset();
-      fetchData();
-    } catch (error) {
-      console.error('Erreur lors de l\'ajout:', error);
-      alert('Erreur lors de l\'ajout de l\'admin');
-    }
   };
 
   if (isLoading) {
@@ -478,283 +460,308 @@ fetchApplications();
   }
 
   return (
-    <div className="admin-dashboard">
-      {/* Header */}
-      <header className="admin-header">
-        <div className="header-content">
-          <div className="header-left">
-            <h1 className="dashboard-title">
-              <span className="title-icon">⚡</span>
-              Dashboard Admin
-            </h1>
-            <p className="welcome-text">
-              Bienvenue <strong>{userInfo.prenom} {userInfo.nom}</strong>
-            </p>
-          </div>
-          <div className="header-right">
-            <div className="user-avatar">
-              {userInfo.prenom?.charAt(0)}{userInfo.nom?.charAt(0)}
-            </div>
+    <div className="dashboard-container">
+      {/* Sidebar */}
+      <div className="sidebar">
+        <div className="sidebar-header">
+          <div className="logo">
+            <img src={logo} alt="Logo" className="sidebar-logo-img" />
           </div>
         </div>
-      </header>
-
-      {/* Stats Cards */}
-      <div className="stats-section">
-        <div className="stat-card primary">
-          <div className="stat-icon">👥</div>
-          <div className="stat-content">
-            <h3>Étudiants</h3>
-            <p className="stat-number">{students.length}</p>
-            <span className="stat-label">Total inscrits</span>
+        <nav className="sidebar-nav">
+          <div className="nav-section">
+            {navigationItems.map((item) => {
+              const IconComponent = item.icon;
+              return (
+                <button
+                  key={item.id}
+                  className={`nav-item ${activeTab === item.id ? 'active' : ''}`}
+                  onClick={() => handleNavigation(item.id)}
+                >
+                  <div className="nav-icon" style={{ color: item.color }}>
+                    <IconComponent size={20} />
+                  </div>
+                  <span className="nav-label" style={{ color: item.color }}>{item.label}</span>
+                  {item.badge && <span className="nav-badge">{item.badge}</span>}
+                </button>
+              );
+            })}
           </div>
-        </div>
-        
-        <div className="stat-card secondary">
-          <div className="stat-icon">👨‍💼</div>
-          <div className="stat-content">
-            <h3>Administrateurs</h3>
-            <p className="stat-number">{admins.length}</p>
-            <span className="stat-label">Membres de l'équipe</span>
+          <div className="nav-section bottom">
+            {bottomNavigationItems.map((item) => {
+              const IconComponent = item.icon;
+              return (
+                <button
+                  key={item.id}
+                  className="nav-item"
+                  onClick={() => handleNavigation(item.id)}
+                >
+                  <div className="nav-icon" style={{ color: item.color }}>
+                    <IconComponent size={20} />
+                  </div>
+                  <span className="nav-label" style={{ color: item.color }}>{item.label}</span>
+                </button>
+              );
+            })}
           </div>
-        </div>
-        
-        <div className="stat-card tertiary">
-          <div className="stat-icon">📊</div>
-          <div className="stat-content">
-            <h3>Activité</h3>
-            <p className="stat-number">100%</p>
-            <span className="stat-label">Système opérationnel</span>
-          </div>
-        </div>
+        </nav>
       </div>
 
-      {/* Navigation Tabs */}
-      {/* Modifiez la section des tabs pour inclure l'onglet applications */}
-      <div className="tabs-container">
-        <button 
-          className={`tab ${activeTab === 'students' ? 'active' : ''}`}
-          onClick={() => setActiveTab('students')}
-        >
-          <span>📚</span> Gestion des Étudiants
-        </button>
-        <button 
-          className={`tab ${activeTab === 'admins' ? 'active' : ''}`}
-          onClick={() => setActiveTab('admins')}
-        >
-          <span>👨‍💼</span> Gestion des Administrateur
-        </button>
-        <button 
-          className={`tab ${activeTab === 'applications' ? 'active' : ''}`}
-          onClick={() => setActiveTab('applications')}
-        >
-          <span>📋</span> Gestion des Candidatures ({applications.length})
-        </button>
-      </div>
-
-      {/* Content Area */}
-      <div className="content-area">
-        {activeTab === 'students' && (
-          <div className="students-section">
-            <div className="section-header">
-              <h2>Liste des Étudiants</h2>
-              <div className="search-bar">
-                <input 
-                  type="text" 
-                  placeholder="Rechercher un étudiant..." 
-                  className="search-input"
-                />
-                <button className="search-btn">🔍</button>
+      {/* Main Content */}
+      <div className="main-content">
+        {/* Header */}
+        <header className="admin-header">
+          <div className="header-content">
+            <div className="header-left">
+              <h1 className="dashboard-title">
+                <span className="title-icon">⚡</span>
+                Dashboard Admin
+              </h1>
+              <p className="welcome-text">
+                Bienvenue <strong>{userInfo.prenom} {userInfo.nom}</strong>
+              </p>
+            </div>
+            <div className="header-right">
+              <div className="user-avatar">
+                {userInfo.prenom?.charAt(0)}{userInfo.nom?.charAt(0)}
               </div>
             </div>
-            
-            {students.length === 0 ? (
-              <div className="empty-state">
-                <div className="empty-icon">📝</div>
-                <h3>Aucun étudiant trouvé</h3>
-                <p>Les nouveaux étudiants apparaîtront ici</p>
-              </div>
-            ) : (
-              <div className="table-container">
-                <table className="modern-table">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Nom complet</th>
-                      <th>Email</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {students.map((student) => (
-                      <tr key={student.user__id}>
-                        <td>
-                          <span className="id-badge">#{student.user__id}</span>
-                        </td>
-                        <td>
-                          <div className="user-cell">
-                            <div className="user-avatar-small">
-                              {student.user__first_name?.charAt(0)}{student.user__last_name?.charAt(0)}
-                            </div>
-                            <div>
-                              <strong>{student.user__first_name} {student.user__last_name}</strong>
-                            </div>
-                          </div>
-                        </td>
-                        <td>{student.user__email}</td>
-                        <td>
-                          <button 
-                            onClick={() => handleDeleteStudent(student.user__id)} 
-                            className="action-btn delete"
-                          >
-                            🗑️ Supprimer
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
           </div>
-        )}
+        </header>
 
-        {activeTab === 'admins' && (
-          <div className="admins-section">
-            <div className="section-header">
-              <h2>Liste des Administrateurs</h2>
-              <div className="search-bar">
-                <input 
-                  type="text" 
-                  placeholder="Rechercher un administrateur..." 
-                  className="search-input"
-                />
-                <button className="search-btn">🔍</button>
-              </div>
+        {/* Stats Cards */}
+        <div className="stats-section">
+          <div className="stat-card primary">
+            <div className="stat-icon">👥</div>
+            <div className="stat-content">
+              <h3>Étudiants</h3>
+              <p className="stat-number">{students.length}</p>
+              <span className="stat-label">Total inscrits</span>
             </div>
-            
-            {admins.length === 0 ? (
-              <div className="empty-state">
-                <div className="empty-icon">👨‍💼</div>
-                <h3>Aucun administrateur trouvé</h3>
-                <p>Les nouveaux administrateurs apparaîtront ici</p>
-              </div>
-            ) : (
-              <div className="table-container">
-                <table className="modern-table">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Nom complet</th>
-                      <th>Email</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {admins.map((admin) => (
-                      <tr key={admin.user__id}>
-                        <td>
-                          <span className="id-badge">#{admin.user__id}</span>
-                        </td>
-                        <td>
-                          <div className="user-cell">
-                            <div className="user-avatar-small">
-                              {admin.user__first_name?.charAt(0)}{admin.user__last_name?.charAt(0)}
-                            </div>
-                            <div>
-                              <strong>{admin.user__first_name} {admin.user__last_name}</strong>
-                            </div>
-                          </div>
-                        </td>
-                        <td>{admin.user__email}</td>
-                        <td>
-                          <button 
-                            onClick={() => handleDeleteAdmin(admin.user__id)} 
-                            className="action-btn delete"
-                          >
-                            🗑️ Supprimer
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-            
-            {/* Formulaire d'ajout d'admin en bas du tableau */}
-            <div className="add-admin-section" style={{ marginTop: '2rem' }}>
+          </div>
+          <div className="stat-card secondary">
+            <div className="stat-icon">👨‍💼</div>
+            <div className="stat-content">
+              <h3>Administrateurs</h3>
+              <p className="stat-number">{admins.length}</p>
+              <span className="stat-label">Membres de l'équipe</span>
+            </div>
+          </div>
+          <div className="stat-card tertiary">
+            <div className="stat-icon">📊</div>
+            <div className="stat-content">
+              <h3>Activité</h3>
+              <p className="stat-number">100%</p>
+              <span className="stat-label">Système opérationnel</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Content Area */}
+        <div className="content-area">
+          {activeTab === 'students' && (
+            <div className="students-section">
               <div className="section-header">
-                <h2>Créer un nouvel administrateur</h2>
-                <p>Ajoutez un membre à votre équipe d'administration</p>
-              </div>
-              
-              <form onSubmit={handleAddAdmin} className="modern-form">
-                <div className="form-grid">
-                  <div className="form-group">
-                    <label htmlFor="prenom">Prénom</label>
-                    <input 
-                      type="text" 
-                      id="prenom"
-                      name="prenom" 
-                      placeholder="Entrez le prénom" 
-                      required 
-                    />
-                  </div>
-                  
-                  <div className="form-group">
-                    <label htmlFor="nom">Nom</label>
-                    <input 
-                      type="text" 
-                      id="nom"
-                      name="nom" 
-                      placeholder="Entrez le nom" 
-                      required 
-                    />
-                  </div>
-                  
-                  <div className="form-group">
-                    <label htmlFor="email">Email</label>
-                    <input 
-                      type="email" 
-                      id="email"
-                      name="email" 
-                      placeholder="admin@example.com" 
-                      required 
-                    />
-                  </div>
-                  
-                  <div className="form-group">
-                    <label htmlFor="password">Mot de passe</label>
-                    <input 
-                      type="password" 
-                      id="password"
-                      name="password" 
-                      placeholder="Mot de passe sécurisé" 
-                      required 
+                <h2>Liste des Étudiants</h2>
+                <div className="search-bar">
+                  <div className="search-input-container">
+                    <Search className="search-icon" size={20} />
+                    <input
+                      type="text"
+                      placeholder="Rechercher un étudiant..."
+                      className="search-input"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
                     />
                   </div>
                 </div>
-                
-                <button type="submit" className="submit-btn">
-                  <span>✨</span> Créer l'administrateur
-                </button>
-              </form>
-            </div>
-          </div>
-        )}
+              </div>
 
-        {/* Ajoutez cette condition dans la section content-area */}
-        {activeTab === 'applications' && (
-          <div className="applications-section">
-            <AdminApplicationManager 
-              applications={applications} 
-              onStatusChange={handleApplicationStatusChange}
-              selectedApp={selectedApp}
-              setSelectedApp={setSelectedApp}
-            />
-          </div>
-        )}
+              {filteredStudents.length === 0 ? (
+                <div className="empty-state">
+                  <div className="empty-icon">📝</div>
+                  <h3>Aucun étudiant trouvé</h3>
+                  <p>{searchTerm ? "Aucun résultat pour cette recherche" : "Les nouveaux étudiants apparaîtront ici"}</p>
+                </div>
+              ) : (
+                <div className="table-container">
+                  <table className="modern-table">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Nom complet</th>
+                        <th>Email</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredStudents.map((student) => (
+                        <tr key={student.user__id}>
+                          <td>
+                            <span className="id-badge">#{student.user__id}</span>
+                          </td>
+                          <td>
+                            <div className="user-cell">
+                              <div className="user-avatar-small">
+                                {student.user_first_name?.charAt(0)}{student.user_last_name?.charAt(0)}
+                              </div>
+                              <div>
+                                <strong>{student.user_first_name} {student.user_last_name}</strong>
+                              </div>
+                            </div>
+                          </td>
+                          <td>{student.user__email}</td>
+                          <td>
+                            <button
+                              onClick={() => handleDeleteStudent(student.user__id)}
+                              className="action-btn delete"
+                            >
+                              🗑️ Supprimer
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'admins' && (
+            <div className="admins-section">
+              <div className="section-header">
+                <h2>Liste des Administrateurs</h2>
+                <div className="search-bar">
+                  <div className="search-input-container">
+                    <Search className="search-icon" size={20} />
+                    <input
+                      type="text"
+                      placeholder="Rechercher un administrateur..."
+                      className="search-input"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {filteredAdmins.length === 0 ? (
+                <div className="empty-state">
+                  <div className="empty-icon">👨‍💼</div>
+                  <h3>Aucun administrateur trouvé</h3>
+                  <p>{searchTerm ? "Aucun résultat pour cette recherche" : "Les nouveaux administrateurs apparaîtront ici"}</p>
+                </div>
+              ) : (
+                <div className="table-container">
+                  <table className="modern-table">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Nom complet</th>
+                        <th>Email</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredAdmins.map((admin) => (
+                        <tr key={admin.user__id}>
+                          <td>
+                            <span className="id-badge">#{admin.user__id}</span>
+                          </td>
+                          <td>
+                            <div className="user-cell">
+                              <div className="user-avatar-small">
+                                {admin.user_first_name?.charAt(0)}{admin.user_last_name?.charAt(0)}
+                              </div>
+                              <div>
+                                <strong>{admin.user_first_name} {admin.user_last_name}</strong>
+                              </div>
+                            </div>
+                          </td>
+                          <td>{admin.user__email}</td>
+                          <td>
+                            <button
+                              onClick={() => handleDeleteAdmin(admin.user__id)}
+                              className="action-btn delete"
+                            >
+                              🗑️ Supprimer
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              <div className="add-admin-section" style={{ marginTop: '2rem' }}>
+                <div className="section-header">
+                  <h2>Créer un nouvel administrateur</h2>
+                  <p>Ajoutez un membre à votre équipe d'administration</p>
+                </div>
+                <form onSubmit={handleAddAdmin} className="modern-form">
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label htmlFor="prenom">Prénom</label>
+                      <input
+                        type="text"
+                        id="prenom"
+                        name="prenom"
+                        placeholder="Entrez le prénom"
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="nom">Nom</label>
+                      <input
+                        type="text"
+                        id="nom"
+                        name="nom"
+                        placeholder="Entrez le nom"
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="email">Email</label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="admin@example.com"
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="password">Mot de passe</label>
+                      <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Mot de passe sécurisé"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <button type="submit" className="submit-btn">
+                    <span>✨</span> Créer l'administrateur
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'applications' && (
+            <div className="applications-section">
+              <AdminApplicationManager
+                applications={applications}
+                onStatusChange={handleApplicationStatusChange}
+                selectedApp={selectedApp}
+                setSelectedApp={setSelectedApp}
+              />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

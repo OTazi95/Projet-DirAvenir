@@ -26,11 +26,10 @@
 }
 
 .hero-section {
-  /* Retirez la couleur de fond pour enlever l'encadrement */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 50px 0; /* Gardez le padding vertical mais retirez l'horizontal */
+  padding: 50px 0;
   position: relative;
   overflow: hidden;
 }
@@ -42,13 +41,13 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px; /* Ajoutez un padding horizontal pour l'espacement */
+  padding: 0 20px;
 }
 
 .hero-text {
   flex: 1;
   padding-right: 200px;
-   font-family: 'Poppins', sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 .hero-text h1 {
@@ -93,19 +92,19 @@
 }
 
 .hero-image {
-  width: 400px; /* Ajustez selon vos besoins */
+  width: 400px;
   height: auto;
   margin-right: -10px;
 }
+
 .platform-description {
-  /* Supprimez les styles de mise en page qui pourraient encadrer les cartes */
   display: flex;
   flex-direction: column;
   padding: 50px 20px;
 }
 
 .platform-content {
-  display: flex; /* Utilise Flexbox pour aligner le texte et les images */
+  display: flex;
   align-items: center;
   gap: 50px;
   max-width: 1200px;
@@ -113,9 +112,8 @@
 }
 
 .description-text {
-  flex: 1; /* Permet au texte de prendre l'espace disponible */
-   font-family: 'Poppins', sans-serif;
-  
+  flex: 1;
+  font-family: 'Poppins', sans-serif;
 }
 
 .description-text h2 {
@@ -123,23 +121,23 @@
   margin-left: 20px;
   font-size: 2.5rem;
   color: #541652;
-  font-weight: bold; /* Assurez-vous que le texte en noir est en gras */
-  line-height: 1.2; /* Ajustez l'espacement entre les lignes */
+  font-weight: bold;
+  line-height: 1.2;
   font-family: 'Poppins', sans-serif;
   margin-left: 0;
 }
 
 .yellow-text {
-  color: #f5B400 /* Applique la couleur jaune à cette classe */
+  color: #f5B400 !important;
 }
 
 /* Styles pour les points décoratifs */
 .decorative-dots {
   position: absolute;
-  top: 133%; /* Positionne l'image juste en dessous du texte */
+  top: 133%;
   left: 0;
-  transform: translateY(10px); /* Ajoute un petit espace */
-  width: 160px; /* Ajustez la largeur de votre image */
+  transform: translateY(10px);
+  width: 160px;
   height: auto;
   margin-left: 55px;
 }
@@ -147,26 +145,21 @@
 /* Styles pour le carrousel d'images */
 .service-images-container {
   display: flex;
-  overflow-x: auto; /* Permet toujours le défilement */
+  overflow-x: auto;
   gap: 20px;
   padding: 20px 0;
-  /* Nouveau : Définir une largeur pour n'afficher que deux images */
-  /* La largeur est calculée pour 2 images (250px * 2) + l'espace (20px) */
   width: 800px; 
-  
   -ms-overflow-style: none;
   scrollbar-width: none;
-
 }
 
 .service-images-container::-webkit-scrollbar {
   display: none;
 }
 
-/* Style des images à l'intérieur du conteneur */
 .service-images-container img {
   flex-shrink: 0;
-  width: 370px; /* Taille de l'image (vous pouvez l'ajuster) */
+  width: 370px;
   height: auto;
   border-radius: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
@@ -180,7 +173,7 @@
 /* Les points de navigation sous le carrousel */
 .carousel-nav-dots {
   display: flex;
-  justify-content: center; /* Pour centrer les points */
+  justify-content: center;
   gap: 10px;
   margin-top: 20px;
 }
@@ -199,23 +192,6 @@
   border-radius: 5px;
 }
 
-/* DESCRIPTION */
-.program-description {
-  color: #f3f4f6;
- font-family: 'Poppins', sans-serif;
- font-size: 0.85rem;
-  margin-bottom: 15px;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  display: -webkit-box;     
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-
-}
-
-
-
-
 /* 3. Who Can Join */
 .who-can-join {
   padding: 50px 20px;
@@ -233,8 +209,8 @@
 .join-list {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 50px; /* Augmentez le gap pour plus d'espace entre les éléments */
-  flex-grow: 1; /* Permet à la liste de s'étendre et de pousser l'image de droite */
+  gap: 50px;
+  flex-grow: 1;
 }
 
 .join-text {
@@ -247,7 +223,6 @@
   margin-bottom: 5px;
   font-family: 'Poppins', sans-serif;
   font-weight: 300;
-
 }
 
 .join-text h2 {
@@ -257,15 +232,13 @@
   margin-left: -20px;
   font-family: 'Poppins', sans-serif;
   font-weight: bold;
-   text-align: left; 
+  text-align: left; 
 }
 
 .join-item .item-text h4 {
-  /* Rendre les titres "Colleges/Universities", "Students", etc. en gris */
-  color: #000; /* Utiliser une couleur grise */
+  color: #000;
   font-size: 1.03rem;
   font-weight: bold;
-
 }
 
 .join-item {
@@ -274,7 +247,7 @@
   gap: 15px;
 }
 
-.join-item  img:hover{
+.join-item img:hover {
   transform: translateY(-5px);
 }
 
@@ -285,31 +258,28 @@
 }
 
 .item-text {
-  /* Changez la direction de la flexbox pour aligner les éléments verticalement */
   display: flex;
   flex-direction: column; 
-  align-items: center; /* Centre le texte et l'image */
-  text-align: center; /* Centre le texte */
+  align-items: center;
+  text-align: center;
 }
 
-
 .item-text img {
-  /* Gardez la largeur de l'image et la marge */
   width: 90px !important;
   height: 90px !important; 
-  margin-right: 0; /* Enlevez la marge droite, car le texte est en dessous */
-  margin-bottom: 10px; /* Ajoutez un peu d'espace entre l'icône et le texte */
+  margin-right: 0;
+  margin-bottom: 10px;
 }
 
 .institutions-icon {
   margin-left: -90px; 
 }
 
-.colleges{
+.colleges {
   margin-left: -70px; 
 }
 
-.career{
+.career {
   margin-left: -30px; 
 }
 
@@ -320,140 +290,252 @@
 }
 
 /* 4. How It Works Section */
-
 .how-it-works-illustration {
-  max-width: 96%; /* Augmente la largeur de l'image */
+  max-width: 96%;
   height: auto;
   border-radius: 15px; 
   margin-left: 4%;
 }
 
+/* ============================================
+   SECTION PROGRAMMES POPULAIRES - FORCER LE NOUVEAU DESIGN
+   ============================================ */
 
-/* 5. Popular Programs Section */
+/* Container principal */
 .popular-programs-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 50px 20px;
-  background-color: #f2f2f2;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  padding: 80px 20px !important;
+  background-color: #f2f2f2 !important;
 }
 
+/* Titre */
 .popular-programs-section h2 {
-  font-size: 2rem;
-  color: #541652;
-  margin-bottom: 40px;
+  font-size: 3rem !important;
+  font-weight: bold !important;
+  margin-bottom: 60px !important;
+  color: #541652 !important;
+  text-align: center !important;
 }
 
+.highlight-yellow {
+  color: #f5B400 !important;
+}
+
+/* Grille de cartes - FORCER LE NOUVEAU LAYOUT */
 .programs-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  width: 100%;
-  max-width: 1200px;
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 30px !important;
+  width: 100% !important;
+  max-width: 1200px !important;
+  margin-bottom: 50px !important;
 }
 
+/* CARTE PROGRAMME - NOUVEAU DESIGN FORCÉ */
 .program-card {
-  background-color: #541652; /* Fond violet */
-  color: #fff;
-  border-radius: 10px;
-  padding-top: 20px; /* Laisse de l'espace en haut pour le logo */
-  text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease-in-out;
-  padding-bottom: 20px; /* Ajoute un espace en bas */
+  background: #541652  !important;
+  border-radius: 20px !important;
+  padding: 20px !important;
+  height: 400px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  position: relative !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+  overflow: visible !important;
 }
 
 .program-card:hover {
-  transform: translateY(-5px); /* Effet de survol */
+  transform: translateY(-8px) !important;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25) !important;
 }
 
-.program-card img {
-  width: 80px;
-  height: auto;
-  margin-bottom: 15px;
+/* LOGO WRAPPER - CERCLE BLANC EN HAUT */
+.logo-wrapper {
+  width: 80px !important;
+  height: 80px !important;
+  background-color: white !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-bottom: 20px !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
+  flex-shrink: 0 !important;
 }
 
-/* Style de la partie blanche avec les détails */
-.program-details-card {
-  background-color: #fff;
-  border-radius: 15px; /* Arrondit les coins */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin: 0 10px; /* Ajoute un espace sur les côtés pour faire ressortir le fond violet */
-  margin-top: 15px; /* Écarte le contenu blanc du logo */
+.logo-wrapper img {
+  width: 60px !important;
+  height: 60px !important;
+  object-fit: contain !important;
+  border-radius: 50% !important;
 }
 
-/* Styles du texte dans la carte blanche */
-.program-details-card h3 {
-  color: #541652; /* Le titre est violet */
-  font-size: 1.2rem;
-  margin-bottom: 10px;
+/* CONTENU BLANC - NOUVELLE STRUCTURE */
+.program-card .card-content {
+  background-color: white !important;
+  border-radius: 15px !important;
+  padding: 20px 15px 15px !important;
+  width: 100% !important;
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  text-align: center !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
 }
 
-.program-details-card p {
-  color: #777; /* La description est grise */
-  font-size: 0.9rem;
-  line-height: 1.4;
-  min-height: 40px;
+/* TITRE DU PROGRAMME */
+
+/* DESCRIPTION DU PROGRAMME 
+.program-card .card-content p {
+  color: #666 !important;
+  font-size: 0.9rem !important;
+  line-height: 1.4 !important;
+  margin-bottom: 20px !important;
+  flex: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+}*/
+
+/* ACTIONS (BOUTONS) */
+.program-card .card-actions {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  width: 100% !important;
 }
 
-/* Conteneur des boutons */
-.program-actions {
-  display: flex;
-  flex-wrap: wrap; /* Permet aux boutons de passer à la ligne sur de petits écrans */
-  justify-content: center;
-  gap: 10px;
-  margin-top: 15px;
+.program-card .action-buttons-top {
+  display: flex !important;
+  gap: 8px !important;
+  justify-content: center !important;
+  margin-bottom: 8px !important;
 }
 
-/* Style pour tous les boutons */
-.program-actions button {
-  padding: 8px 12px;
-  border-radius: 50px;
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
-  
-  display: flex; /* Active Flexbox */
-  align-items: center; /* Centre verticalement les icônes et le texte */
-  justify-content: center;
-  
-  font-weight: 600; /* Le poids de la police a été modifié ici */
+/* PETITS BOUTONS (MORE INFOS / SAVE THIS) */
+.program-card .more-infos-button,
+.program-card .save-this-button {
+  background-color: transparent !important;
+  border: none !important;
+  color: #999 !important;
+  padding: 6px 10px !important;
+  border-radius: 12px !important;
+  font-size: 0.75rem !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
 }
 
-/* Style des boutons "More Info" et "Save This" */
-.program-actions .info-button,
-.program-actions .save-button {
-  background-color: #fff;
-  border: 1px solid #ffd700;
-  color: #777;
+.program-card .more-infos-button:hover,
+.program-card .save-this-button:hover {
+  color: #f5B400 !important;
+  background-color: rgba(245, 180, 0, 0.1) !important;
 }
 
-/* Style du bouton "Apply Now" */
-.program-actions .apply-button {
-  background-color: #ffd700;
-  border: none;
-  color: #541652;
-  font-weight: bold;
+/* BOUTON APPLY NOW */
+.program-card .apply-now-button {
+  background: linear-gradient(135deg, #f5B400, #e6a300) !important;
+  border: none !important;
+  color: white !important;
+  font-weight: 600 !important;
+  padding: 12px 0 !important;
+  border-radius: 25px !important;
+  font-size: 0.9rem !important;
+  cursor: pointer !important;
+  width: 100% !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 6px rgba(245, 180, 0, 0.3) !important;
 }
 
+.program-card .apply-now-button:hover {
+  background: linear-gradient(135deg, #e6a300, #cc9200) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(245, 180, 0, 0.4) !important;
+}
+
+.program-description {
+  color: #666 !important;
+  font-size: 0.9rem !important;
+  line-height: 1.4 !important;
+  margin-bottom: 15px !important;
+  overflow: hidden !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 3 !important;
+  line-clamp: 3 !important;
+  -webkit-box-orient: vertical !important;
+  text-overflow: ellipsis !important;
+  text-align: center !important;
+  height: 4.2rem !important;
+  max-height: 4.2rem !important;
+}
+
+/* BOUTON VIEW ALL */
 .view-all-button {
-  margin-top: 40px;
-  padding: 15px 30px;
-  border: none;
-  border-radius: 30px;
-  background-color: #541652;
-  color: #fff;
-  font-size: 1rem;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.2s ease;
+  background-color: #541652 !important;
+  color: white !important;
+  padding: 15px 40px !important;
+  border: none !important;
+  border-radius: 30px !important;
+  font-size: 1.1rem !important;
+  font-weight: bold !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 15px rgba(84, 22, 82, 0.3) !important;
 }
 
 .view-all-button:hover {
-  transform: translateY(-10px);
-  background-color: #541652b7
+  background-color: #6b2c5c !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 20px rgba(84, 22, 82, 0.4) !important;
 }
+
+/* Responsive pour les cartes */
+@media (max-width: 1200px) {
+  .programs-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 25px !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .programs-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px !important;
+  }
+  
+  .popular-programs-section h2 {
+    font-size: 2.5rem !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .programs-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+  
+  .popular-programs-section h2 {
+    font-size: 2rem !important;
+  }
+  
+  .program-card {
+    height: 350px !important;
+  }
+}
+
+/* ============================================
+   FIN SECTION PROGRAMMES POPULAIRES
+   ============================================ */
 
 /* 6. Section des réalisations */
 .achievements-section {
@@ -505,7 +587,6 @@
   width: 440px;
 }
 
-/* Première carte - 200 Students Abroad */
 .achievement-card.first-card {
   grid-column: 1;
   grid-row: 1;
@@ -523,7 +604,6 @@
   justify-content: space-between;
 }
 
-/* Deuxième carte - 70 Programs Available */
 .achievement-card.second-card {
   grid-column: 2;
   grid-row: 1;
@@ -542,7 +622,6 @@
   justify-content: space-between;
 }
 
-/* Troisième carte - 90% Students Satisfied (carte large) */
 .achievement-card.wide-card {
   grid-column: 1 / 3;
   grid-row: 2;
@@ -594,14 +673,12 @@
   font-weight: 500;
 }
 
-/* Style spécifique pour la carte 90% */
 .wide-card .satisfaction-text {
   font-size: 1rem;
   color: #666;
   line-height: 1.3;
 }
 
-/* Motif de points décoratif */
 .wide-card::after {
   content: '';
   position: absolute;
@@ -615,7 +692,6 @@
   opacity: 0.5;
 }
 
-/* Animation de flottement */
 @keyframes move-up-down {
   0%, 100% {
     transform: translateY(0);
@@ -625,7 +701,6 @@
   }
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .achievements-content {
     flex-direction: column;
@@ -646,6 +721,7 @@
     width: 100%;
   }
 }
+
 /* 7. Section des témoignages */
 .testimonials-section {
   padding: 80px 20px;
@@ -678,15 +754,10 @@
   margin-bottom: 60px;
 }
 
-.yellow-text {
-  color: #FCBE1C;
-}
-
 .purple-text {
   color: #541652;
 }
 
-/* NOUVEAU: Container horizontal pour les témoignages */
 .testimonials-horizontal-container {
   display: flex;
   justify-content: center;
@@ -694,7 +765,7 @@
   flex-wrap: wrap;
   position: relative;
   z-index: 1;
-  margin-top: -50px; /* Ajustement pour compenser le titre positionné */
+  margin-top: -50px;
 }
 
 .testimonial-card {
@@ -703,7 +774,7 @@
   padding: 60px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   width: 450px;
-  min-height: 400px; /* Hauteur minimale pour uniformité */
+  min-height: 400px;
   text-align: left;
   position: relative;
   transition: transform 0.4s ease-out, box-shadow 0.4s ease-out;
@@ -745,7 +816,7 @@
 
 .profile-info {
   flex: 1;
-  min-width: 0; /* Permet au texte de se réduire */
+  min-width: 0;
 }
 
 .profile-info h3 {
@@ -815,7 +886,6 @@
   margin: 0;
 }
 
-/* Animation de survol */
 .testimonial-card:hover {
   transform: translateY(-10px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
@@ -834,7 +904,6 @@
   }
 }
 
-/* Responsive Design */
 @media (max-width: 1200px) {
   .testimonials-horizontal-container {
     gap: 20px;
@@ -884,11 +953,8 @@
     font-size: 0.9rem;
   }
 }
-/*
-  ========================================
-  8. Section "Our Destinations"
-  ========================================
-*/
+
+/* 8. Section "Our Destinations" */
 .destinations-section,
 .partners-section {
   padding: 80px 20px;
@@ -949,56 +1015,105 @@
   z-index: 10;
 }
 
+/* ============================================
+   STYLES POUR DÉFILEMENT AUTOMATIQUE DES PARTENAIRES
+   ============================================ */
+
 .partners-section {
-  text-align: center;
-  margin: 50px 0;
-}
-
-.partners-title {
-  font-size: 2rem;
-  margin-bottom: 30px;
-  color: #541652;
-}
-
-.partner-item {
-  display: flex !important;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
-}
-
-.partner-logo-wrapper {
-  width: 180px;              /* taille du cercle */
-  height: 180px;
-  border-radius: 50%;        /* cercle parfait */
-  background: white;         
-  border: 10px solid #541652; /* bordure violette */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;          /* cache ce qui dépasse */
-}
-
-.partner-logo {
-  max-width: 80%;   /* garde une marge interne */
-  max-height: 80%;
-  object-fit: contain;
-  transition: transform 0.3s ease;
-}
-
-.partner-logo:hover {
-  transform: scale(1.1);
-}
-
-.destinations-title,
-.partners-title {
-  font-size: 2.8rem !important;
-  font-weight: bold !important;
-  font-family: 'Poppins', sans-serif !important;
-  margin-bottom: 50px !important;
+  padding: 80px 20px !important;
   text-align: center !important;
-  color: #541652 !important;
-  margin-top: -60px;
+  background-color: #f2f2f2 !important;
+  overflow: hidden !important;
+}
+
+.partners-scrolling-container {
+  width: 100% !important;
+  overflow: hidden !important;
+  position: relative !important;
+  height: 120px !important;
+  border-radius: 50px;
+}
+
+.partners-scrolling-track {
+  display: flex !important;
+  align-items: center !important;
+  gap: 40px !important;
+  animation: scrollLeft 580s linear infinite !important;
+  width: fit-content !important;
+  height: 100% !important;
+}
+
+.partners-scrolling-track:hover {
+  animation-play-state: paused !important;
+}
+
+.partner-scrolling-item {
+  flex-shrink: 0 !important;
+  width: 160px !important;
+  height: 100px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: white !important;
+  border-radius: 15px !important;
+  padding: 15px !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+  cursor: pointer !important;
+}
+
+.partner-scrolling-item:hover {
+  transform: translateY(-5px) scale(1.05) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
+  z-index: 10 !important;
+  position: relative !important;
+}
+
+.partner-scrolling-logo {
+  max-width: 100% !important;
+  max-height: 70px !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
+  transition: all 0.3s ease !important;
+  /* Logos en couleur par défaut */
+  filter: none !important;
+}
+
+.partner-scrolling-item:hover .partner-scrolling-logo {
+  transform: scale(1.1) !important;
+}
+
+/* Animation de défilement de droite vers la gauche */
+@keyframes scrollLeft {
+  0% {
+    transform: translateX(100vw);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* Dégradé pour effet de fondu sur les bords */
+.partners-scrolling-container::before,
+.partners-scrolling-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 100px;
+  height: 100%;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.partners-scrolling-container::before {
+  left: 0;
+  background: linear-gradient(to right, #f2f2f2, transparent);
+}
+
+.partners-scrolling-container::after {
+  right: 0;
+  background: linear-gradient(to left, #f2f2f2, transparent);
 }
 
 .program-logo {
@@ -1017,11 +1132,9 @@
     transform: translateX(0);
   }
   to {
-    transform: translateX(-50%); /* défile la moitié car on a cloné */
+    transform: translateX(-50%);
   }
 }
-
-
 
 .destinations-title,
 .partners-title {
@@ -1034,15 +1147,12 @@
   margin-top: -60px;
 }
 
-
-
 .filters-container {
   display: flex;
   gap: 12px;
   align-items: center;
   justify-content: center;
   margin-top: 20px;
-
   background: transparent !important;
   box-shadow: none !important;
   border: none !important;
@@ -1055,11 +1165,11 @@
   outline: none;
   font-size: 16px;
   transition: all 0.3s ease !important;
-  margin-left: -100px;
+  margin-left: -20px;
 }
 
 .filter-input:focus {
-  border-color: var(--main-mauve) !important;
+  border-color: var(--primary-color) !important;
   box-shadow: 0 0 8px rgba(84, 22, 82, 0.4) !important;
 }
 
@@ -1072,10 +1182,11 @@
   cursor: pointer !important;
   font-weight: bold !important;
   transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s !important;
+  margin-left: -10px!important;
 }
 
 .search-button:hover {
-  background-color: #541652 !important;
+  background-color: #6b2c5c !important;
   transform: translateY(-2px) !important;
   box-shadow: 0 4px 12px rgba(84, 22, 82, 0.4) !important;
 }
@@ -1089,20 +1200,11 @@
   cursor: pointer !important;
   font-weight: bold !important;
   transition: transform 0.2s, box-shadow 0.2s !important;
+  margin-right: 50px!important;
 }
 
-.reset-button:hover{
-    background-color: #f5B400 !important;
+.reset-button:hover {
+  background-color: #e6a300 !important;
   transform: translateY(-2px) !important;
-  box-shadow: 0 4px 12px rgba(84, 22, 82, 0.4) !important;
-}
-
-.apply-button {
-  background-color: #f5B400;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 10px;
+  box-shadow: 0 4px 12px rgba(245, 180, 0, 0.4) !important;
 }

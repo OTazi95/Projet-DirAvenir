@@ -130,7 +130,49 @@ function Dashboard() {
   const [searchCategory, setSearchCategory] = useState('');
   const [searchCountry, setSearchCountry] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  const [logos, setLogos] = useState([]);
+  // Ajoutez cet état en haut de votre composant Dashboard
+const [savedPrograms, setSavedPrograms] = useState([]);
+const [logos, setLogos] = useState([]);
+
+useEffect(() => {
+  axios.get("http://localhost:8000/api/logos/")
+    .then((res) => {
+      console.log("Logos API:", res.data);
+      setLogos(res.data.logos);
+    })
+    .catch((err) => console.error("Erreur logos :", err));
+}, []);
+
+// Chargez les programmes sauvegardés depuis le localStorage au démarrage
+useEffect(() => {
+  const savedProgramsFromStorage = localStorage.getItem('savedPrograms');
+  if (savedProgramsFromStorage) {
+    try {
+      const parsed = JSON.parse(savedProgramsFromStorage);
+      setSavedPrograms(parsed);
+    } catch (error) {
+      console.error('Erreur lors du parsing des programmes sauvegardés:', error);
+    }
+  }
+}, []);
+
+// Sauvegardez les programmes dans le localStorage à chaque changement
+useEffect(() => {
+  localStorage.setItem('savedPrograms', JSON.stringify(savedPrograms));
+}, [savedPrograms]);
+
+
+
+  const toggleSaveProgram = (programId) => {
+  setSavedPrograms((prev) => {
+    const newSavedPrograms = prev.includes(programId)
+      ? prev.filter((id) => id !== programId)
+      : [...prev, programId];
+
+    return newSavedPrograms;
+  });
+};
+
 
   const [activeDot, setActiveDot] = useState(0);
   const containerRef = useRef(null);
@@ -143,15 +185,6 @@ function Dashboard() {
       setPrenom(prenomLocal);
       setNom(nomLocal);
     }
-  }, []);
-
-  useEffect(() => {
-    axios.get("http://localhost:8000/api/logos/")
-      .then((res) => {
-        console.log("Logos API:", res.data);
-        setLogos(res.data.logos);
-      })
-      .catch((err) => console.error("Erreur logos :", err));
   }, []);
 
   // Charger toutes les filières uniques et les 5 premiers programmes
@@ -261,12 +294,12 @@ const handleProgramDetail = (programId) => {
               Up To Success <br />
               With Us
             </h1>
-            <p id='ph'>Get the guidance you need for the future of work.</p>
+            <p id='ph'>Get the guidance you need for <br/>the future of work.</p>
  {/* Nouvelle barre de recherche avec input (comme Programs.jsx) */}
         <div className="filters-container">
           <input
             type="text"
-            placeholder="Reserch by categories..."
+            placeholder="Research by categories..."
             value={searchCategory}
             onChange={handleCategoryChange}
             className="filter-input"
@@ -281,69 +314,76 @@ const handleProgramDetail = (programId) => {
           </button>
         </div>
 
-        {/* Résultats de la nouvelle recherche */}
+        {/* Résultats de la nouvelle recherche - CORRIGÉ */}
         {searchResults.length > 0 && (
-          <div className="search-results">
-            <h3>Résultats de recherche ({searchResults.length})</h3>
+          <div className="popular-programs-section" style={{ paddingTop: '40px', paddingBottom: '40px' }}>
+            <h2>
+              Search <span className="highlight-yellow">Results</span> ({searchResults.length})
+            </h2>
 
-<div className="programs-grid">
-  {searchResults.map((program, index) => (
-    <motion.div
-      key={program.id || index}
-      className="program-card"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.05 }}
-    >
-      {/* HEADER */}
-      <div className="card-header">
-        <div className="logo-container">
-          <img
-            src={program.logo ? `http://localhost:8000/media/logo/${program.logo}` : '/default-logo.png'}
-            alt={`${program.universities} logo`}
-            className="program-logo"
-          />
-        </div>
-      </div>
+            <div className="programs-grid">
+              {searchResults.map((program, index) => (
+                <motion.div
+                  key={program.id || index}
+                  className="program-card"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: index * 0.05 }}
+                >
+                  {/* Logo de l'université en haut */}
+                  <div className="logo-wrapper">
+                    <img
+                      src={program.logo ? `http://localhost:8000/media/logo/${program.logo}` : '/default-logo.png'}
+                      alt={`${program.universities} logo`}
+                    />
+                  </div>
 
-      {/* CONTENT */}
-      <div className="card-content">
-        {/* catégorie en badge */}
-        <h3 className="program-title">{program.program}</h3>
-        <p className="program-description">{program.description}</p>
-      </div>
+                  {/* Contenu blanc */}
+                  <div className="card-content">
+                    <h3>{program.program}</h3>
+                    <p className="program-description">{program.description}</p>
 
-      {/* ACTIONS */}
-      <div className="card-actions">
-        <div className="action-buttons-top">
-          <button
-            className="more-infos-button"
-            onClick={() => handleProgramDetail(program.id)}
-          >
-            <span className="icon">💬</span> More Infos
-          </button>
-          <button className="save-this-button">
-            <span className="icon">⭐</span> Save This
-          </button>
-        </div>
-        <button
-          className="apply-now-button"
-          onClick={() => handleApply(program.id)}
-        >
-          Apply Now
-        </button>
-      </div>
-    </motion.div>
-  ))}
-</div>
-
+                    {/* Boutons */}
+                    <div className="card-actions">
+                      <div className="action-buttons-top">
+                        <button
+                          className="more-infos-button"
+                          onClick={() => handleProgramDetail(program.id)}
+                        >
+                          More Infos
+                        </button>
+                        <button
+                      className={`save-this-button ${savedPrograms.includes(program.id) ? 'saved' : ''}}
+                      onClick={() => toggleSaveProgram(program.id)`}
+                    >
+                      {savedPrograms.includes(program.id) ? 'Unsave' : 'Save This'}
+                    </button>
+                      </div>
+                      <button
+                        className="apply-now-button"
+                        onClick={() => handleApply(program.id)}
+                      >
+                        Apply Now
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
         )}
 
-        {/* Message si pas de résultats */}
+        {/* Message si pas de résultats - CORRIGÉ */}
         {searchResults.length === 0 && (searchCategory || searchCountry) && (
-          <div className="no-results">
-            <p>Aucun programme trouvé pour ces critères de recherche.</p>
+          <div className="popular-programs-section" style={{ paddingTop: '40px', paddingBottom: '40px' }}>
+            <div className="no-results">
+              <h3 style={{ color: '#541652', textAlign: 'center', fontSize: '1.5rem' }}>
+                No programs found for these search criteria.
+              </h3>
+              <p style={{ color: '#777', textAlign: 'center', marginTop: '10px' }}>
+                Try different keywords or reset your filters.
+              </p>
+            </div>
           </div>
         )}
 
@@ -376,8 +416,8 @@ const handleProgramDetail = (programId) => {
           {[...Array(4)].map((_, index) => (
             <span
               key={index}
-              className={`dot ${index === activeDot ? 'active' : ''}`}
-              onClick={() => handleDotClick(index)}
+              className={`dot ${index === activeDot ? 'active' : ''}}
+              onClick={() => handleDotClick(index)`}
             ></span>
           ))}
         </div>
@@ -433,12 +473,11 @@ const handleProgramDetail = (programId) => {
         <img src={howitworks} alt="How it works illustration" className="how-it-works-illustration" />
       </section>
  
-   {/* SECTION PROGRAMMES POPULAIRES */}
+   {/* SECTION PROGRAMMES POPULAIRES - NOUVEAU DESIGN */}
       <div className="popular-programs-section">
         <h2>
           Popular <span className="highlight-yellow">Programs</span>
         </h2>
-
 <div className="programs-grid">
   {topPrograms.map((program, index) => (
     <motion.div
@@ -448,46 +487,45 @@ const handleProgramDetail = (programId) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.05 }}
     >
-      {/* HEADER */}
-      <div className="card-header">
-        <div className="logo-container">
-          <img 
-            src={program.logo ? `http://localhost:8000/media/logo/${program.logo}` : '/default-logo.png'}
-            alt={`${program.universities} logo`}
-            className="program-logo"
-          />
-        </div>
+      {/* Logo de l'université en haut */}
+      <div className="logo-wrapper">
+        <img
+          src={program.logo ? `http://localhost:8000/media/logo/${program.logo}` : '/default-logo.png'}
+          alt={`${program.universities} logo`}
+        />
       </div>
-
-      {/* CONTENT */}
+      {/* Contenu blanc */}
       <div className="card-content">
-        <h3 className="program-title">{program.program}</h3>
+        <h3 className='program-title'>{program.program}</h3>
         <p className="program-description">{program.description}</p>
-      </div>
-
-      {/* ACTIONS */}
-      <div className="card-actions">
-        <div className="action-buttons-top">
-          <button 
-            className="more-infos-button"
-            onClick={() => handleProgramDetail(program.id)}
+        {/* Boutons */}
+        <div className="card-actions">
+          <div className="action-buttons-top">
+            <button
+              className="more-infos-button"
+              onClick={() => handleProgramDetail(program.id)}
+            >
+              More Infos
+            </button>
+            <button
+              className={`save-this-button ${savedPrograms.includes(program.id) ? 'saved' : ''}`}
+              onClick={() => toggleSaveProgram(program.id)}
+            >
+              {savedPrograms.includes(program.id) ? 'Unsave' : 'Save This'}
+            </button>
+          </div>
+          <button
+            className="apply-now-button"
+            onClick={() => handleApply(program.id)}
           >
-            <span className="icon">💬</span> More Infos
-          </button>
-          <button className="save-this-button">
-            <span className="icon">⭐</span> Save This
+            Apply Now
           </button>
         </div>
-        <button 
-          className="apply-now-button" 
-          onClick={() => handleApply(program.id)}
-        >
-          Apply Now
-        </button>
       </div>
     </motion.div>
   ))}
 </div>
+
 
         {/* BOUTON VOIR TOUS LES PROGRAMMES */}
         <div className="view-all-container">
@@ -620,7 +658,6 @@ const handleProgramDetail = (programId) => {
         </div>
       </section>
 
-
       {/* 9. Our Destinations */}
       <section className="destinations-section">
         <h2 className="destinations-title">Our <span className="yellow-text">Destinations</span></h2>
@@ -640,30 +677,20 @@ const handleProgramDetail = (programId) => {
     Our <span className="yellow-text">Partners</span>
   </h2>
 
-<Slider
- dots={false}
-  infinite={true}
-  speed={4000}        
-  slidesToShow={5}
-  slidesToScroll={1}
-  autoplay={true}
-  autoplaySpeed={0}    
-  cssEase="linear"     
-  pauseOnHover={true}
-  arrows={false}
->
-  {logos.map((logo, index) => (
-    <div className="partner-item" key={index}>
-      <div className="partner-logo-wrapper">
-        <img
-          src={`http://localhost:8000/media/logo/${logo}`}
-            alt={`Partner ${index}`} 
-            className="program-logo" 
+  <div className="partners-scrolling-container">
+    <div className="partners-scrolling-track">
+      {/* Répéter les logos 3 fois pour un défilement continu */}
+      {[...logos, ...logos, ...logos].map((logo, index) => (
+        <div className="partner-scrolling-item" key={index}>
+          <img 
+            src={`http://localhost:8000/media/logo/${logo}`} 
+            alt={`Partner ${(index % logos.length) + 1}`} 
+            className="partner-scrolling-logo" 
           />
         </div>
-        </div>
       ))}
-</Slider>
+    </div>
+  </div>
 </section>
     </div>
   );

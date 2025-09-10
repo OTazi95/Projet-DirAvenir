@@ -5,7 +5,6 @@ import logo from '../assets/logo.png';
 import logo2 from '../assets/logoj.png';
 import { FaUserCircle, FaCog, FaGlobe, FaChevronDown } from 'react-icons/fa';
 import { AuthContext } from '../context/AuthContext';
-import UserProfileModal from '../components/UserProfileModal';
 import '../styles/Navbar.css';
 
 function Navbar() {
@@ -14,13 +13,16 @@ function Navbar() {
   const location = useLocation();
   const { t, i18n } = useTranslation();
 
-  const [showProfileModal, setShowProfileModal] = useState(false);
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate('/');
   };
+
+   const handleNavigateToDashboard = () => {
+    navigate('/welcome-etudiant');
+  }; 
 
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
@@ -97,7 +99,7 @@ function Navbar() {
 
           {isLoggedIn ? (
             <>
-              <FaUserCircle className="nav-icon" onClick={() => setShowProfileModal(true)} />
+              <FaUserCircle className="nav-icon" onClick={() => handleNavigateToDashboard()} />
               <button className="logout-btn" onClick={handleLogout}>{t('navbar.logout')}</button>
             </>
           ) : (
@@ -109,10 +111,7 @@ function Navbar() {
         </div>
       </nav>
 
-      <UserProfileModal
-        isOpen={showProfileModal}
-        onClose={() => setShowProfileModal(false)}
-      />
+ 
     </>
   );
 }

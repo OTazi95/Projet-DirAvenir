@@ -36,8 +36,7 @@ function Contact() {
     setSubmitStatus(null);
 
     try {
-      // 🔥 REMPLACEZ 'YOUR_FORM_ID' PAR VOTRE FORM ID FORMSPREE
-      const response = await fetch('https://formspree.io/f/mjkekkqq', {
+      const response = await fetch('https://formspree.io/f/mjkekkqq', {   // ici ou il faut changer le lien pour l'envoie de formulaire 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -211,7 +210,7 @@ function Contact() {
                 required
                 disabled={isSubmitting}
               >
-                <option value="">Choisissez un sujet</option>
+                <option value="">Choose your subject...</option>
                 <option value={t('contact.subjectOption1')}>{t('contact.subjectOption1')}</option>
                 <option value={t('contact.subjectOption2')}>{t('contact.subjectOption2')}</option>
                 <option value={t('contact.subjectOption3')}>{t('contact.subjectOption3')}</option>
@@ -254,7 +253,7 @@ function Contact() {
             {isSubmitting ? (
               <>
                 <span className="spinner"></span>
-                Envoi en cours...
+                Sending in progress...
               </>
             ) : (
               t('contact.sendButton')
