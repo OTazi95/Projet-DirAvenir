@@ -53,7 +53,7 @@ const WelcomeEtudiant = () => {
     { id: 'dashboard', label: 'Dashboard', icon: Home, color: '#3B82F6' },
     { id: 'applications', label: 'My Applications', icon: FileText, color: '#8B5CF6' },
     { id: 'profile', label: 'Edit Profile', icon: User, color: '#F59E0B' },
-    { id: 'notifications', label: 'Notifications', icon: Bell, color: '#10B981', badge: unreadCount },
+    { id: 'notifications', label: 'Notifications', icon: Bell, color: '#10B981' },
     { id: 'settings', label: 'Settings', icon: Settings, color: '#6B7280' }
   ];
 
@@ -74,6 +74,7 @@ const WelcomeEtudiant = () => {
           'Content-Type': 'application/json',
         }
       });
+      console.log('[fetchApplications] response.data:', response.data);
       setApplications(response.data);
       // Générer les notifications après avoir chargé les applications
       generateNotificationsFromApplications(response.data);
@@ -85,63 +86,102 @@ const WelcomeEtudiant = () => {
   };
 
   // Fonction pour générer des notifications à partir des applications
-  const generateNotificationsFromApplications = (apps) => {
+const generateNotificationsFromApplications = (apps) => {
+  try {
     const savedNotifications = JSON.parse(localStorage.getItem('studentNotifications')) || [];
+    const dismissed = JSON.parse(localStorage.getItem('dismissedNotifications')) || [];
+    console.log('[Notifications] savedNotifications (before):', savedNotifications);
+    console.log('[Notifications] applications received:', apps);
+
     const newNotifications = [];
 
     apps.forEach(app => {
-      // Vérifier si l'application a un statut différent de 'sent' et un reviewed_by
-      if (app.status !== 'sent' && app.reviewedBy) {
-        // Vérifier si une notification pour cette application existe déjà
-        const existingNotification = savedNotifications.find(n => n.applicationId === app.id);
+      const status = app.status;
+      // ignore if no status or still 'sent'
+      if (!status || status === 'sent') return;
 
-        if (!existingNotification) {
-          let title, message, type;
+      // check if we already have a notification for this application + this status
+      const already = savedNotifications.find(n => n.applicationId === app.id && n.type === status);
+      if (already) return;
 
-          switch (app.status) {
-            case 'approved':
-              title = "Candidature Approuvée";
-              message = `Votre candidature pour ${app.program} à ${app.university} a été approuvée.`;
-              type = "approved";
-              break;
-            case 'rejected':
-              title = "Candidature Rejetée";
-              message = `Votre candidature pour ${app.program} à ${app.university} a été rejetée.`;
-              type = "rejected";
-              break;
-            case 'reviewing':
-              title = "Candidature en Examen";
-              message = `Votre candidature pour ${app.program} à ${app.university} est en cours d'examen.`;
-              type = "reviewing";
-              break;
-            default:
-              return; // Ignorer les autres statuts
-          }
+      // build title/message with safe fallbacks
+      const program = app.program || (app.formData && app.formData.program) || 'ce programme';
+      const university = app.university || (app.formData && app.formData.university) || 'cette université';
 
-          newNotifications.push({
-            id: `notif-${app.id}`,
-            applicationId: app.id,
-            title,
-            message,
-            type,
-            read: false,
-            created_at: app.reviewedDate || new Date().toISOString(),
-          });
-        }
+      let title = `Candidature: ${status}`;
+      let message = `Le statut de votre candidature pour ${program} à ${university} a changé (${status}).`;
+      let type = status;
+
+      switch (status) {
+        case 'approved':
+        case 'approve':
+        case 'accepted':
+          title = "Candidature Approuvée";
+          message = `Votre candidature pour ${program} à ${university} a été approuvée.`;
+          type = 'approved';
+          break;
+        case 'rejected':
+        case 'declined':
+          title = "Candidature Rejetée";
+          message = `Votre candidature pour ${program} à ${university} a été rejetée.`;
+          type = 'rejected';
+          break;
+        case 'reviewing':
+        case 'under_review':
+        case 'in_review':
+          title = "Candidature en Examen";
+          message = `Votre candidature pour ${program} à ${university} est en cours d'examen.`;
+          type = 'reviewing';
+          break;
       }
+
+      // robust created_at detection
+      const createdAtCandidate =
+        app.reviewedDate || app.reviewed_date ||
+        app.updatedAt || app.updated_at ||
+        app.createdAt || app.created_at ||
+        new Date().toISOString();
+
+      const createdAtISO = new Date(createdAtCandidate).toISOString();
+
+      // id unique 
+      const notifId = `notif-${app.id}-${type}-${Date.now()}`;
+      const notifKey = `${app.id}-${status}`;
+        if (dismissed.includes(notifKey)) return; 
+
+      newNotifications.push({
+        id: notifId,
+        applicationId: app.id,
+        title,
+        message,
+        type,
+        read: false,
+        created_at: createdAtISO,
+      });
     });
 
-    // Fusionner avec les notifications existantes
-    const mergedNotifications = [...savedNotifications, ...newNotifications];
+    // merge sans doublon (base sur id)
+    const merged = [...savedNotifications];
+    newNotifications.forEach(n => {
+      if (!merged.find(m => m.id === n.id)) merged.push(n);
+    });
 
-    // Mettre à jour les notifications et le compteur
-    setNotifications(mergedNotifications);
-    const newUnreadCount = mergedNotifications.filter(n => !n.read).length;
-    setUnreadCount(newUnreadCount);
-
-    // Sauvegarder dans localStorage
-    localStorage.setItem('studentNotifications', JSON.stringify(mergedNotifications));
-  };
+    // si on a créé au moins une nouvelle notif on met à jour les états et localStorage
+    if (newNotifications.length > 0) {
+      setNotifications(merged);
+      const newUnread = merged.filter(n => !n.read).length;
+      setUnreadCount(newUnread);
+      localStorage.setItem('studentNotifications', JSON.stringify(merged));
+      console.log('[Notifications] created:', newNotifications);
+    } else {
+      // sinon on s'assure que l'état reflète localStorage
+      setNotifications(savedNotifications);
+      setUnreadCount(savedNotifications.filter(n => !n.read).length);
+    }
+  } catch (err) {
+    console.error('[Notifications] generate error:', err);
+  }
+};
 
   // Fonction pour marquer les notifications comme lues
   const markNotificationsAsRead = () => {
@@ -633,48 +673,65 @@ const WelcomeEtudiant = () => {
 
   // Notifications component
   const NotificationsSection = () => {
-    useEffect(() => {
-      markNotificationsAsRead();
-    }, []);
-
     return (
-      <div className="notifications-content">
-        <h1>Notifications</h1>
-        {notifications.length === 0 ? (
-          <div className="no-notifications">
-            <Bell size={48} color="#9CA3AF" />
-            <h3>Aucune Notification</h3>
-            <p>Vous n'avez aucune notification pour le moment.</p>
-          </div>
-        ) : (
-          <div className="notifications-list">
-            {notifications.map((notification) => (
-              <div key={notification.id} className={`notification-item ${!notification.read ? 'unread' : ''}`}>
-                <div className="notification-icon">
-                  {notification.type === 'approved' && <CheckCircle size={20} color="#10B981" />}
-                  {notification.type === 'rejected' && <XCircle size={20} color="#EF4444" />}
-                  {notification.type === 'reviewing' && <Eye size={20} color="#F59E0B" />}
-                </div>
-                <div className="notification-content">
-                  <h4>{notification.title}</h4>
-                  <p>{notification.message}</p>
-                  <span className="notification-time">
-                    {new Date(notification.created_at).toLocaleDateString('fr-FR', {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+  <div className="notifications-content">
+    <div className="notifications-header">
+      <h1>Notifications</h1>
+      {notifications.length > 0 && (
+        <button
+          className="clear-notifications-btn"
+          onClick={() => {
+  const dismissed = notifications.map(n => `${n.applicationId}-${n.type}`);
+  localStorage.setItem('dismissedNotifications', JSON.stringify(dismissed));
+
+  setNotifications([]);
+  setUnreadCount(0);
+  localStorage.setItem('studentNotifications', JSON.stringify([]));
+}}
+        >
+          Effacer tout
+        </button>
+      )}
+    </div>
+
+    {notifications.length === 0 ? (
+      <div className="no-notifications">
+        <Bell size={48} color="#9CA3AF" />
+        <h3>Aucune Notification</h3>
+        <p>Vous n'avez aucune notification pour le moment.</p>
       </div>
-    );
-  };
+    ) : (
+      <div className="notifications-list">
+        {notifications.map((notification) => (
+          <div
+            key={notification.id}
+            className={`notification-item ${!notification.read ? 'unread' : ''}`}
+          >
+            <div className="notification-icon">
+              {notification.type === 'approved' && <CheckCircle size={20} color="#10B981" />}
+              {notification.type === 'rejected' && <XCircle size={20} color="#EF4444" />}
+              {notification.type === 'reviewing' && <Eye size={20} color="#F59E0B" />}
+            </div>
+            <div className="notification-content">
+              <h4>{notification.title}</h4>
+              <p>{notification.message}</p>
+              <span className="notification-time">
+                {new Date(notification.created_at).toLocaleDateString('fr-FR', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+  );
+    };
 
   useEffect(() => {
     const loadUserData = () => {
@@ -1091,9 +1148,10 @@ const WelcomeEtudiant = () => {
                     <IconComponent size={20} />
                   </div>
                   <span className="nav-label">{item.label}</span>
-                  {item.badge > 0 && (
-                    <span className="nav-badge">{item.badge}</span>
+                  {item.id === 'notifications' && unreadCount > 0 && (
+                  <span className="nav-badge">{unreadCount}</span>
                   )}
+
                 </button>
               );
             })}

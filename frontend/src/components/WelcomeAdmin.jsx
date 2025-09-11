@@ -16,7 +16,10 @@ const WelcomeAdmin = () => {
   const [applications, setApplications] = useState([]);
   const [selectedApp, setSelectedApp] = useState(null);
   const [applicationFilter, setApplicationFilter] = useState('all');
-  const [searchTerm, setSearchTerm] = useState(''); // État pour la recherche
+  const [searchTerm, setSearchTerm] = useState(''); 
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+
   const navigate = useNavigate();
 
   // Navigation items pour le sidebar
@@ -39,10 +42,51 @@ const WelcomeAdmin = () => {
       const headers = token ? { 'Authorization': `Token ${token} `} : {};
       const response = await axios.get("http://localhost:8000/api/applications/all/", { headers });
       setApplications(response.data);
+      generateNotificationsFromApplications(response.data);
     } catch (error) {
       console.error('Erreur lors du chargement des candidatures:', error);
     }
   };
+
+  const generateNotificationsFromApplications = (apps) => {
+  const savedNotifications = JSON.parse(localStorage.getItem('adminNotifications')) || [];
+  const dismissed = JSON.parse(localStorage.getItem('adminDismissedNotifications')) || [];
+  const newNotifications = [...savedNotifications];
+
+  apps.forEach(app => {
+    // si la candidature est nouvelle
+    const notifKey = `app-${app.id}-sent`;
+    if (app.status === "sent" && !savedNotifications.find(n => n.key === notifKey) && !dismissed.includes(notifKey)) {
+      newNotifications.push({
+        key: notifKey,
+        applicationId: app.id,
+        message: `Nouvelle candidature envoyée par ${app.userName || app.userEmail}`,
+        date: new Date().toLocaleDateString("fr-FR"),
+        time: new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
+        read: false,
+      });
+    }
+  });
+
+  localStorage.setItem('adminNotifications', JSON.stringify(newNotifications));
+  setNotifications(newNotifications);
+  setUnreadCount(newNotifications.filter(n => !n.read).length);
+};
+
+const markNotificationsAsRead = () => {
+  const updated = notifications.map(n => ({ ...n, read: true }));
+  setNotifications(updated);
+  setUnreadCount(0);
+  localStorage.setItem('adminNotifications', JSON.stringify(updated));
+};
+
+const clearAllNotifications = () => {
+  const dismissed = notifications.map(n => n.key);
+  localStorage.setItem('adminDismissedNotifications', JSON.stringify(dismissed));
+  setNotifications([]);
+  setUnreadCount(0);
+  localStorage.setItem('adminNotifications', JSON.stringify([]));
+};
 
   // Charger les données (étudiants et admins)
   const fetchData = async () => {
@@ -158,7 +202,10 @@ const WelcomeAdmin = () => {
       handleLogout();
     } else {
       setActiveTab(itemId);
-      setSearchTerm(''); // Réinitialiser la recherche lors du changement d'onglet
+      setSearchTerm(''); 
+        if (itemId === 'notifications') {
+      markNotificationsAsRead();
+    }
     }
   };
 
@@ -482,7 +529,9 @@ const WelcomeAdmin = () => {
                     <IconComponent size={20} />
                   </div>
                   <span className="nav-label" style={{ color: item.color }}>{item.label}</span>
-                  {item.badge && <span className="nav-badge">{item.badge}</span>}
+{item.id === 'notifications' && unreadCount > 0 && (
+  <span className="nav-badge">{unreadCount}</span>
+)}
                 </button>
               );
             })}
@@ -514,11 +563,10 @@ const WelcomeAdmin = () => {
           <div className="header-content">
             <div className="header-left">
               <h1 className="dashboard-title">
-                <span className="title-icon">⚡</span>
                 Dashboard Admin
               </h1>
               <p className="welcome-text">
-                Bienvenue <strong>{userInfo.prenom} {userInfo.nom}</strong>
+                Bienvenue <strong>{userInfo.firstName} {userInfo.lastName}</strong>
               </p>
             </div>
             <div className="header-right">
@@ -540,19 +588,10 @@ const WelcomeAdmin = () => {
             </div>
           </div>
           <div className="stat-card secondary">
-            <div className="stat-icon">👨‍💼</div>
             <div className="stat-content">
               <h3>Administrateurs</h3>
               <p className="stat-number">{admins.length}</p>
               <span className="stat-label">Membres de l'équipe</span>
-            </div>
-          </div>
-          <div className="stat-card tertiary">
-            <div className="stat-icon">📊</div>
-            <div className="stat-content">
-              <h3>Activité</h3>
-              <p className="stat-number">100%</p>
-              <span className="stat-label">Système opérationnel</span>
             </div>
           </div>
         </div>
@@ -568,7 +607,7 @@ const WelcomeAdmin = () => {
                     <Search className="search-icon" size={20} />
                     <input
                       type="text"
-                      placeholder="Rechercher un étudiant..."
+                      placeholder="Search a student..."
                       className="search-input"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -579,8 +618,7 @@ const WelcomeAdmin = () => {
 
               {filteredStudents.length === 0 ? (
                 <div className="empty-state">
-                  <div className="empty-icon">📝</div>
-                  <h3>Aucun étudiant trouvé</h3>
+                  <h3>No Student Found</h3>
                   <p>{searchTerm ? "Aucun résultat pour cette recherche" : "Les nouveaux étudiants apparaîtront ici"}</p>
                 </div>
               ) : (
@@ -603,10 +641,10 @@ const WelcomeAdmin = () => {
                           <td>
                             <div className="user-cell">
                               <div className="user-avatar-small">
-                                {student.user_first_name?.charAt(0)}{student.user_last_name?.charAt(0)}
+                                {student.user__first_name?.charAt(0)}{student.user__last_name?.charAt(0)}
                               </div>
                               <div>
-                                <strong>{student.user_first_name} {student.user_last_name}</strong>
+                                <strong>{student.user__first_name} {student.user__last_name}</strong>
                               </div>
                             </div>
                           </td>
@@ -616,7 +654,7 @@ const WelcomeAdmin = () => {
                               onClick={() => handleDeleteStudent(student.user__id)}
                               className="action-btn delete"
                             >
-                              🗑️ Supprimer
+                              Supprimer
                             </button>
                           </td>
                         </tr>
@@ -648,7 +686,6 @@ const WelcomeAdmin = () => {
 
               {filteredAdmins.length === 0 ? (
                 <div className="empty-state">
-                  <div className="empty-icon">👨‍💼</div>
                   <h3>Aucun administrateur trouvé</h3>
                   <p>{searchTerm ? "Aucun résultat pour cette recherche" : "Les nouveaux administrateurs apparaîtront ici"}</p>
                 </div>
@@ -672,10 +709,10 @@ const WelcomeAdmin = () => {
                           <td>
                             <div className="user-cell">
                               <div className="user-avatar-small">
-                                {admin.user_first_name?.charAt(0)}{admin.user_last_name?.charAt(0)}
+                                {admin.user__first_name?.charAt(0)}{admin.user__last_name?.charAt(0)}
                               </div>
                               <div>
-                                <strong>{admin.user_first_name} {admin.user_last_name}</strong>
+                                <strong>{admin.user__first_name} {admin.user__last_name}</strong>
                               </div>
                             </div>
                           </td>
@@ -685,7 +722,7 @@ const WelcomeAdmin = () => {
                               onClick={() => handleDeleteAdmin(admin.user__id)}
                               className="action-btn delete"
                             >
-                              🗑️ Supprimer
+                              Supprimer
                             </button>
                           </td>
                         </tr>
@@ -744,7 +781,7 @@ const WelcomeAdmin = () => {
                     </div>
                   </div>
                   <button type="submit" className="submit-btn">
-                    <span>✨</span> Créer l'administrateur
+                     Créer l'administrateur
                   </button>
                 </form>
               </div>
@@ -761,6 +798,32 @@ const WelcomeAdmin = () => {
               />
             </div>
           )}
+
+          {activeTab === 'notifications' && (
+  <div className="notifications-section">
+    <div className="section-header">
+      <h2>Notifications</h2>
+      {notifications.length > 0 && (
+        <button className="clear-btn" onClick={clearAllNotifications}>
+          Effacer tout
+        </button>
+      )}
+    </div>
+    {notifications.length === 0 ? (
+      <p>Aucune notification</p>
+    ) : (
+      <ul className="notifications-list">
+        {notifications.map((n, i) => (
+          <li key={i} className={`notification-item ${n.read ? 'read' : 'unread'}`}>
+            <div className="notif-message">{n.message}</div>
+            <div className="notif-time">{n.date} {n.time}</div>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+)}
+
         </div>
       </div>
     </div>

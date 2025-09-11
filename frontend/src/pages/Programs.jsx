@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import '../styles/Programs.css';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext'; 
+
 
 function Programs() {
   const [programs, setPrograms] = useState([]);
@@ -15,6 +17,7 @@ function Programs() {
   const [activeTab, setActiveTab] = useState('All');
   const navigate = useNavigate();
   const totalPages = 77;
+  const { isLoggedIn } = useContext(AuthContext); 
 
   // Charger les programmes sauvegardés depuis le localStorage au démarrage
   useEffect(() => {
@@ -61,10 +64,8 @@ function Programs() {
 
   const fetchAllPrograms = async () => {
     try {
-      // Pour récupérer TOUS les programmes, vous pourriez avoir besoin de faire plusieurs requêtes
-      // ou d'avoir une API endpoint qui retourne tous les programmes d'un coup
       const response = await axios.get(`http://localhost:8000/api/list-programmes-v2/`, {
-        params: { page: 1, per_page: 1000 } // Ajustez selon votre API
+        params: { page: 1, per_page: 1000 }
       });
       setAllPrograms(response.data.results);
     } catch (error) {
@@ -90,17 +91,18 @@ function Programs() {
     setCurrentPage(1);
   };
 
-  const handleCountryChange = (e) => {
-    setSelectedCountry(e.target.value);
-    setCurrentPage(1);
-  };
-
   const handleProgramDetail = (programId) => {
     navigate(`/program-detail/${programId}`);
   };
 
   const handleApply = (programId) => {
-    navigate(`/application/${programId}`);
+        if (isLoggedIn) {
+      // L'utilisateur est connecté, il peut passer le test directement
+     navigate(`/application/${programId}`);
+    } else {
+      // L'utilisateur n'est pas connecté, redirection vers login avec redirect parameter
+navigate(`/login?redirect=/application/${programId}`);
+    }
   };
 
   const toggleSaveProgram = (programId) => {
@@ -114,7 +116,7 @@ function Programs() {
     });
   };
 
-  // Fonction pour effacer tous les programmes sauvegardés (optionnelle)
+  // Fonction pour effacer tous les programmes sauvegardés 
   const clearAllSavedPrograms = () => {
     setSavedPrograms([]);
     localStorage.removeItem('savedPrograms');

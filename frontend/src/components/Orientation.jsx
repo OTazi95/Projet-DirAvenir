@@ -3,12 +3,12 @@ import '../styles/Orientation.css';
 import orientationImage from '../assets/orien.png';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { AuthContext } from '../context/AuthContext'; // Votre AuthContext
+import { AuthContext } from '../context/AuthContext'; 
 
 function Orientation() {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { isLoggedIn } = useContext(AuthContext); // Utilisez votre propriété isLoggedIn
+  const { isLoggedIn } = useContext(AuthContext); 
 
   // Fonction pour démarrer le test avec vérification d'authentification
   const startTest = () => {

@@ -479,3 +479,25 @@
     font-size: 13px;
   }
 }
+
+.form-input.error, 
+.form-select.error, 
+textarea.error {
+  border: 2px solid #e53e3e !important;
+  background-color: #fff5f5;
+}
+
+.agree-all-btn {
+  margin-top: 20px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #5e2ca5;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.agree-all-btn:hover {
+  background: #4a1e87;
+}

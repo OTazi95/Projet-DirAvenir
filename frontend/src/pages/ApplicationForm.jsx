@@ -12,6 +12,7 @@ function ApplicationForm() {
   const [error, setError] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submissionData, setSubmissionData] = useState(null);
+  const [globalError, setGlobalError] = useState("");
   
   // Fonction utilitaire pour récupérer les données d'authentification
   const getAuthData = () => {
@@ -229,29 +230,70 @@ function ApplicationForm() {
     }));
   };
 
-  const validateStep = (currentStep) => {
-    const newErrors = {};
-    
-    switch(currentStep) {
-      case 1:
-        if (!formData.email) newErrors.email = "Email is required";
-        if (!formData.phone) newErrors.phone = "Phone is required";
-        if (!formData.firstName) newErrors.firstName = "First name is required";
-        if (!formData.lastName) newErrors.lastName = "Last name is required";
-        break;
-      case 3:
-        if (!formData.acknowledgment) newErrors.acknowledgment = "Required";
-        if (!formData.consent) newErrors.consent = "Required";
-        if (!formData.accuracy) newErrors.accuracy = "Required";
-        if (!formData.paymentPolicy) newErrors.paymentPolicy = "Required";
-        if (!formData.refundPolicy) newErrors.refundPolicy = "Required";
-        if (!formData.compliance) newErrors.compliance = "Required";
-        break;
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+const validateStep = (currentStep) => {
+  const newErrors = {};
+
+  switch (currentStep) {
+    case 1:
+      if (!formData.email) newErrors.email = "Email is required";
+      if (!formData.phone) newErrors.phone = "Phone is required";
+      if (!formData.firstName) newErrors.firstName = "First name is required";
+      if (!formData.lastName) newErrors.lastName = "Last name is required";
+      if (!formData.dob) newErrors.dob = "Date of birth is required";
+      if (!formData.placeOfBirth) newErrors.placeOfBirth = "Place of birth is required";
+      if (!formData.gender) newErrors.gender = "Gender is required";
+      if (!formData.maritalStatus) newErrors.maritalStatus = "Marital status is required";
+      if (!formData.passportNumber) newErrors.passportNumber = "Passport number is required";
+      if (!formData.passportExpiry) newErrors.passportExpiry = "Passport expiry date is required";
+      if (!formData.englishLevel) newErrors.englishLevel = "English level is required";
+      if (!formData.englishCertificate) newErrors.englishCertificate = "English certificate is required";
+      if (!formData.country) newErrors.country = "Country is required";
+      if (!formData.fullAddress) newErrors.fullAddress = "Full address is required";
+      if (!formData.educationalBackground[0].school) newErrors.school = "School is required";
+      if (!formData.educationalBackground[0].startDate) newErrors.startDate = "Start date is required";
+      if (!formData.educationalBackground[0].finishDate) newErrors.finishDate = "Finish date is required";
+      if (!formData.workExperience[0].employer) newErrors.employer = "Employer is required";
+      if (!formData.workExperience[0].jobTitle) newErrors.jobTitle = "Job title is required";
+      if (!formData.workExperience[0].startDate) newErrors.workStart = "Work start date is required";
+      break;
+
+    case 2:
+      if (!formData.familyContacts[0].name) newErrors.familyName = "Family contact name is required";
+      if (!formData.familyContacts[0].nationality) newErrors.familyNationality = "Family nationality is required";
+      if (!formData.familyContacts[0].relationship) newErrors.familyRelation = "Family relationship is required";
+      if (!formData.guarantorRelationship) newErrors.guarantorRelationship = "Guarantor relationship is required";
+      if (!formData.guarantorName) newErrors.guarantorName = "Guarantor name is required";
+      if (!formData.guarantorCountry) newErrors.guarantorCountry = "Guarantor country is required";
+      if (!formData.guarantorAddress) newErrors.guarantorAddress = "Guarantor address is required";
+      if (!formData.emergencyCountry) newErrors.emergencyCountry = "Emergency country is required";
+      break;
+
+    case 3:
+      if (!formData.acknowledgment) newErrors.acknowledgment = "Required";
+      if (!formData.consent) newErrors.consent = "Required";
+      if (!formData.accuracy) newErrors.accuracy = "Required";
+      if (!formData.paymentPolicy) newErrors.paymentPolicy = "Required";
+      if (!formData.refundPolicy) newErrors.refundPolicy = "Required";
+      if (!formData.compliance) newErrors.compliance = "Required";
+      break;
+
+    case 4:
+      if (!formData.documents.passportPages) newErrors.passportPages = "Passport pages are required";
+      if (!formData.documents.academicCertificate) newErrors.academicCertificate = "Academic certificate is required";
+      if (!formData.documents.academicTranscript) newErrors.academicTranscript = "Academic transcript is required";
+      if (!formData.documents.criminalRecord) newErrors.criminalRecord = "Non-criminal certificate is required";
+      if (!formData.documents.personalPhoto) newErrors.personalPhoto = "Personal photo is required";
+      break;
+  }
+
+  setErrors(newErrors);
+  setGlobalError(Object.keys(newErrors).length > 0 
+    ? "⚠️ Please fill in all required fields marked with * before continuing."
+    : ""
+  );
+
+  return Object.keys(newErrors).length === 0;
+};
 
   const nextStep = () => {
     if (validateStep(step)) {
@@ -367,7 +409,6 @@ function ApplicationForm() {
     return <ApplicationSuccess />;
   }
 
-  // Reste du code inchangé pour les fonctions de rendu des steps...
   const renderStep1 = () => (
     <>
       <div className="form-section">
@@ -988,6 +1029,23 @@ function ApplicationForm() {
           />
           I agree to attend all required courses, interviews, and exams as outlined in the application process. I will abide by the laws and regulations of the university and Diravenir.
         </label>
+         <button
+    type="button"
+    className="agree-all-btn"
+    onClick={() => {
+      setFormData(prev => ({
+        ...prev,
+        acknowledgment: true,
+        consent: true,
+        accuracy: true,
+        paymentPolicy: true,
+        refundPolicy: true,
+        compliance: true,
+      }));
+    }}
+  >
+    Agree to All
+  </button>
       </div>
     </div>
   );
@@ -1203,6 +1261,29 @@ function ApplicationForm() {
         {/* Formulaire principal */}
         <div className="application-form">
           <h2 className="form-title">Your Application</h2>
+
+{globalError && (
+  <div className="error-banner">
+    {globalError}
+  </div>
+)}
+
+<style jsx>{`
+  .error-banner {
+    background: #ffe6e6;
+    color: #cc0000;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 500;
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+`}</style>
 
           {step === 1 && renderStep1()}
           {step === 2 && renderStep2()}

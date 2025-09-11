@@ -295,7 +295,7 @@ const handleProgramDetail = (programId) => {
               With Us
             </h1>
             <p id='ph'>Get the guidance you need for <br/>the future of work.</p>
- {/* Nouvelle barre de recherche avec input (comme Programs.jsx) */}
+ {/* Nouvelle barre de recherche avec input */}
         <div className="filters-container">
           <input
             type="text"
@@ -314,7 +314,7 @@ const handleProgramDetail = (programId) => {
           </button>
         </div>
 
-        {/* Résultats de la nouvelle recherche - CORRIGÉ */}
+        {/* Résultats de la nouvelle recherche */}
         {searchResults.length > 0 && (
           <div className="popular-programs-section" style={{ paddingTop: '40px', paddingBottom: '40px' }}>
             <h2>
@@ -340,7 +340,7 @@ const handleProgramDetail = (programId) => {
 
                   {/* Contenu blanc */}
                   <div className="card-content">
-                    <h3>{program.program}</h3>
+                    <h3 className='program-title'>{program.program}</h3>
                     <p className="program-description">{program.description}</p>
 
                     {/* Boutons */}
@@ -473,7 +473,7 @@ const handleProgramDetail = (programId) => {
         <img src={howitworks} alt="How it works illustration" className="how-it-works-illustration" />
       </section>
  
-   {/* SECTION PROGRAMMES POPULAIRES - NOUVEAU DESIGN */}
+   {/* SECTION PROGRAMMES POPULAIRES */}
       <div className="popular-programs-section">
         <h2>
           Popular <span className="highlight-yellow">Programs</span>
@@ -487,14 +487,12 @@ const handleProgramDetail = (programId) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.05 }}
     >
-      {/* Logo de l'université en haut */}
       <div className="logo-wrapper">
         <img
           src={program.logo ? `http://localhost:8000/media/logo/${program.logo}` : '/default-logo.png'}
           alt={`${program.universities} logo`}
         />
       </div>
-      {/* Contenu blanc */}
       <div className="card-content">
         <h3 className='program-title'>{program.program}</h3>
         <p className="program-description">{program.description}</p>

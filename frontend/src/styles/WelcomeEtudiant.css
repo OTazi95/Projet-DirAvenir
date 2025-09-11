@@ -1623,108 +1623,67 @@ body:has(.dashboard-container) .footer {
   background: #9ca3af;
 }
 
-/* Notification Bell */
+
+
+/* --- Badge pour notifications dans la sidebar et header --- */
+.nav-badge,
+.notification-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ef4444; /* rouge */
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 50%;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 4px rgba(0,0,0,0.2);
+}
+
+/* Badge sur la cloche en haut à droite */
 .notification-bell {
   position: relative;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem;
-  border-radius: 50%;
-  transition: background-color 0.2s;
 }
 
-.notification-bell:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+.notification-bell .notification-badge {
+  top: -5px;
+  right: -5px;
 }
 
-.notification-badge {
+/* Badge dans la sidebar */
+.nav-item {
+  position: relative; /* important pour contenir le badge */
+}
+
+.nav-badge {
   position: absolute;
-  top: -8px;
-  right: -8px;
-  background: #ef4444;
-  color: white;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.125rem 0.5rem;
-  border-radius: 1rem;
-  min-width: 1.25rem;
-  text-align: center;
+  top: 8px;
+  right: 12px;
 }
 
-/* Notifications List */
-.notifications-content {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.notifications-list {
+.notifications-header {
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.notification-item {
-  display: flex;
-  gap: 1rem;
-  padding: 1.5rem;
-  background: white;
-  border-radius: 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #f3f4f6;
-  transition: all 0.2s;
-}
-
-.notification-item.unread {
-  border-left: 4px solid #10B981;
-  background-color: rgba(16, 185, 129, 0.05);
-}
-
-.notification-icon {
-  flex-shrink: 0;
-  width: 2.5rem;
-  height: 2.5rem;
-  display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  border-radius: 50%;
 }
 
-.notification-content h4 {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #111827;
-  margin: 0 0 0.25rem 0;
+.clear-notifications-btn {
+  background: #ef4444; /* rouge */
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
 }
 
-.notification-content p {
-  color: #6b7280;
-  margin: 0 0 0.5rem 0;
-  font-size: 0.875rem;
-}
-
-.notification-time {
-  font-size: 0.75rem;
-  color: #9ca3af;
-}
-
-.no-notifications {
-  text-align: center;
-  padding: 3rem;
-  background: white;
-  border-radius: 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.no-notifications h3 {
-  color: #111827;
-  margin: 1rem 0 0.5rem;
-  font-size: 1.125rem;
-  font-weight: 600;
-}
-
-.no-notifications p {
-  color: #6b7280;
-  font-size: 0.875rem;
+.clear-notifications-btn:hover {
+  background: #dc2626;
 }
