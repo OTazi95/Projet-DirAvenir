@@ -102,14 +102,14 @@ function Register() {
         <form onSubmit={handleSubmit} className="register-form">
           {/* Nom et Prénom */}
           <div className="form-row">
-            <div className="form-group">
+         <div className="form-group">
               <input
                 type="text"
-                id="nom"
-                name="nom"
-                value={nom}
-                onChange={(e) => setNom(e.target.value)}
-                placeholder="Last Name"
+                id="prenom"
+                name="prenom"
+                value={prenom}
+                onChange={(e) => setPrenom(e.target.value)}
+                placeholder="First Name"
                 className="form-input"
                 autoComplete="off"
                 required
@@ -118,11 +118,11 @@ function Register() {
             <div className="form-group">
               <input
                 type="text"
-                id="prenom"
-                name="prenom"
-                value={prenom}
-                onChange={(e) => setPrenom(e.target.value)}
-                placeholder="First Name"
+                id="nom"
+                name="nom"
+                value={nom}
+                onChange={(e) => setNom(e.target.value)}
+                placeholder="Last Name"
                 className="form-input"
                 autoComplete="off"
                 required
@@ -204,40 +204,6 @@ function Register() {
             Login Here
           </Link>
         </p>
-
-        {/* Divider */}
-        <div className="divider">
-          <div className="divider-line"></div>
-          <span className="divider-text">or</span>
-          <div className="divider-line"></div>
-        </div>
-
-        {/* Social Login */}
-        <div className="social-buttons">
-          <button
-            type="button"
-            onClick={() => handleSocialLogin('Google')}
-            className="social-btn social-btn-google"
-          >
-            <FaGoogle style={{ color: '#DB4437' }} /> Login with Google
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleSocialLogin('Facebook')}
-            className="social-btn social-btn-facebook"
-          >
-            <FaFacebookF /> Login with Facebook
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleSocialLogin('Apple')}
-            className="social-btn social-btn-apple"
-          >
-            <FaApple /> Login with Apple
-          </button>
-        </div>
 
         {/* Terms */}
         <p className="terms-text">

@@ -1,87 +1,134 @@
-import React, { useEffect, useContext } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+// GoogleAuthCallback.jsx
+import React, { useEffect, useContext, useRef } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 function GoogleAuthCallback() {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { login } = useContext(AuthContext);
+  const hasProcessed = useRef(false); // Empêcher le traitement multiple
 
   useEffect(() => {
-    // Récupérer les paramètres de l'URL
-    const token = searchParams.get('token');
-    const userId = searchParams.get('user');
-    const email = searchParams.get('email');
-    const prenom = searchParams.get('prenom');
-    const nom = searchParams.get('nom');
-    const role = searchParams.get('role');
-    const error = searchParams.get('error');
+    // Si déjà traité, ne pas recommencer
+    if (hasProcessed.current) return;
+    
+    const handleGoogleCallback = () => {
+      console.log('Processing Google auth callback...');
+      hasProcessed.current = true; // Marquer comme traité
+      
+      // Extract parameters from URL
+      const token = searchParams.get('token');
+      const userId = searchParams.get('user_id');
+      const email = decodeURIComponent(searchParams.get('email') || '');
+      const prenom = decodeURIComponent(searchParams.get('prenom') || '');
+      const nom = decodeURIComponent(searchParams.get('nom') || '');
+      const role = searchParams.get('role');
+      const redirectPath = searchParams.get('redirect_path');
+      const error = searchParams.get('error');
 
-    if (error) {
-      console.error('Erreur d\'authentification Google:', error);
-      navigate('/login?error=google_auth_failed');
-      return;
-    }
+      console.log('Callback parameters:', { token, userId, email, prenom, nom, role, redirectPath });
 
-    if (token && userId) {
-      // Stocker les données utilisateur
-      const userInfo = {
-        id: userId,
-        email: email,
-        firstName: prenom,
-        lastName: nom,
-        role: role,
-      };
-
-      // Utiliser localStorage par défaut pour Google OAuth
-      localStorage.setItem('token', token);
-      localStorage.setItem('auth_user', JSON.stringify(userInfo));
-      localStorage.setItem('role', role);
-
-      // Mettre à jour le contexte d'authentification
-      if (login) {
-        login(token);
-      }
-
-      // Vérifier s'il y a une redirection stockée dans sessionStorage
-      const redirectPath = sessionStorage.getItem('google_redirect_path');
-      if (redirectPath) {
-        sessionStorage.removeItem('google_redirect_path');
-        navigate(redirectPath);
+      if (error) {
+        console.error('Google authentication error:', error);
+        navigate('/login?error=' + encodeURIComponent('Google authentication failed. Please try again.'), { replace: true });
         return;
       }
 
-      // Redirection selon le rôle
-      const userRole = role?.toLowerCase().trim();
-      if (userRole === 'admin' || userRole === 'administrator') {
-        navigate('/welcome-admin');
+      if (token && userId && email) {
+        try {
+          const userInfo = {
+            id: parseInt(userId),
+            email: email,
+            firstName: prenom || '',
+            lastName: nom || '',
+            role: role || 'etudiant',
+          };
+
+          console.log('Setting user info:', userInfo);
+
+          // Update auth context
+          if (login) {
+            login(token, userInfo, false);
+          }
+
+          // Redirection immédiate avec replace pour éviter la boucle
+          const userRole = (role || 'etudiant').toLowerCase().trim();
+          
+          // Priorité à redirectPath s'il existe et n'est pas une page d'accueil
+          if (redirectPath && 
+              redirectPath !== '/welcome-etudiant' && 
+              redirectPath !== '/welcome-admin' && 
+              redirectPath !== '/' && 
+              redirectPath !== '') {
+            console.log('Redirecting to original requested path:', redirectPath);
+            navigate(redirectPath, { replace: true });
+          } else {
+            // Default role-based redirect
+            if (userRole === 'admin' || userRole === 'administrator') {
+              console.log('Redirecting to admin welcome');
+              navigate('/welcome-admin', { replace: true });
+            } else {
+              console.log('Redirecting to student welcome');
+              navigate('/welcome-etudiant', { replace: true });
+            }
+          }
+          
+        } catch (error) {
+          console.error('Error processing Google authentication:', error);
+          navigate('/login?error=' + encodeURIComponent('Authentication processing failed.'), { replace: true });
+        }
       } else {
-        navigate('/welcome-etudiant');
+        console.error('Missing authentication parameters:', { token, userId, email });
+        navigate('/login?error=' + encodeURIComponent('Authentication data incomplete.'), { replace: true });
       }
-    } else {
-      // Données manquantes, rediriger vers login
-      navigate('/login?error=invalid_google_response');
-    }
-  }, [searchParams, navigate, login]);
+    };
+
+    handleGoogleCallback();
+  }, []); // Dépendances vides pour éviter la boucle
 
   return (
-    <div style={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
       height: '100vh',
-      fontSize: '18px'
+      flexDirection: 'column',
+      backgroundColor: '#f8f9fa'
     }}>
-      <div>
-        <p>Finalisation de la connexion Google...</p>
-        <div style={{ margin: '20px auto', width: '50px', height: '50px', border: '3px solid #f3f3f3', borderTop: '3px solid #3498db', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+      <div style={{
+        fontSize: '18px',
+        marginBottom: '20px',
+        color: '#333',
+        fontFamily: 'Arial, sans-serif'
+      }}>
+        🔄 Processing Google authentication...
       </div>
-      <style>{`
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      `}</style>
+      <div style={{
+        width: '40px',
+        height: '40px',
+        border: '4px solid #f3f3f3',
+        borderTop: '4px solid #4285f4',
+        borderRadius: '50%',
+        animation: 'spin 1s linear infinite'
+      }}></div>
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `
+      }} />
+      <div style={{
+        marginTop: '20px',
+        fontSize: '14px',
+        color: '#666',
+        maxWidth: '300px',
+        textAlign: 'center'
+      }}>
+        Please wait while we complete your Google authentication...
+      </div>
     </div>
   );
 }

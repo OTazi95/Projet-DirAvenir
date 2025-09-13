@@ -1,30 +1,29 @@
 from rest_framework.decorators import api_view, authentication_classes, permission_classes, api_view
 from rest_framework.response import Response
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db import connection
 from django.contrib.auth import authenticate
-from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 import json
-from accounts.models import Profile
-
-
-
-
-# views.py - Ajoutez ces vues à votre fichier views.py existant
-
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework.response import Response
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from accounts.models import Profile, ProgrammesUniversitesV2, Application
+from django.shortcuts import redirect
+from django.contrib.auth import login as auth_login
+from rest_framework.authtoken.models import Token
+from django.contrib.auth import login as django_login
+from rest_framework.permissions import AllowAny
+from django.contrib.auth.decorators import login_required
+import urllib.parse
 from django.utils import timezone
-from .models import Application
 import random
 import string
+from rest_framework import status
+from django.core.paginator import Paginator
+from django.db.models import Q, IntegerField
+from django.db.models.functions import Cast
+from .models import OrientationTest
 
 def generate_application_id():
     """Génère un ID unique pour la candidature"""
@@ -324,12 +323,6 @@ def get_application_statistics(request):
         return Response({"error": "Profil utilisateur introuvable"}, status=404)
     except Exception as e:
         return Response({'error': str(e)}, status=500)
-
-
-
-
-
-
 
 @csrf_exempt
 def register_view(request):
@@ -641,17 +634,7 @@ def get_admins(request):
         return Response({"error": "Profil utilisateur introuvable"}, status=404)
     except Exception as e:
         return Response({"error": str(e)}, status=500)
-
-
-
-
-
-
-
-
-
-
-
+    
 @api_view(['PUT'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -755,8 +738,6 @@ def delete_profile(request):
     except Exception as e:
         return Response({'error': str(e)}, status=500)
 
-
-# Optionnel : Vue pour récupérer les informations du profil actuel
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -835,29 +816,6 @@ def change_password(request):
         
     except Exception as e:
         return Response({'error': str(e)}, status=500)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# accounts/views.py
-
-from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
-from django.core.paginator import Paginator
-from django.db.models import Q
-from .models import ProgrammesUniversitesV2
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -967,12 +925,6 @@ def get_program_detail_v2(request, program_id):
             {'error': f'Erreur serveur: {str(e)}'}, 
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
-
-# Gardez vos autres vues existantes ici...
-
-
-from django.db.models import Q, IntegerField
-from django.db.models.functions import Cast
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -1121,25 +1073,6 @@ def get_program_detail_with_similar(request, program_id):
         return Response({'error': 'Programme non trouvé'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({'error': f'Erreur serveur: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
-
-
-
-
-
-
-# views.py - Ajoutez ces vues à votre fichier views.py existant
-
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework.response import Response
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
-from django.utils import timezone
-from .models import OrientationTest
-from accounts.models import Profile
-import json
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
@@ -1381,3 +1314,66 @@ def get_user_orientation_history(request, user_id):
     except Exception as e:
         print(f"Erreur lors de la récupération de l'historique utilisateur: {e}")
         return Response({'error': 'Erreur lors de la récupération de l\'historique'}, status=500)
+    
+@login_required
+def google_auth_callback(request):
+    """
+    Handle Google OAuth callback and redirect to frontend with authentication data
+    """
+    user = request.user
+    
+    if user.is_authenticated:
+        try:
+            # Create or get authentication token
+            token, created = Token.objects.get_or_create(user=user)
+            
+            # Create or get user profile
+            profile, profile_created = Profile.objects.get_or_create(
+                user=user, 
+                defaults={'role': 'etudiant'}
+            )
+            
+            # Get redirect path from session (set in frontend)
+            redirect_path = request.session.get('google_redirect_path', '/welcome-etudiant')
+            
+            # Prepare user data for frontend
+            user_data = {
+                'token': token.key,
+                'user_id': user.id,
+                'email': user.email,
+                'prenom': user.first_name or '',
+                'nom': user.last_name or '',
+                'role': profile.role,
+                'redirect_path': redirect_path
+            }
+            
+            # Build query parameters
+            query_params = urllib.parse.urlencode(user_data)
+            
+            # Redirect to React callback page
+            frontend_callback_url = f"http://localhost:3000/google-auth-callback?{query_params}"
+            
+            # Clear the redirect path from session
+            if 'google_redirect_path' in request.session:
+                del request.session['google_redirect_path']
+                
+            return redirect(frontend_callback_url)
+            
+        except Exception as e:
+            # Handle any errors during authentication
+            error_url = f"http://localhost:3000/login?error={urllib.parse.quote('Authentication failed. Please try again.')}"
+            return redirect(error_url)
+    
+    # If user is not authenticated, redirect to login
+    return redirect('http://localhost:3000/login?error=Authentication%20failed')
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def set_google_redirect_path(request):
+    """
+    API endpoint to set redirect path before Google OAuth
+    """
+    redirect_path = request.data.get('redirect_path', '/welcome-etudiant')
+    request.session['google_redirect_path'] = redirect_path
+    return JsonResponse({'success': True, 'redirect_path': redirect_path})

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import verify_password, login_view, register_view
+from .views import verify_password, login_view, register_view, google_auth_callback, set_google_redirect_path
 from . import views
 
 urlpatterns = [
@@ -42,6 +42,7 @@ urlpatterns = [
     
     # Historique d'un utilisateur spécifique (admin uniquement)
     path('api/orientation-test/user/<int:user_id>/history/', views.get_user_orientation_history, name='get_user_orientation_history'),
-]
+    path('auth/google/callback/', google_auth_callback, name='google_auth_callback'),
+    path('api/set-google-redirect/', set_google_redirect_path, name='set_google_redirect_path'),]
 
 

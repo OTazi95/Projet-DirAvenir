@@ -113,10 +113,30 @@ function Login() {
     }
   };
 
-  const handleSocialLogin = (provider) => {
-    const redirectParam = redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : '';
-    window.location.href = `http://localhost:8000/api/auth/${provider.toLowerCase()}/${redirectParam}`;
-  };
+const handleSocialLogin = async (provider) => {
+  if (provider === 'Google') {
+    try {
+      // Récupérer le chemin de redirection depuis l'URL ou utiliser la valeur par défaut
+      const targetRedirectPath = redirectPath || '/welcome-etudiant';
+      
+      console.log('Setting redirect path for Google login:', targetRedirectPath);
+      
+      // Envoyer le chemin de redirection au backend AVANT de rediriger vers Google
+      await axios.post('http://localhost:8000/api/set-google-redirect/', {
+        redirect_path: targetRedirectPath
+      });
+      
+      // Redirection vers Google OAuth
+      window.location.href = `http://localhost:8000/auth/login/google-oauth2/?prompt=select_account`;
+    } catch (error) {
+      console.error('Error setting redirect path:', error);
+      // Même si ça échoue, on continue avec Google login
+      window.location.href = `http://localhost:8000/auth/login/google-oauth2/?prompt=select_account`;
+    }
+  } else {
+    console.log(`${provider} login not implemented yet`);
+  }
+};
 
   return (
     <div className="login-container">
@@ -201,22 +221,7 @@ function Login() {
           >
             <FaGoogle style={{ color: '#DB4437' }} /> Login with Google
           </button>
-          <button
-            type="button"
-            className="facebook"
-            onClick={() => handleSocialLogin('Facebook')}
-            disabled={isLoading}
-          >
-            <FaFacebookF /> Login with Facebook
-          </button>
-          <button
-            type="button"
-            className="apple"
-            onClick={() => handleSocialLogin('Apple')}
-            disabled={isLoading}
-          >
-            <FaApple /> Login with Apple
-          </button>
+ 
         </div>
 
         <p className="terms-text">

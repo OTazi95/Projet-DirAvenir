@@ -25,6 +25,7 @@ import AdminWelcomeDashboard from './components/WelcomeAdmin';
 import TermsOfService from './components/TermsConditions';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import Results from './components/OrientationTest/Results';
+import GoogleAuthCallback from './components/GoogleAuthCallback'; 
 
 
 // Animation wrapper pour transition fluide
@@ -52,6 +53,7 @@ function AnimatedRoutes() {
           <Route index element={<PageTransition><Dashboard /></PageTransition>} />
           <Route path="register" element={<PageTransition><Register /></PageTransition>} />
           <Route path="login" element={<PageTransition><Login /></PageTransition>} />
+          <Route path="google-auth-callback" element={<PageTransition><GoogleAuthCallback /></PageTransition>} /> {/* ← AJOUTÉ */}
           <Route path="contact" element={<PageTransition><Contact /></PageTransition>} />
           <Route path="dashboard" element={<PageTransition><Dashboard /></PageTransition>} />
           <Route path="/destination/chine" element={<PageTransition><Chine /></PageTransition>} />
@@ -72,7 +74,6 @@ function AnimatedRoutes() {
           <Route path="/terms" element={<PageTransition><TermsOfService    /></PageTransition>} />
           <Route path="/privacy" element={<PageTransition><PrivacyPolicy    /></PageTransition>} />
           <Route path="/results" element={<PageTransition><Results    /></PageTransition>} />
-
         </Route>
       </Routes>
     </AnimatePresence>
