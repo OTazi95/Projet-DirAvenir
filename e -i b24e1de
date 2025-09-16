@@ -1,0 +1,31 @@
+[33mdc3cfd0[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Remove .env from repository
+[33m0079aee[m ajout login google et modif login et register
+[33mb24e1de[m modification dsh etd et admin, applicationform, programs, redire orientation
+[33mef2c21d[m modification dsh etd et admin
+[33m593b83b[m amelioration desgn
+[33m515a48b[m ajout desg orientest en affichage
+[33m077c95a[m ajout desg orientest modif des et sys auth
+[33mac35f73[m ajout readme, correction footer, ajout linkedin et finaliser abus
+[33me661303[m ajout de l'etat apply pour admin et user et ajout historique test dshetd
+[33m177808f[m ajout de l'etat apply pour admin et user et ajout historique test dshetd
+[33m349cec4[m ajout de l'etat apply pour admin et user
+[33m52b8380[m ajout dsh etd adn ajout syt envoir contactus finalisation form apply
+[33mb442c0b[m modification du desgn prg ajout trad abtus faq contus orion
+[33maad6205[m modification footer dasboard orientation ajout apply traduction nav et fotter amelioration desg prg
+[33mddec774[m resolu des prb design home et amelior system pagination prg
+[33m571bd7c[m modification des pages dasb abus, contus, navbar
+[33m25ef9d0[m modification dans description detaille prg
+[33m3fa51ca[m modification dans description detaille prg
+[33md2441c7[m ajout description detaille prg ajout donnes manq BDD
+[33m27772d0[m modification design register et creation d'une nvl BDD pour new data
+[33med2ef0a[m ajout systeme orientation et moification page aboutus
+[33mbf20b81[m ajout des logos universiter
+[33me00da33[m ajout de la pages des programme avec filtre
+[33maa00d0f[m ajout des dossier de langues fr ang et ar
+[33mff0243e[m ajout de personne dans la rebrique our team
+[33m60de911[m ajout faq modification dans about us et contact us, modification navbar et ajout recherche universiter dans dashboard
+[33me92e535[m Ajout de comment ca marche
+[33m1ab876e[m Correction: suppression des traces de submodule frontend
+[33m5517ea8[m Suppression de l'ancien dossier frontend du backend
+[33m441fb68[m Ajout du dossier frontend (projet React)
+[33m30497a5[m Initial commit

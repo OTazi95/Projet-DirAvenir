@@ -394,7 +394,7 @@
 
 .similar-program-card {
   background: #4b014e;
-  border-radius: 50%;
+  border-radius: 30%;
   width: 120px;
   height: 120px;
   display: flex;

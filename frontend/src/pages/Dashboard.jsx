@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from "framer-motion";
-import { IoIosInformationCircleOutline } from "react-icons/io";
-import { BsBookmark } from "react-icons/bs";
 import '../styles/Dashboard.css';
 import guide from '../assets/home_pictures/guide.png';
 import ai1 from '../assets/home_pictures/AI1.png';
@@ -23,9 +21,6 @@ import profile1 from '../assets/home_pictures/profile1.png';
 import profile2 from '../assets/home_pictures/profile2.png';
 import profile3 from '../assets/home_pictures/profile3.png';
 import trophy from '../assets/home_pictures/trophy.png';
-import finalUni from '../assets/Final-logo.png';
-import cyprusUni from '../assets/Cyprus-logo.png';
-import bauUni from '../assets/BAU-logo.png';
 import chinaDest from '../assets/home_pictures/china.png';
 import cyprusDest from '../assets/home_pictures/cyprus.png';
 import romaniaDest from '../assets/home_pictures/romania.png';
@@ -99,12 +94,6 @@ const destinations = [
   { id: 3, image: romaniaDest },
 ];
 
-const partners = [
-  { id: 1, name: 'Final International University', logo: finalUni },
-  { id: 2, name: 'Cyprus International University', logo: cyprusUni },
-  { id: 3, name: 'BAU University', logo: bauUni },
-];
-
 const StarRating = ({ rating, duration }) => {
   const stars = [];
   for (let i = 0; i < 5; i++) {
@@ -130,9 +119,37 @@ function Dashboard() {
   const [searchCategory, setSearchCategory] = useState('');
   const [searchCountry, setSearchCountry] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  // Ajoutez cet état en haut de votre composant Dashboard
-const [savedPrograms, setSavedPrograms] = useState([]);
-const [logos, setLogos] = useState([]);
+  const [savedPrograms, setSavedPrograms] = useState([]);
+  const [logos, setLogos] = useState([]);
+
+  const [activeIndex, setActiveIndex] = useState(0);
+  const containerRef = useRef(null);
+  const [isPaused, setIsPaused] = useState(false);
+
+// Défilement automatique toutes les 3 secondes
+useEffect(() => {
+  const interval = setInterval(() => {
+    if (!isPaused) {
+      setActiveIndex((prev) => (prev + 1) % 4);
+    }
+  }, 3000);
+  return () => clearInterval(interval);
+}, [isPaused]);
+
+// Défilement manuel via les dots
+const handleDotClick = (index) => {
+  setActiveIndex(index);
+};
+
+// Effet pour faire défiler le conteneur en fonction de l'index actif
+useEffect(() => {
+  if (containerRef.current) {
+    const cardWidth = containerRef.current.children[0].clientWidth;
+    containerRef.current.style.transition = "transform 0.5s ease-in-out";
+    containerRef.current.style.transform = `translateX(-${activeIndex * cardWidth}px)`;
+  }
+}, [activeIndex]);
+
 
 useEffect(() => {
   axios.get("http://localhost:8000/api/logos/")
@@ -175,7 +192,6 @@ useEffect(() => {
 
 
   const [activeDot, setActiveDot] = useState(0);
-  const containerRef = useRef(null);
   const testimonialsTrackRef = useRef(null);
 
   useEffect(() => {
@@ -271,15 +287,6 @@ const handleProgramDetail = (programId) => {
     };
   }, []);
 
-  const handleDotClick = (index) => {
-    setActiveDot(index);
-    if (testimonialsTrackRef.current) {
-      const cardWidth = 350; 
-      const cardGap = 30;
-      const newPosition = index * (cardWidth + cardGap);
-      testimonialsTrackRef.current.style.transform = `translateX(-${newPosition}px)`;
-    }
-  };
 
   const specialRoles = ['Cyber Security', 'Business Administration', 'Architecture', 'Biotechnology'];
 
@@ -353,8 +360,8 @@ const handleProgramDetail = (programId) => {
                           More Infos
                         </button>
                         <button
-                      className={`save-this-button ${savedPrograms.includes(program.id) ? 'saved' : ''}}
-                      onClick={() => toggleSaveProgram(program.id)`}
+                      className={`save-this-button ${savedPrograms.includes(program.id) ? 'saved' : ''}`}
+                      onClick={() => toggleSaveProgram(program.id)}
                     >
                       {savedPrograms.includes(program.id) ? 'Unsave' : 'Save This'}
                     </button>
@@ -373,7 +380,7 @@ const handleProgramDetail = (programId) => {
           </div>
         )}
 
-        {/* Message si pas de résultats - CORRIGÉ */}
+        {/* Message si pas de résultats */}
         {searchResults.length === 0 && (searchCategory || searchCountry) && (
           <div className="popular-programs-section" style={{ paddingTop: '40px', paddingBottom: '40px' }}>
             <div className="no-results">
@@ -396,32 +403,51 @@ const handleProgramDetail = (programId) => {
 
       {/* 2. Platform Description */}
       <section className="platform-description">
-        <div className="platform-content">
-          <div className="description-text">
-            <h2>
-              Morocco's <br />
-              First AI Based <br />
-              <span className="yellow-text">Orientation Platform</span>
-            </h2>
-            <img src={point} alt="Decorative dots" className="decorative-dots" />
-          </div>
-          <div className="service-images-container" ref={containerRef}>
-            <img src={ai1} alt="AI Based Program Selector" />
-            <img src={ai2} alt="AI Based Scenarios" />
-            <img src={ai3} alt="AI Based Quizzes/Tests" />
-            <img src={ai4} alt="AI Based Gamification" />
-          </div>
-        </div>
-        <div className="carousel-nav-dots">
-          {[...Array(4)].map((_, index) => (
-            <span
-              key={index}
-              className={`dot ${index === activeDot ? 'active' : ''}}
-              onClick={() => handleDotClick(index)`}
-            ></span>
-          ))}
-        </div>
-      </section>
+  <div className="platform-content">
+    <div className="description-text">
+      <h2>
+        Morocco's <br />
+        First AI Based <br />
+        <span className="yellow-text">Orientation Platform</span>
+      </h2>
+      <img src={point} alt="Decorative dots" className="decorative-dots" />
+    </div>
+
+    {/* Conteneur pour le défilement automatique */}
+    <div
+  className="carousel-wrapper"
+  onMouseEnter={() => setIsPaused(true)}
+  onMouseLeave={() => setIsPaused(false)}
+>
+      <div
+        className="service-images-container"
+        ref={containerRef}
+        style={{
+          transform: `translateX(-${activeIndex * (370 + 20)}px)`,
+          transition: 'transform 0.5s ease-in-out'
+        }}
+      >
+        <img src={ai1} alt="AI Based Program Selector" className="carousel-image" />
+        <img src={ai2} alt="AI Based Scenarios" className="carousel-image" />
+        <img src={ai3} alt="AI Based Quizzes/Tests" className="carousel-image" />
+        <img src={ai4} alt="AI Based Gamification" className="carousel-image" />
+      </div>
+    </div>
+  </div>
+
+  {/* Indicateurs de position (dots) */}
+  <div className="carousel-nav-dots">
+    {[...Array(4)].map((_, index) => (
+      <span
+        key={index}
+        className={`dot ${index === activeIndex ? 'active' : ''}`}
+        onClick={() => handleDotClick(index)}
+      />
+    ))}
+  </div>
+</section>
+
+
 
       {/* 3. Who Can Join */}
       <section className="who-can-join">

@@ -92,6 +92,7 @@ def get_user_applications(request):
                 'status': app.status,
                 'submissionDate': app.submission_date.isoformat(),
                 'formData': app.form_data,
+                'files': app.form_data.get("files", {}),
                 'userName': app.user_name,
                 'userEmail': app.user_email,
                 'userId': app.user.id
@@ -128,6 +129,7 @@ def get_all_applications(request):
                 'status': app.status,
                 'submissionDate': app.submission_date.isoformat(),
                 'formData': app.form_data,
+                'files': app.form_data.get("files", {}),
                 'userName': app.user_name,
                 'userEmail': app.user_email,
                 'userId': app.user.id,
@@ -223,6 +225,7 @@ def get_application_detail(request, application_id):
             'status': application.status,
             'submissionDate': application.submission_date.isoformat(),
             'formData': application.form_data,
+            'files': application.form_data.get("files", {}),
             'userName': application.user_name,
             'userEmail': application.user_email,
             'userId': application.user.id,

@@ -122,7 +122,7 @@ function ProgramDetail() {
           <div className="info-item"><span className="info-label">Duration</span><span className="info-value">{program.duration}</span></div>
           <div className="info-item"><span className="info-label">Language</span><span className="info-value">{program.language}</span></div>
           <div className="info-item"><span className="info-label">University Ranking</span><span className="info-value">Top {program.university_ranking}</span></div>
-          <div className="info-item"><span className="info-label">Scholarship</span><span className="info-value scholarship">{program.scholarship}</span></div>
+          <div className="info-item"><span className="info-label">Scholarship</span><span className="info-value scholarship">Available</span></div>  {/*{program.scholarship}*/}
         </div>
       </motion.div>
 

@@ -1262,11 +1262,6 @@ const validateStep = (currentStep) => {
         <div className="application-form">
           <h2 className="form-title">Your Application</h2>
 
-{globalError && (
-  <div className="error-banner">
-    {globalError}
-  </div>
-)}
 
 <style jsx>{`
   .error-banner {
@@ -1290,10 +1285,28 @@ const validateStep = (currentStep) => {
           {step === 3 && renderStep3()}
           {step === 4 && renderStep4()}
           {step === 5 && renderStep5()}
+           
+           
+            {globalError && (
+  <div className="error-banner">
+    {globalError}
+  </div>
+)}
 
+{Object.keys(errors).length > 0 && (
+  <div className="error-banner">
+    <ul>
+      {Object.entries(errors).map(([field, msg]) => (
+        <li key={field}>{msg}</li>
+      ))}
+    </ul>
+  </div>
+)}
+
+      
           {/* Navigation buttons */}
           <div className="nav-buttons">
-            <button
+      <button
               onClick={prevStep}
               disabled={step === 1}
               className="prev-btn"

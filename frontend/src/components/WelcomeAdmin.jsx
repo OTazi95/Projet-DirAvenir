@@ -39,7 +39,7 @@ const WelcomeAdmin = () => {
   const fetchApplications = async () => {
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      const headers = token ? { 'Authorization': `Token ${token} `} : {};
+      const headers = token ? { 'Authorization': `Token ${token}` } : {};
       const response = await axios.get("http://localhost:8000/api/applications/all/", { headers });
       setApplications(response.data);
       generateNotificationsFromApplications(response.data);
@@ -49,50 +49,50 @@ const WelcomeAdmin = () => {
   };
 
   const generateNotificationsFromApplications = (apps) => {
-  const savedNotifications = JSON.parse(localStorage.getItem('adminNotifications')) || [];
-  const dismissed = JSON.parse(localStorage.getItem('adminDismissedNotifications')) || [];
-  const newNotifications = [...savedNotifications];
+    const savedNotifications = JSON.parse(localStorage.getItem('adminNotifications')) || [];
+    const dismissed = JSON.parse(localStorage.getItem('adminDismissedNotifications')) || [];
+    const newNotifications = [...savedNotifications];
 
-  apps.forEach(app => {
-    // si la candidature est nouvelle
-    const notifKey = `app-${app.id}-sent`;
-    if (app.status === "sent" && !savedNotifications.find(n => n.key === notifKey) && !dismissed.includes(notifKey)) {
-      newNotifications.push({
-        key: notifKey,
-        applicationId: app.id,
-        message: `Nouvelle candidature envoyée par ${app.userName || app.userEmail}`,
-        date: new Date().toLocaleDateString("fr-FR"),
-        time: new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
-        read: false,
-      });
-    }
-  });
+    apps.forEach(app => {
+      // si la candidature est nouvelle
+      const notifKey = `app-${app.id}-sent`;
+      if (app.status === "sent" && !savedNotifications.find(n => n.key === notifKey) && !dismissed.includes(notifKey)) {
+        newNotifications.push({
+          key: notifKey,
+          applicationId: app.id,
+          message: `Nouvelle candidature envoyée par ${app.userName || app.userEmail}`,
+          date: new Date().toLocaleDateString("fr-FR"),
+          time: new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
+          read: false,
+        });
+      }
+    });
 
-  localStorage.setItem('adminNotifications', JSON.stringify(newNotifications));
-  setNotifications(newNotifications);
-  setUnreadCount(newNotifications.filter(n => !n.read).length);
-};
+    localStorage.setItem('adminNotifications', JSON.stringify(newNotifications));
+    setNotifications(newNotifications);
+    setUnreadCount(newNotifications.filter(n => !n.read).length);
+  };
 
-const markNotificationsAsRead = () => {
-  const updated = notifications.map(n => ({ ...n, read: true }));
-  setNotifications(updated);
-  setUnreadCount(0);
-  localStorage.setItem('adminNotifications', JSON.stringify(updated));
-};
+  const markNotificationsAsRead = () => {
+    const updated = notifications.map(n => ({ ...n, read: true }));
+    setNotifications(updated);
+    setUnreadCount(0);
+    localStorage.setItem('adminNotifications', JSON.stringify(updated));
+  };
 
-const clearAllNotifications = () => {
-  const dismissed = notifications.map(n => n.key);
-  localStorage.setItem('adminDismissedNotifications', JSON.stringify(dismissed));
-  setNotifications([]);
-  setUnreadCount(0);
-  localStorage.setItem('adminNotifications', JSON.stringify([]));
-};
+  const clearAllNotifications = () => {
+    const dismissed = notifications.map(n => n.key);
+    localStorage.setItem('adminDismissedNotifications', JSON.stringify(dismissed));
+    setNotifications([]);
+    setUnreadCount(0);
+    localStorage.setItem('adminNotifications', JSON.stringify([]));
+  };
 
   // Charger les données (étudiants et admins)
   const fetchData = async () => {
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      const headers = token ? { 'Authorization': `Token ${token} `} : {};
+      const headers = token ? { 'Authorization': `Token ${token}` } : {};
       const studentsRes = await axios.get("http://localhost:8000/api/students/", { headers });
       setStudents(studentsRes.data);
       const adminsRes = await axios.get("http://localhost:8000/api/admins/", { headers });
@@ -122,7 +122,7 @@ const clearAllNotifications = () => {
   const handleApplicationStatusChange = async (appId, newStatus) => {
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      const headers = token ? { 'Authorization': `Token ${token} `} : {};
+      const headers = token ? { 'Authorization': `Token ${token}` } : {};
       await axios.patch(`http://localhost:8000/api/applications/${appId}/status/`, {
         status: newStatus
       }, { headers });
@@ -142,7 +142,7 @@ const clearAllNotifications = () => {
     if (!window.confirm("Voulez-vous vraiment supprimer cet étudiant ?")) return;
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      const headers = token ? { 'Authorization': `Token ${token} `} : {};
+      const headers = token ? { 'Authorization': `Token ${token}` } : {};
       await axios.delete(`http://localhost:8000/api/students/${id}/delete/`, { headers });
       fetchData();
       alert('Étudiant supprimé avec succès');
@@ -157,7 +157,7 @@ const clearAllNotifications = () => {
     if (!window.confirm("Voulez-vous vraiment supprimer cet administrateur ?")) return;
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      const headers = token ? { 'Authorization': `Token ${token} `} : {};
+      const headers = token ? { 'Authorization': `Token ${token}` } : {};
       await axios.delete(`http://localhost:8000/api/admins/${id}/delete/`, { headers });
       fetchData();
       alert('Administrateur supprimé avec succès');
@@ -173,7 +173,7 @@ const clearAllNotifications = () => {
     const formData = new FormData(e.target);
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      const headers = token ? { 'Authorization': `Token ${token} `} : {};
+      const headers = token ? { 'Authorization': `Token ${token}` } : {};
       await axios.post("http://localhost:8000/api/admins/add/", {
         first_name: formData.get("prenom"),
         last_name: formData.get("nom"),
@@ -203,9 +203,9 @@ const clearAllNotifications = () => {
     } else {
       setActiveTab(itemId);
       setSearchTerm(''); 
-        if (itemId === 'notifications') {
-      markNotificationsAsRead();
-    }
+      if (itemId === 'notifications') {
+        markNotificationsAsRead();
+      }
     }
   };
 
@@ -245,94 +245,426 @@ const clearAllNotifications = () => {
     fetchApplications();
   }, [navigate]);
 
-  // Composant pour gérer les candidatures
-  const AdminApplicationManager = ({ applications, onStatusChange, selectedApp, setSelectedApp }) => {
-    const filteredApplications = applications.filter(app => {
-      if (applicationFilter === 'all') return true;
-      return app.status === applicationFilter;
-    });
-
-    const getStatusIcon = (status) => {
-      switch (status) {
-        case 'sent': return <Clock size={16} color="#3B82F6" />;
-        case 'reviewing': return <Eye size={16} color="#F59E0B" />;
-        case 'approved': return <CheckCircle size={16} color="#10B981" />;
-        case 'rejected': return <XCircle size={16} color="#EF4444" />;
-        default: return <Clock size={16} color="#6B7280" />;
-      }
-    };
-
-    const handleView = (app) => {
-      setSelectedApp(app);
-      if (app.status === 'sent') {
-        onStatusChange(app.id, 'reviewing');
-      }
-    };
-
-    const ApplicationDetail = ({ application, onClose, onStatusChange }) => (
+  // Composant ApplicationDetail avec vue complète
+  const ApplicationDetail = ({ application, onClose, onStatusChange }) => {
+    const formData = application.formData || {};
+    
+    return (
       <div className="modal-overlay" onClick={onClose}>
         <div className="application-detail-modal" onClick={e => e.stopPropagation()}>
           <div className="modal-header">
-            <h3>Détails de la Candidature #{application.id}</h3>
-            <button className="modal-close" onClick={onClose}><X size={24} /></button>
+            <h3>Candidature #{application.applicationId} - Détails Complets</h3>
+            <button className="modal-close" onClick={onClose}>
+              <X size={24} />
+            </button>
           </div>
+          
           <div className="modal-content">
+            {/* Informations Générales */}
+            <div className="detail-section">
+              <h4><User size={18} /> Informations Générales</h4>
+              <div className="detail-grid">
+                <div className="detail-item">
+                  <span className="label">ID Candidature:</span>
+                  <span className="value">{application.applicationId}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="label">Programme:</span>
+                  <span className="value">{application.program}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="label">Université:</span>
+                  <span className="value">{application.university}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="label">Statut:</span>
+                  <span className={`value status-${application.status}`}>
+                    {application.status === 'sent' ? 'Envoyée' :
+                     application.status === 'reviewing' ? 'En examen' :
+                     application.status === 'approved' ? 'Approuvée' : 'Rejetée'}
+                  </span>
+                </div>
+                <div className="detail-item">
+                  <span className="label">Date de soumission:</span>
+                  <span className="value">
+                    {new Date(application.submissionDate).toLocaleDateString('fr-FR')} à {' '}
+                    {new Date(application.submissionDate).toLocaleTimeString('fr-FR')}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Contact Details */}
+            <div className="detail-section">
+              <h4><User size={18} /> Coordonnées</h4>
+              <div className="detail-grid">
+                <div className="detail-item">
+                  <span className="label">Email:</span>
+                  <span className="value">{formData.email}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="label">Téléphone:</span>
+                  <span className="value">{formData.phone}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="label">WhatsApp:</span>
+                  <span className="value">{formData.whatsapp || 'Non fourni'}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Informations Personnelles */}
             <div className="detail-section">
               <h4><User size={18} /> Informations Personnelles</h4>
               <div className="detail-grid">
                 <div className="detail-item">
                   <span className="label">Nom complet:</span>
-                  <span className="value">{application.formData.firstName} {application.formData.lastName}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="label">Email:</span>
-                  <span className="value">{application.formData.email}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="label">Téléphone:</span>
-                  <span className="value">{application.formData.phone}</span>
+                  <span className="value">{formData.firstName} {formData.lastName}</span>
                 </div>
                 <div className="detail-item">
                   <span className="label">Date de naissance:</span>
-                  <span className="value">{application.formData.dob}</span>
+                  <span className="value">{formData.dob}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="label">Lieu de naissance:</span>
+                  <span className="value">{formData.placeOfBirth}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="label">Genre:</span>
+                  <span className="value">{formData.gender}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="label">État civil:</span>
+                  <span className="value">{formData.maritalStatus}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="label">N° Passeport:</span>
+                  <span className="value">{formData.passportNumber}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="label">Expiration passeport:</span>
+                  <span className="value">{formData.passportExpiry}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Compétences Linguistiques */}
+            <div className="detail-section">
+              <h4><GraduationCap size={18} /> Compétences Linguistiques</h4>
+              <div className="detail-grid">
+                <div className="detail-item">
+                  <span className="label">Niveau d'anglais:</span>
+                  <span className="value">{formData.englishLevel}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="label">Certificat d'anglais:</span>
+                  <span className="value">{formData.englishCertificate}</span>
+                </div>
+                {formData.certificateScore && (
+                  <div className="detail-item">
+                    <span className="label">Score:</span>
+                    <span className="value">{formData.certificateScore}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Adresse */}
+            <div className="detail-section">
+              <h4>📍 Adresse</h4>
+              <div className="detail-grid">
+                <div className="detail-item">
+                  <span className="label">Pays:</span>
+                  <span className="value">{formData.country}</span>
+                </div>
+                <div className="detail-item full-width">
+                  <span className="label">Adresse complète:</span>
+                  <span className="value">{formData.fullAddress}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Formation */}
+            <div className="detail-section">
+              <h4><GraduationCap size={18} /> Formation</h4>
+              {formData.educationalBackground?.map((edu, index) => (
+                <div key={index} className="education-item">
+                  <h5>Formation #{index + 1}</h5>
+                  <div className="detail-grid">
+                    <div className="detail-item">
+                      <span className="label">École/Université:</span>
+                      <span className="value">{edu.school}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="label">Spécialité:</span>
+                      <span className="value">{edu.major || 'Non spécifiée'}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="label">Date de début:</span>
+                      <span className="value">{edu.startDate}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="label">Date de fin:</span>
+                      <span className="value">{edu.finishDate}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="label">Note/Mention:</span>
+                      <span className="value">{edu.grade || 'Non fournie'}</span>
+                    </div>
+                  </div>
+                </div>
+              )) || <p>Aucune formation renseignée</p>}
+            </div>
+
+            {/* Expérience Professionnelle */}
+            <div className="detail-section">
+              <h4>💼 Expérience Professionnelle</h4>
+              {formData.workExperience?.map((work, index) => (
+                <div key={index} className="work-item">
+                  <h5>Expérience #{index + 1}</h5>
+                  <div className="detail-grid">
+                    <div className="detail-item">
+                      <span className="label">Employeur:</span>
+                      <span className="value">{work.employer}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="label">Poste:</span>
+                      <span className="value">{work.jobTitle}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="label">Date de début:</span>
+                      <span className="value">{work.startDate}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="label">Date de fin:</span>
+                      <span className="value">{work.endDate || 'En cours'}</span>
+                    </div>
+                  </div>
+                </div>
+              )) || <p>Aucune expérience professionnelle renseignée</p>}
+            </div>
+
+            {/* Contacts Familiaux */}
+            <div className="detail-section">
+              <h4>👨‍👩‍👧‍👦 Contacts Familiaux</h4>
+              {formData.familyContacts?.map((contact, index) => (
+                <div key={index} className="family-item">
+                  <h5>Contact #{index + 1}</h5>
+                  <div className="detail-grid">
+                    <div className="detail-item">
+                      <span className="label">Nom:</span>
+                      <span className="value">{contact.name}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="label">Nationalité:</span>
+                      <span className="value">{contact.nationality}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="label">Email:</span>
+                      <span className="value">{contact.email || 'Non fourni'}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="label">Lieu de travail:</span>
+                      <span className="value">{contact.workplace || 'Non fourni'}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="label">Poste:</span>
+                      <span className="value">{contact.position || 'Non fourni'}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="label">Relation:</span>
+                      <span className="value">{contact.relationship}</span>
+                    </div>
+                  </div>
+                </div>
+              )) || <p>Aucun contact familial renseigné</p>}
+            </div>
+
+            {/* Garant Financier */}
+            <div className="detail-section">
+              <h4>💰 Garant Financier</h4>
+              <div className="detail-grid">
+                <div className="detail-item">
+                  <span className="label">Relation:</span>
+                  <span className="value">{formData.guarantorRelationship}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="label">Nom:</span>
+                  <span className="value">{formData.guarantorName}</span>
                 </div>
                 <div className="detail-item">
                   <span className="label">Pays:</span>
-                  <span className="value">{application.formData.country}</span>
+                  <span className="value">{formData.guarantorCountry}</span>
+                </div>
+                <div className="detail-item full-width">
+                  <span className="label">Adresse:</span>
+                  <span className="value">{formData.guarantorAddress}</span>
                 </div>
                 <div className="detail-item">
-                  <span className="label">Niveau d'anglais:</span>
-                  <span className="value">{application.formData.englishLevel}</span>
+                  <span className="label">Email:</span>
+                  <span className="value">{formData.guarantorEmail || 'Non fourni'}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="label">Lieu de travail:</span>
+                  <span className="value">{formData.guarantorWorkplace || 'Non fourni'}</span>
+                </div>
+                {formData.guarantorWorkplaceAddress && (
+                  <div className="detail-item full-width">
+                    <span className="label">Adresse du travail:</span>
+                    <span className="value">{formData.guarantorWorkplaceAddress}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Contact d'Urgence en Chine */}
+            <div className="detail-section">
+              <h4>🚨 Contact d'Urgence en Chine</h4>
+              <div className="detail-grid">
+                <div className="detail-item">
+                  <span className="label">Nom:</span>
+                  <span className="value">{formData.emergencyName || 'Non fourni'}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="label">Pays:</span>
+                  <span className="value">{formData.emergencyCountry}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="label">Email:</span>
+                  <span className="value">{formData.emergencyEmail || 'Non fourni'}</span>
+                </div>
+                {formData.emergencyAddress && (
+                  <div className="detail-item full-width">
+                    <span className="label">Adresse:</span>
+                    <span className="value">{formData.emergencyAddress}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Déclarations et Accords */}
+            <div className="detail-section">
+              <h4>✅ Déclarations et Accords</h4>
+              <div className="agreements-list">
+                <div className="agreement-item">
+                  <span className="agreement-label">Conditions générales:</span>
+                  <span className={`agreement-status ${formData.acknowledgment ? 'accepted' : 'declined'}`}>
+                    {formData.acknowledgment ? '✓ Accepté' : '✗ Non accepté'}
+                  </span>
+                </div>
+                <div className="agreement-item">
+                  <span className="agreement-label">Consentement données:</span>
+                  <span className={`agreement-status ${formData.consent ? 'accepted' : 'declined'}`}>
+                    {formData.consent ? '✓ Accepté' : '✗ Non accepté'}
+                  </span>
+                </div>
+                <div className="agreement-item">
+                  <span className="agreement-label">Exactitude des informations:</span>
+                  <span className={`agreement-status ${formData.accuracy ? 'accepted' : 'declined'}`}>
+                    {formData.accuracy ? '✓ Accepté' : '✗ Non accepté'}
+                  </span>
+                </div>
+                <div className="agreement-item">
+                  <span className="agreement-label">Politique de paiement:</span>
+                  <span className={`agreement-status ${formData.paymentPolicy ? 'accepted' : 'declined'}`}>
+                    {formData.paymentPolicy ? '✓ Accepté' : '✗ Non accepté'}
+                  </span>
+                </div>
+                <div className="agreement-item">
+                  <span className="agreement-label">Politique de remboursement:</span>
+                  <span className={`agreement-status ${formData.refundPolicy ? 'accepted' : 'declined'}`}>
+                    {formData.refundPolicy ? '✓ Accepté' : '✗ Non accepté'}
+                  </span>
+                </div>
+                <div className="agreement-item">
+                  <span className="agreement-label">Conformité:</span>
+                  <span className={`agreement-status ${formData.compliance ? 'accepted' : 'declined'}`}>
+                    {formData.compliance ? '✓ Accepté' : '✗ Non accepté'}
+                  </span>
                 </div>
               </div>
             </div>
-            <div className="detail-section">
-              <h4><GraduationCap size={18} /> Formation</h4>
-              {application.formData.educationalBackground?.map((edu, index) => (
-                <div key={index} className="education-item">
+
+{/* Documents */}
+<div className="detail-section">
+  <h4><FileText size={18} /> Documents Fournis</h4>
+  <div className="documents-list">
+    {Object.entries(formData.documents || {}).map(([docType, file]) => {
+      const docLabels = {
+        passportPages: 'Pages de passeport',
+        academicCertificate: 'Certificat académique',
+        academicTranscript: 'Relevé de notes',
+        languageCertificate: 'Certificat de langue',
+        medicalExam: 'Examen médical',
+        criminalRecord: 'Casier judiciaire',
+        bankStatement: 'Relevé bancaire',
+        personalPhoto: 'Photo personnelle',
+        resume: 'CV',
+        awards: 'Certificats de prix',
+        parentsId: 'ID des parents'
+      };
+
+      // Si le champ est un chemin de fichier (ex: "uploads/cv_omar.pdf"), on construit l'URL
+      const fileUrl = typeof file === "string" 
+        ? `http://localhost:8000/media/${file}`  // adapte selon MEDIA_URL Django
+        : null;
+
+      return (
+        <div key={docType} className="document-status-item">
+          <span className="doc-label">{docLabels[docType] || docType}:</span>
+          <span className={`doc-status ${file ? 'provided' : 'missing'}`}>
+            {file ? '✓ Fourni' : '✗ Manquant'}
+          </span>
+
+          {file && (
+            fileUrl ? (
+              <a 
+                href={fileUrl} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="file-link"
+              >
+                {docLabels[docType] || 'Voir le fichier'}
+              </a>
+            ) : (
+              <span className="file-name">{file.name || 'Fichier fourni'}</span>
+            )
+          )}
+        </div>
+      );
+    })}
+  </div>
+</div>
+
+
+            {/* Informations de révision (si disponibles) */}
+            {application.reviewedBy && (
+              <div className="detail-section">
+                <h4>📝 Informations de Révision</h4>
+                <div className="detail-grid">
                   <div className="detail-item">
-                    <span className="label">École:</span>
-                    <span className="value">{edu.school}</span>
+                    <span className="label">Révisé par:</span>
+                    <span className="value">{application.reviewedBy}</span>
                   </div>
                   <div className="detail-item">
-                    <span className="label">Spécialité:</span>
-                    <span className="value">{edu.major}</span>
+                    <span className="label">Date de révision:</span>
+                    <span className="value">
+                      {new Date(application.reviewedDate).toLocaleDateString('fr-FR')} à {' '}
+                      {new Date(application.reviewedDate).toLocaleTimeString('fr-FR')}
+                    </span>
                   </div>
-                  <div className="detail-item">
-                    <span className="label">Note:</span>
-                    <span className="value">{edu.grade}</span>
-                  </div>
+                  {application.notes && (
+                    <div className="detail-item full-width">
+                      <span className="label">Notes:</span>
+                      <span className="value">{application.notes}</span>
+                    </div>
+                  )}
                 </div>
-              ))}
-            </div>
-            <div className="detail-section">
-              <h4><FileText size={18} /> Programme Demandé</h4>
-              <div className="program-info">
-                <p><strong>Programme:</strong> {application.program}</p>
-                <p><strong>Université:</strong> {application.university}</p>
               </div>
-            </div>
+            )}
           </div>
+
+          {/* Actions */}
           <div className="modal-actions">
             {application.status === 'reviewing' && (
               <>
@@ -361,6 +693,31 @@ const clearAllNotifications = () => {
         </div>
       </div>
     );
+  };
+
+// Composant pour gérer les candidatures
+  const AdminApplicationManager = ({ applications, onStatusChange, selectedApp, setSelectedApp }) => {
+    const filteredApplications = applications.filter(app => {
+      if (applicationFilter === 'all') return true;
+      return app.status === applicationFilter;
+    });
+
+    const getStatusIcon = (status) => {
+      switch (status) {
+        case 'sent': return <Clock size={16} color="#3B82F6" />;
+        case 'reviewing': return <Eye size={16} color="#F59E0B" />;
+        case 'approved': return <CheckCircle size={16} color="#10B981" />;
+        case 'rejected': return <XCircle size={16} color="#EF4444" />;
+        default: return <Clock size={16} color="#6B7280" />;
+      }
+    };
+
+    const handleView = (app) => {
+      setSelectedApp(app);
+      if (app.status === 'sent') {
+        onStatusChange(app.id, 'reviewing');
+      }
+    };
 
     return (
       <>
@@ -529,9 +886,9 @@ const clearAllNotifications = () => {
                     <IconComponent size={20} />
                   </div>
                   <span className="nav-label" style={{ color: item.color }}>{item.label}</span>
-{item.id === 'notifications' && unreadCount > 0 && (
-  <span className="nav-badge">{unreadCount}</span>
-)}
+                  {item.id === 'notifications' && unreadCount > 0 && (
+                    <span className="nav-badge">{unreadCount}</span>
+                  )}
                 </button>
               );
             })}
@@ -781,7 +1138,7 @@ const clearAllNotifications = () => {
                     </div>
                   </div>
                   <button type="submit" className="submit-btn">
-                     Créer l'administrateur
+                    Créer l'administrateur
                   </button>
                 </form>
               </div>
@@ -800,30 +1157,29 @@ const clearAllNotifications = () => {
           )}
 
           {activeTab === 'notifications' && (
-  <div className="notifications-section">
-    <div className="section-header">
-      <h2>Notifications</h2>
-      {notifications.length > 0 && (
-        <button className="clear-btn" onClick={clearAllNotifications}>
-          Effacer tout
-        </button>
-      )}
-    </div>
-    {notifications.length === 0 ? (
-      <p>Aucune notification</p>
-    ) : (
-      <ul className="notifications-list">
-        {notifications.map((n, i) => (
-          <li key={i} className={`notification-item ${n.read ? 'read' : 'unread'}`}>
-            <div className="notif-message">{n.message}</div>
-            <div className="notif-time">{n.date} {n.time}</div>
-          </li>
-        ))}
-      </ul>
-    )}
-  </div>
-)}
-
+            <div className="notifications-section">
+              <div className="section-header">
+                <h2>Notifications</h2>
+                {notifications.length > 0 && (
+                  <button className="clear-btn" onClick={clearAllNotifications}>
+                    Effacer tout
+                  </button>
+                )}
+              </div>
+              {notifications.length === 0 ? (
+                <p>Aucune notification</p>
+              ) : (
+                <ul className="notifications-list">
+                  {notifications.map((n, i) => (
+                    <li key={i} className={`notification-item ${n.read ? 'read' : 'unread'}`}>
+                      <div className="notif-message">{n.message}</div>
+                      <div className="notif-time">{n.date} {n.time}</div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

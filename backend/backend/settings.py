@@ -179,13 +179,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # React
-     "http://127.0.0.1:3000",# ajoute d'autres origines si nécessaire
+    "http://localhost:3000",  
+     "http://127.0.0.1:3000",
 ]
 
 # Ajoute ceci pour autoriser tous les headers
 CORS_ALLOW_HEADERS = list(default_headers) + [
-    'X-CSRFToken',  # utile si tu utilises CSRF
+    'X-CSRFToken',  
     'Authorization',
 ]
 

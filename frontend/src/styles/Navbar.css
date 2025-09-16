@@ -6,7 +6,7 @@ html {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: transparent !important;
+  background-color: #f2f2f2 !important;
   backdrop-filter: blur(6px);
   padding: 10px 20px;
   color: #f2f2f2;
@@ -23,6 +23,12 @@ html {
 
 .navbar.navbar-yellow {
   background-color: #FCBE1C !important;
+  backdrop-filter: none !important;
+  color: white;
+}
+
+.navbar.navbar-test {
+  background-color: transparent !important;
   backdrop-filter: none !important;
   color: white;
 }
@@ -304,4 +310,8 @@ html {
 
 .language-option.active.mauve-page:hover {
   background-color: #3d0040 !important;
+}
+
+.navbar.navbar-mauve .nav-icon.user-icon {
+  color: #FCBE1C !important;
 }

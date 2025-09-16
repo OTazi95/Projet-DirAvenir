@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import logo from '../assets/logo.png';
+import logo from '../assets/diravenir.png';
 import logo2 from '../assets/logoj.png';
 import { FaUserCircle, FaCog, FaGlobe, FaChevronDown } from 'react-icons/fa';
 import { AuthContext } from '../context/AuthContext';
@@ -34,9 +34,9 @@ function Navbar() {
   const pagesYellow = ['/faq', '/contact'];
   const pagesDefault = ['/dashboard', '/Orientation', '/programs'];
 
-  const isMauvePage = pagesMauve.includes(location.pathname);
-  const isYellowPage = pagesYellow.includes(location.pathname);
-  const isDefaultPage = pagesDefault.includes(location.pathname);
+const isMauvePage = pagesMauve.some(path => location.pathname.startsWith(path));
+const isYellowPage = pagesYellow.some(path => location.pathname.startsWith(path));
+const isDefaultPage = pagesDefault.some(path => location.pathname.startsWith(path));
 
   // Déterminer la classe CSS de la navbar
   let navbarClass = '';
@@ -99,7 +99,7 @@ function Navbar() {
 
           {isLoggedIn ? (
             <>
-              <FaUserCircle className="nav-icon" onClick={() => handleNavigateToDashboard()} />
+              <FaUserCircle className="nav-icon user-icon" onClick={() => handleNavigateToDashboard()} />
               <button className="logout-btn" onClick={handleLogout}>{t('navbar.logout')}</button>
             </>
           ) : (

@@ -215,7 +215,7 @@ body {
 }
 
 .contact-info strong {
-  color: #4b014e; /* met en valeur les labels */
+  color: #4b014e; 
 }
 
 .social-icons {
@@ -234,7 +234,7 @@ body {
 }
 
 .social-icons a:hover {
-  color: #e9b200; /* jaune au hover */
+  color: #e9b200; 
   transform: scale(1.2);
 }
 

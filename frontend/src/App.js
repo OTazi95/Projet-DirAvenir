@@ -7,12 +7,6 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Contact from './pages/Contact';
-import Chine from './pages/Chine';
-import Roumanie from './pages/Roumanie';
-import Chypre from './pages/Chypre';
-import PartnerFinal from './pages/PartnerFinal';
-import PartnerCyprus from './pages/PartnerCyprus';
-import PartnerBAU from './pages/PartnerBAU';
 import AboutUs from './pages/AboutUs';
 import Faq from './pages/faq';
 import Programs from './pages/Programs';
@@ -56,12 +50,6 @@ function AnimatedRoutes() {
           <Route path="google-auth-callback" element={<PageTransition><GoogleAuthCallback /></PageTransition>} /> {/* ← AJOUTÉ */}
           <Route path="contact" element={<PageTransition><Contact /></PageTransition>} />
           <Route path="dashboard" element={<PageTransition><Dashboard /></PageTransition>} />
-          <Route path="/destination/chine" element={<PageTransition><Chine /></PageTransition>} />
-          <Route path="/destination/roumanie" element={<PageTransition><Roumanie /></PageTransition>} />
-          <Route path="/destination/chypre" element={<PageTransition><Chypre /></PageTransition>} />
-          <Route path="/partner/final" element={<PageTransition><PartnerFinal /></PageTransition>} />
-          <Route path="/partner/cyprus" element={<PageTransition><PartnerCyprus /></PageTransition>} />
-          <Route path="/partner/bau" element={<PageTransition><PartnerBAU /></PageTransition>} />
           <Route path="/about" element={<PageTransition><AboutUs /></PageTransition>} />
           <Route path="/faq" element={<PageTransition><Faq /></PageTransition>} />
           <Route path="/programs" element={<PageTransition><Programs /></PageTransition>} />

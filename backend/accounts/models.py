@@ -1,5 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+import json
 
 class Profile(models.Model):
     ROLE_CHOICES = [
@@ -12,10 +16,6 @@ class Profile(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.role}"
 
-
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
@@ -27,13 +27,6 @@ def save_user_profile(sender, instance, **kwargs):
      instance.profile.save()
     except Profile.DoesNotExist:
      Profile.objects.create(user=instance)
-
-
-
-
-# models.py - Modèles Django pour le système d'orientation
-from django.contrib.auth.models import User
-import json
 
 class Major(models.Model):
     name = models.CharField(max_length=200, unique=True)
@@ -75,11 +68,6 @@ class Major(models.Model):
         verbose_name_plural = "Majeures"
 
 
-
-
-
-# Ajoute ce nouveau modèle à ton accounts/models.py
-
 class ProgrammesUniversitesV2(models.Model):
     """Nouvelle base de données des programmes universitaires"""
     
@@ -111,31 +99,19 @@ class ProgrammesUniversitesV2(models.Model):
         verbose_name = "Programme Universitaire V2"
         verbose_name_plural = "Programmes Universitaires V2"
         indexes = [
-            models.Index(fields=['universities', 'category']),    # ✅ Utilise 'universities' au lieu de 'university'
-            models.Index(fields=['campus_city']),                # ✅ Utilise 'campus_city' au lieu de 'city'
-            models.Index(fields=['degree_type']),                # ✅ OK
-            models.Index(fields=['is_active']),                  # ✅ OK
+            models.Index(fields=['universities', 'category']),    
+            models.Index(fields=['campus_city']),               
+            models.Index(fields=['degree_type']),                
+            models.Index(fields=['is_active']),                  
         ]
 
     def __str__(self):
-        return f"{self.program} - {self.universities} ({self.campus_city})"  # ✅ Corrigé les noms
+        return f"{self.program} - {self.universities} ({self.campus_city})"  
 
     @property
     def has_scholarship(self):
         return self.scholarship and self.scholarship.lower() not in ['no', 'none', 'n/a', 'non']
     
-
-
-
-
-
-
-
-
-
-from django.db import models
-from django.contrib.auth.models import User
-import json
 
 class Application(models.Model):
     STATUS_CHOICES = [
@@ -180,18 +156,6 @@ class Application(models.Model):
     def user_email(self):
         return self.user.email
     
-
-
-
-
-
-    # models.py - Ajoutez ce modèle à votre fichier models.py existant
-
-from django.db import models
-from django.contrib.auth.models import User
-from django.utils import timezone
-import json
-
 class OrientationTest(models.Model):
     """
     Modèle pour stocker les résultats des tests d'orientation des utilisateurs
@@ -235,12 +199,7 @@ class OrientationTest(models.Model):
         return self.completed_at >= timezone.now() - timedelta(days=30)
     
     def get_top_results(self, limit=3):
-        """
-        Retourne les top résultats basés sur les scores normalisés
-        Cette méthode devra être adaptée selon votre logique de calcul des majeures
-        """
-        # Pour l'instant, retournons des données d'exemple
-        # Vous devrez adapter cette méthode selon votre système de scoring
+        
         example_results = [
             {'major': 'Informatique', 'score': 85},
             {'major': 'Ingénierie', 'score': 78},
