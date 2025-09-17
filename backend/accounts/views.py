@@ -24,6 +24,8 @@ from django.core.paginator import Paginator
 from django.db.models import Q, IntegerField
 from django.db.models.functions import Cast
 from .models import OrientationTest
+from django.core.files.storage import FileSystemStorage
+
 
 def generate_application_id():
     """Génère un ID unique pour la candidature"""
@@ -32,29 +34,47 @@ def generate_application_id():
         if not Application.objects.filter(application_id=app_id).exists():
             return app_id
 
+from django.core.files.storage import FileSystemStorage
+import json
+
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def submit_application(request):
-    """
-    Soumet une nouvelle candidature
-    """
     try:
-        data = request.data
-        
-        # Générer un ID unique pour la candidature
-        app_id = data.get('formData', {}).get('applicationId', generate_application_id())
-        
-        # Créer la nouvelle candidature
+        # 1. Récupérer le JSON depuis formData (qui est une chaîne)
+        form_data_json = request.POST.get('formData', '{}')
+        form_data = json.loads(form_data_json)
+
+        # 2. Extraire program et university depuis form_data
+        program = form_data.get('program', '')
+        university = form_data.get('university', '')
+
+        # 3. Générer un ID unique si non fourni
+        app_id = form_data.get('applicationId', generate_application_id())
+
+        # 4. Créer l'application avec les bonnes valeurs
         application = Application.objects.create(
             user=request.user,
-            program=data.get('program', ''),
-            university=data.get('university', ''),
+            program=program,  # Valeurs extraites du JSON
+            university=university,
             status='sent',
-            form_data=data.get('formData', {}),
+            form_data=form_data,  # Stocker tout le formData (y compris program/university)
             application_id=str(app_id)
         )
-        
+
+        # 5. Traiter les fichiers uploadés
+        if not application.form_data.get('documents'):
+            application.form_data['documents'] = {}
+
+        for doc_type in request.FILES:
+            file = request.FILES[doc_type]
+            fs = FileSystemStorage()
+            filename = fs.save(f"uploads/{doc_type}_{request.user.id}_{file.name}", file)
+            application.form_data['documents'][doc_type] = filename
+
+        application.save()  # Sauvegarder les modifications
+
         return Response({
             'message': 'Candidature soumise avec succès',
             'application': {
@@ -65,12 +85,15 @@ def submit_application(request):
                 'status': application.status,
                 'submission_date': application.submission_date.isoformat(),
                 'user_name': application.user_name,
-                'user_email': application.user_email
+                'user_email': application.user_email,
+                'form_data': application.form_data
             }
         }, status=201)
-        
+
     except Exception as e:
         return Response({'error': str(e)}, status=500)
+
+
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])

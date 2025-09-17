@@ -589,7 +589,7 @@ const WelcomeAdmin = () => {
 <div className="detail-section">
   <h4><FileText size={18} /> Documents Fournis</h4>
   <div className="documents-list">
-    {Object.entries(formData.documents || {}).map(([docType, file]) => {
+    {Object.entries(application.formData.documents || {}).map(([docType, file]) => {
       const docLabels = {
         passportPages: 'Pages de passeport',
         academicCertificate: 'Certificat académique',
@@ -604,37 +604,36 @@ const WelcomeAdmin = () => {
         parentsId: 'ID des parents'
       };
 
-      // Si le champ est un chemin de fichier (ex: "uploads/cv_omar.pdf"), on construit l'URL
-      const fileUrl = typeof file === "string" 
-        ? `http://localhost:8000/media/${file}`  // adapte selon MEDIA_URL Django
+      // Vérifier si le fichier est un objet vide ou null
+      const isFileEmpty = !file || (typeof file === 'object' && Object.keys(file).length === 0);
+
+      // Si c'est un chemin de fichier (string), construire l'URL
+      const fileUrl = typeof file === "string" && file.trim() !== ""
+        ? `http://localhost:8000/media/${file.startsWith('uploads/') ? file : `uploads/${file}`}`
         : null;
 
       return (
         <div key={docType} className="document-status-item">
           <span className="doc-label">{docLabels[docType] || docType}:</span>
-          <span className={`doc-status ${file ? 'provided' : 'missing'}`}>
-            {file ? '✓ Fourni' : '✗ Manquant'}
+          <span className={`doc-status ${!isFileEmpty ? 'provided' : 'missing'}`}>
+            {!isFileEmpty ? '✓ Fourni' : '✗ Manquant'}
           </span>
-
-          {file && (
-            fileUrl ? (
-              <a 
-                href={fileUrl} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="file-link"
-              >
-                {docLabels[docType] || 'Voir le fichier'}
-              </a>
-            ) : (
-              <span className="file-name">{file.name || 'Fichier fourni'}</span>
-            )
+          {fileUrl && (
+            <a
+              href={fileUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="file-link"
+            >
+              Voir le document
+            </a>
           )}
         </div>
       );
     })}
   </div>
 </div>
+
 
 
             {/* Informations de révision (si disponibles) */}

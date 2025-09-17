@@ -303,64 +303,59 @@ const validateStep = (currentStep) => {
 
   const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
 
-  const handleSubmit = async () => {
-    try {
-      // Récupérer les données d'authentification
-      const { authUser, token } = getAuthData();
-      
-      if (!authUser || !token) {
-        alert("Erreur d'authentification. Veuillez vous reconnecter.");
-        navigate('/login');
-        return;
-      }
-
-      console.log('Données d\'authentification:', { authUser: !!authUser, token: !!token });
-      
-      // Préparer les données de soumission
-      const submissionPayload = {
-        program: program?.program || "Programme non spécifié",
-        university: program?.universities || "Université non spécifiée",
-        formData: {
-          ...formData,
-          applicationId: applicationId
-        }
-      };
-
-      console.log('Payload à envoyer:', submissionPayload);
-
-      // Envoyer la requête avec le token d'authentification
-      const response = await fetch('http://localhost:8000/api/applications/submit/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Token ${token}`
-        },
-        body: JSON.stringify(submissionPayload)
-      });
-
-      console.log('Response status:', response.status);
-
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Candidature soumise avec succès:', result);
-        
-        setSubmissionData({
-          applicationId: result.application?.application_id || applicationId,
-          submissionDate: new Date().toISOString(),
-          status: 'sent'
-        });
-        setIsSubmitted(true);
-      } else {
-        const errorData = await response.json().catch(() => ({}));
-        console.error('Erreur de réponse:', response.status, errorData);
-        throw new Error(errorData.error || `Erreur ${response.status}: ${response.statusText}`);
-      }
-
-    } catch (error) {
-      console.error("Erreur lors de l'envoi:", error);
-      alert(`Erreur lors de l'envoi de la candidature: ${error.message}`);
+const handleSubmit = async () => {
+  try {
+    const { authUser, token } = getAuthData();
+    if (!authUser || !token) {
+      alert("Erreur d'authentification. Veuillez vous reconnecter.");
+      navigate('/login');
+      return;
     }
-  };
+
+    // Créer un FormData pour gérer les fichiers
+    const formDataToSend = new FormData();
+    
+    formDataToSend.append('formData', JSON.stringify({
+      ...formData,
+      applicationId: applicationId,
+      program: program?.program || "Programme non spécifié",  // <-- Ajoutez program
+      university: program?.universities || "Université non spécifiée",  // <-- Ajoutez university
+    }));
+
+    // Ajouter chaque fichier
+    Object.entries(formData.documents).forEach(([docType, file]) => {
+      if (file instanceof File) {  // Vérifier que c'est bien un fichier
+        formDataToSend.append(`documents[${docType}]`, file);
+      }
+    });
+
+    const response = await fetch('http://localhost:8000/api/applications/submit/', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${token}`
+        // Ne pas mettre 'Content-Type' pour laisser le navigateur le définir avec la boundary
+      },
+      body: formDataToSend
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      setSubmissionData({
+        applicationId: result.application?.application_id || applicationId,
+        submissionDate: new Date().toISOString(),
+        status: 'sent'
+      });
+      setIsSubmitted(true);
+    } else {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Erreur ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Erreur lors de l'envoi:", error);
+    alert(`Erreur: ${error.message}`);
+  }
+};
+
 
   // Component de succès
   const ApplicationSuccess = () => (
