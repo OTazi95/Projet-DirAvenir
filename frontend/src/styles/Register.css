@@ -1,4 +1,3 @@
-/* Container principal - mêmes alignements que login */
 .register-container {
   display: flex;
   align-items: flex-start;
@@ -12,18 +11,18 @@
 
 /* Card Register */
 .register-card {
-  width: 480px;
+  width: 500px;
   background-color: #FDFDFD;
   border-radius: 23px;
   box-shadow: 3px 4px 7px 6px rgba(0, 0, 0, 0.09);
   padding: 10px 20px 20px;
   margin-left: 70px;
   max-width: 100%;
-  margin-top: -2px;
+  margin-top: 25px;
 }
 
 /* Titre */
-.form-title {
+.form1-title {
   margin-bottom: 25px;
   color: #541652;
   font-weight: 600;
@@ -32,17 +31,17 @@
 }
 
 /* Style pour les champs de Register */
-.register-form .form-input {
+.register-form .form1-input {
   width: 100%;
-  border: none;                  /* Supprime les bordures */
-  border-bottom: 2px solid #ccc; /* Juste une ligne en bas */
+  border: none;                  
+  border-bottom: 2px solid #ccc; 
   outline: none;
-  background: transparent;       /* Pas de fond */
-   padding: 4px 2px;   /* encore plus fin */
-  font-size: 15px;    /* texte un peu réduit */
+  background: transparent;       
+   padding: 4px 2px;   
+  font-size: 15px;    
   line-height: 1.1;
   color: #000;
-  border-radius: 0;              /* Pas d’arrondi */
+  border-radius: 0;             
   transition: border-color 0.3s ease;
 }
 
@@ -52,26 +51,26 @@
   opacity: 1;
 }
 
-/* Effet focus (quand on clique dans le champ) */
+/* Effet focus  */
 .register-form .form-input:focus {
-  border: none;                  /* supprime toute bordure */
-  border-bottom: 2px solid #9ca3af; /* une couleur personnalisée si tu veux */
-  outline: none;                 /* enlève le cadre par défaut */
-  box-shadow: none;              /* supprime le halo violet */
+  border: none;                 
+  border-bottom: 2px solid #9ca3af; 
+  outline: none;                 
+  box-shadow: none;              
 }
 
 
 .form-row {
   display: flex;
-  gap: 10px; /* réduit l’espace horizontal entre les deux champs */
-  margin-bottom: -10px !important; /* réduit l’espace avec le champ suivant */
+  gap: 10px; 
+  margin-bottom: -10px !important; 
 }
 
 .register-form .form-group {
-  margin-bottom: 8px; /* Réduit l’écart entre les champs */
+  margin-bottom: 8px; 
 }
 
-/* Checkbox stylée comme login */
+/* Checkbox stylée */
 .checkbox-group {
   position: relative;
   display: inline-flex;
@@ -145,7 +144,7 @@
   box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15); 
 }
 
-/* Switch text + lien */
+/* Switch text et lien */
 .switch-text {
   font-size: 14px;
   color: gray;
@@ -184,15 +183,15 @@
 }
 .social-buttons {
   display: flex !important;
-  flex-direction: row !important;   /* en ligne */
+  flex-direction: row !important;  
   justify-content: space-between;
   align-items: center !important;
   gap: 10px !important;
-  flex-wrap: wrap !important;       /* passe à la ligne si trop serré */
+  flex-wrap: wrap !important;      
 }
 
 .social-btn {
-  flex: 1!important;        /* largeur auto */
+  flex: 1!important;        
   padding: 10px 14px !important;
   border-radius: 18px !important;
   font-weight: 500 !important;
@@ -220,17 +219,6 @@
   color: #111 !important;
 }
 
-/* Facebook */
-.social-btn-facebook {
-  background: #1877F2 !important;
-  color: #fff !important;
-}
-
-/* Apple */
-.social-btn-apple {
-  background: #000 !important;
-  color: #fff !important;
-}
 
 /* Terms / Privacy */
 .terms-text {
@@ -267,7 +255,7 @@
 }
 
 .illustration-image {
-  width: 780px;
+  width: 720px;
   height: auto;
   border-radius: 25px;
   margin-top: -65px;
@@ -305,4 +293,31 @@
     flex-direction: column;
     gap: 15px;
   }
+}
+.register-form .password-group,
+.login-form .password-group {
+  position: relative;
+  width: 100%;
+}
+
+.register-form .password-group input,
+.login-form .password-group input {
+  width: 100%;
+  padding-right: 40px; 
+  box-sizing: border-box;
+}
+
+.register-form .password-group .toggle-password,
+.login-form .password-group .toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #555;
+  font-size: 18px;
+  line-height: 1;
+  padding: 0;
 }

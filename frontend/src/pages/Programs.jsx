@@ -172,6 +172,7 @@ navigate(`/login?redirect=/application/${programId}`);
     : programs;
 
   return (
+    <div className="programs-section">
     <div className="programs-container">
       <div className="programs-header">
         <h1>Programs <span className="programs-list">List</span></h1>
@@ -310,6 +311,7 @@ navigate(`/login?redirect=/application/${programId}`);
           {renderPagination()}
         </div>
       )}
+    </div>
     </div>
   );
 }

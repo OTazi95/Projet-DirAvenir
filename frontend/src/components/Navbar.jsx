@@ -12,6 +12,7 @@ function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { t, i18n } = useTranslation();
+  const [userInfo, setUserInfo] = useState({});
 
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
 
@@ -100,7 +101,7 @@ const isDefaultPage = pagesDefault.some(path => location.pathname.startsWith(pat
           {isLoggedIn ? (
             <>
               <FaUserCircle className="nav-icon user-icon" onClick={() => handleNavigateToDashboard()} />
-              <button className="logout-btn" onClick={handleLogout}>{t('navbar.logout')}</button>
+              <button className="login-btn" onClick={handleLogout}>{t('navbar.logout')}</button>
             </>
           ) : (
             <>

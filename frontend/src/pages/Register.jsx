@@ -3,11 +3,11 @@ import { useNavigate, Link, useSearchParams } from 'react-router-dom'; // Ajout 
 import '../styles/Register.css';
 import illustrationImage from '../assets/register-illustration.png';
 import axios from 'axios';
-import { FaGoogle, FaFacebookF, FaApple } from 'react-icons/fa';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 function Register() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams(); // Pour récupérer le paramètre redirect
+  const [searchParams] = useSearchParams(); 
   const [showPassword, setShowPassword] = useState(false);
 
   // Récupérer le paramètre redirect
@@ -20,6 +20,7 @@ function Register() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -78,7 +79,7 @@ function Register() {
     <div className="register-container">
       {/* Formulaire */}
       <div className="register-card">
-        <h2 className="form-title">Create Account</h2>
+        <h2 className="form1-title">Create Account</h2>
 
         {/* Message informatif si l'utilisateur vient d'une redirection */}
         {redirectPath && (
@@ -110,7 +111,7 @@ function Register() {
                 value={prenom}
                 onChange={(e) => setPrenom(e.target.value)}
                 placeholder="First Name"
-                className="form-input"
+                className="form1-input"
                 autoComplete="off"
                 required
               />
@@ -123,7 +124,7 @@ function Register() {
                 value={nom}
                 onChange={(e) => setNom(e.target.value)}
                 placeholder="Last Name"
-                className="form-input"
+                className="form1-input"
                 autoComplete="off"
                 required
               />
@@ -139,7 +140,7 @@ function Register() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Email Address"
-              className="form-input"
+              className="form1-input"
               autoComplete="off"
               required
             />
@@ -154,10 +155,18 @@ function Register() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
-              className="form-input"
+              className="form1-input"
               autoComplete="new-password"
               required
             />
+                        <button
+              type="button"
+              className="toggle-password"
+              onClick={() => setShowPassword(!showPassword)}
+              tabIndex={-1}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
           </div>
 
           {/* Confirmer mot de passe */}
@@ -169,10 +178,11 @@ function Register() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Confirm Password"
-              className="form-input"
+              className="form1-input"
               autoComplete="new-password"
               required
             />
+
           </div>
 
           {/* Remember Me */}

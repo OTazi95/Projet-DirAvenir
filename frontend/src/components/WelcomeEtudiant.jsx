@@ -12,11 +12,11 @@ import {
 } from '../components/OrientationTest/scoring';
 import {
   Clock, CheckCircle, XCircle, Eye, Calendar, User, Mail, Phone, MapPin,
-  FileText, Target, Award, TrendingUp, BookOpen, BarChart3, Settings,
+  FileText, Target, Award, TrendingUp, BookOpen, Settings,
   LogOut, Bell, HelpCircle, MessageCircle, Home, X, ArrowLeft, ChevronDown, Plus
 } from 'lucide-react';
 import '../styles/WelcomeEtudiant.css';
-import logo from '../assets/logo.png';
+import logo from '../assets/diravenir.png';
 
 const WelcomeEtudiant = () => {
   const { logout } = useContext(AuthContext);
@@ -24,18 +24,21 @@ const WelcomeEtudiant = () => {
     prenom: '',
     nom: '',
     email: '',
-    role: ''
+    role: '',
+    profilePhoto: ''
   });
   const [isLoading, setIsLoading] = useState(true);
-  const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
     prenom: '',
     nom: '',
     email: '',
     currentPassword: '',
-    newPassword: ''
+    newPassword: '',
+    profilePhoto: ''
   });
+  const [tempProfilePhoto, setTempProfilePhoto] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [applications, setApplications] = useState([]);
@@ -45,7 +48,6 @@ const WelcomeEtudiant = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
-
   const navigate = useNavigate();
 
   // Navigation items
@@ -54,7 +56,6 @@ const WelcomeEtudiant = () => {
     { id: 'applications', label: 'My Applications', icon: FileText, color: '#8B5CF6' },
     { id: 'profile', label: 'Edit Profile', icon: User, color: '#F59E0B' },
     { id: 'notifications', label: 'Notifications', icon: Bell, color: '#10B981' },
-    { id: 'settings', label: 'Settings', icon: Settings, color: '#6B7280' }
   ];
 
   const bottomNavigationItems = [
@@ -63,6 +64,81 @@ const WelcomeEtudiant = () => {
     { id: 'contact', label: 'Contact Us', icon: MessageCircle, color: '#6B7280' },
     { id: 'logout', label: 'Log Out', icon: LogOut, color: '#EF4444' }
   ];
+
+  // Initialisation du formulaire d'édition
+  const initEditForm = () => {
+    setEditForm({
+      prenom: userInfo.prenom || '',
+      nom: userInfo.nom || '',
+      email: userInfo.email || '',
+      profilePhoto: userInfo.profilePhoto || '',
+      currentPassword: '',
+      newPassword: ''
+    });
+    setTempProfilePhoto(null);
+  };
+
+  // useEffect pour initialiser quand on entre en mode édition
+  useEffect(() => {
+    if (isEditing) {
+      initEditForm();
+    }
+  }, [isEditing, userInfo]);
+
+  // Gestion optimisée de l'upload de photo
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validation du fichier
+    const maxSize = 5 * 1024 * 1024; // 5MB max
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    
+    if (!allowedTypes.includes(file.type)) {
+      alert('Format non supporté. Utilisez JPG, PNG ou WebP.');
+      return;
+    }
+    
+    if (file.size > maxSize) {
+      alert('Image trop volumineuse. Maximum 5MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const photoData = event.target.result;
+      
+      // Mise à jour du formulaire pour l'aperçu
+      setEditForm(prev => ({
+        ...prev, 
+        profilePhoto: photoData
+      }));
+      
+      // Garder une copie temporaire
+      setTempProfilePhoto(photoData);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Annulation des modifications
+  const handleCancelEdit = () => {
+    // Restaurer la photo originale
+    setEditForm(prev => ({
+      ...prev,
+      profilePhoto: userInfo.profilePhoto || ''
+    }));
+    
+    // Nettoyer le temporaire
+    setTempProfilePhoto(null);
+    
+    // Sortir du mode édition
+    setIsEditing(false);
+  };
+
+  // Fonction utilitaire pour afficher la photo
+  const getCurrentPhoto = () => {
+    return editForm.profilePhoto || userInfo.profilePhoto || null;
+  };
 
   // Function to load applications
   const fetchApplications = async () => {
@@ -76,7 +152,6 @@ const WelcomeEtudiant = () => {
       });
       console.log('[fetchApplications] response.data:', response.data);
       setApplications(response.data);
-      // Générer les notifications après avoir chargé les applications
       generateNotificationsFromApplications(response.data);
     } catch (error) {
       console.error('Error loading applications:', error);
@@ -85,105 +160,85 @@ const WelcomeEtudiant = () => {
     }
   };
 
-  // Fonction pour générer des notifications à partir des applications
-const generateNotificationsFromApplications = (apps) => {
-  try {
-    const savedNotifications = JSON.parse(localStorage.getItem('studentNotifications')) || [];
-    const dismissed = JSON.parse(localStorage.getItem('dismissedNotifications')) || [];
-    console.log('[Notifications] savedNotifications (before):', savedNotifications);
-    console.log('[Notifications] applications received:', apps);
-
-    const newNotifications = [];
-
-    apps.forEach(app => {
-      const status = app.status;
-      // ignore if no status or still 'sent'
-      if (!status || status === 'sent') return;
-
-      // check if we already have a notification for this application + this status
-      const already = savedNotifications.find(n => n.applicationId === app.id && n.type === status);
-      if (already) return;
-
-      // build title/message with safe fallbacks
-      const program = app.program || (app.formData && app.formData.program) || 'ce programme';
-      const university = app.university || (app.formData && app.formData.university) || 'cette université';
-
-      let title = `Candidature: ${status}`;
-      let message = `Le statut de votre candidature pour ${program} à ${university} a changé (${status}).`;
-      let type = status;
-
-      switch (status) {
-        case 'approved':
-        case 'approve':
-        case 'accepted':
-          title = "Candidature Approuvée";
-          message = `Votre candidature pour ${program} à ${university} a été approuvée.`;
-          type = 'approved';
-          break;
-        case 'rejected':
-        case 'declined':
-          title = "Candidature Rejetée";
-          message = `Votre candidature pour ${program} à ${university} a été rejetée.`;
-          type = 'rejected';
-          break;
-        case 'reviewing':
-        case 'under_review':
-        case 'in_review':
-          title = "Candidature en Examen";
-          message = `Votre candidature pour ${program} à ${university} est en cours d'examen.`;
-          type = 'reviewing';
-          break;
-      }
-
-      // robust created_at detection
-      const createdAtCandidate =
-        app.reviewedDate || app.reviewed_date ||
-        app.updatedAt || app.updated_at ||
-        app.createdAt || app.created_at ||
-        new Date().toISOString();
-
-      const createdAtISO = new Date(createdAtCandidate).toISOString();
-
-      // id unique 
-      const notifId = `notif-${app.id}-${type}-${Date.now()}`;
-      const notifKey = `${app.id}-${status}`;
-        if (dismissed.includes(notifKey)) return; 
-
-      newNotifications.push({
-        id: notifId,
-        applicationId: app.id,
-        title,
-        message,
-        type,
-        read: false,
-        created_at: createdAtISO,
+  // Function to generate notifications from applications
+  const generateNotificationsFromApplications = (apps) => {
+    try {
+      const savedNotifications = JSON.parse(localStorage.getItem('studentNotifications')) || [];
+      const dismissed = JSON.parse(localStorage.getItem('dismissedNotifications')) || [];
+      console.log('[Notifications] savedNotifications (before):', savedNotifications);
+      console.log('[Notifications] applications received:', apps);
+      const newNotifications = [];
+      apps.forEach(app => {
+        const status = app.status;
+        if (!status || status === 'sent') return;
+        const already = savedNotifications.find(n => n.applicationId === app.id && n.type === status);
+        if (already) return;
+        const program = app.program || (app.formData && app.formData.program) || 'ce programme';
+        const university = app.university || (app.formData && app.formData.university) || 'cette université';
+        let title = `Candidature: ${status}`;
+        let message = `Le statut de votre candidature pour ${program} à ${university} a changé (${status}).`;
+        let type = status;
+        switch (status) {
+          case 'approved':
+          case 'approve':
+          case 'accepted':
+            title = "Application Approved";
+            message = `Your application for ${program} has ${university} was approved.`;
+            type = 'approved';
+            break;
+          case 'rejected':
+          case 'declined':
+            title = "Application Rejected";
+            message = `Your application for ${program} has ${university} was rejected.`;
+            type = 'rejected';
+            break;
+          case 'reviewing':
+          case 'under_review':
+          case 'in_review':
+            title = "Application under reviewing";
+            message = `Your application for ${program} has ${university} is under review.`;
+            type = 'reviewing';
+            break;
+        }
+        const createdAtCandidate =
+          app.reviewedDate || app.reviewed_date ||
+          app.updatedAt || app.updated_at ||
+          app.createdAt || app.created_at ||
+          new Date().toISOString();
+        const createdAtISO = new Date(createdAtCandidate).toISOString();
+        const notifId = `notif-${app.id}-${type}-${Date.now()}`;
+        const notifKey = `${app.id}-${status}`;
+        if (dismissed.includes(notifKey)) return;
+        newNotifications.push({
+          id: notifId,
+          applicationId: app.id,
+          title,
+          message,
+          type,
+          read: false,
+          created_at: createdAtISO,
+        });
       });
-    });
-
-    // merge sans doublon (base sur id)
-    const merged = [...savedNotifications];
-    newNotifications.forEach(n => {
-      if (!merged.find(m => m.id === n.id)) merged.push(n);
-    });
-
-    // si on a créé au moins une nouvelle notif on met à jour les états et localStorage
-    if (newNotifications.length > 0) {
-      setNotifications(merged);
-      const newUnread = merged.filter(n => !n.read).length;
-      setUnreadCount(newUnread);
-      localStorage.setItem('studentNotifications', JSON.stringify(merged));
-      console.log('[Notifications] created:', newNotifications);
-    } else {
-      // sinon on s'assure que l'état reflète localStorage
-      setNotifications(savedNotifications);
-      setUnreadCount(savedNotifications.filter(n => !n.read).length);
+      const merged = [...savedNotifications];
+      newNotifications.forEach(n => {
+        if (!merged.find(m => m.id === n.id)) merged.push(n);
+      });
+      if (newNotifications.length > 0) {
+        setNotifications(merged);
+        const newUnread = merged.filter(n => !n.read).length;
+        setUnreadCount(newUnread);
+        localStorage.setItem('studentNotifications', JSON.stringify(merged));
+        console.log('[Notifications] created:', newNotifications);
+      } else {
+        setNotifications(savedNotifications);
+        setUnreadCount(savedNotifications.filter(n => !n.read).length);
+      }
+    } catch (err) {
+      console.error('[Notifications] generate error:', err);
     }
-  } catch (err) {
-    console.error('[Notifications] generate error:', err);
-  }
-};
+  };
 
-  // Fonction pour marquer les notifications comme lues
+  // Function to mark notifications as read
   const markNotificationsAsRead = () => {
     const updatedNotifications = notifications.map(notification => ({
       ...notification,
@@ -194,7 +249,7 @@ const generateNotificationsFromApplications = (apps) => {
     localStorage.setItem('studentNotifications', JSON.stringify(updatedNotifications));
   };
 
-  // Charger les notifications depuis localStorage au démarrage
+  // Load notifications from localStorage on startup
   useEffect(() => {
     const savedNotifications = localStorage.getItem('studentNotifications');
     if (savedNotifications) {
@@ -214,9 +269,22 @@ const generateNotificationsFromApplications = (apps) => {
       });
       if (response.data?.user) {
         const { prenom, nom, email, role } = response.data.user;
-        const updated = { prenom: prenom || '', nom: nom || '', email: email || '', role: role || 'student' };
+        const updated = { 
+          prenom: prenom || '', 
+          nom: nom || '', 
+          email: email || '', 
+          role: role || 'student',
+          profilePhoto: userInfo.profilePhoto || ''
+        };
         setUserInfo(updated);
-        setEditForm({ prenom: updated.prenom, nom: updated.nom, email: updated.email, currentPassword: '', newPassword: '' });
+        setEditForm({ 
+          prenom: updated.prenom, 
+          nom: updated.nom, 
+          email: updated.email, 
+          currentPassword: '', 
+          newPassword: '',
+          profilePhoto: updated.profilePhoto
+        });
         const storage = localStorage.getItem('token') ? localStorage : sessionStorage;
         const old = JSON.parse(storage.getItem('auth_user') || '{}');
         storage.setItem('auth_user', JSON.stringify({ ...old, ...updated }));
@@ -437,109 +505,6 @@ const generateNotificationsFromApplications = (apps) => {
     );
   };
 
-  // Chart component
-  const ApplicationChart = ({ applications = [] }) => {
-    const [timeRange, setTimeRange] = useState('monthly');
-
-    const generateChartData = () => {
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-      const now = new Date();
-      const dataByPeriod = {};
-
-      if (timeRange === 'weekly') {
-        for (let i = 0; i < 7; i++) {
-          const dayIndex = (now.getDay() - i + 7) % 7;
-          dataByPeriod[days[dayIndex]] = { date: days[dayIndex], applications: 0, approved: 0, rejected: 0 };
-        }
-      } else { // monthly
-        for (let i = 0; i < 12; i++) {
-          dataByPeriod[months[i]] = { date: months[i], applications: 0, approved: 0, rejected: 0 };
-        }
-      }
-
-      applications.forEach(app => {
-        const appDate = new Date(app.submissionDate);
-        let periodKey;
-
-        if (timeRange === 'weekly') {
-          periodKey = days[appDate.getDay()];
-        } else { // monthly
-          periodKey = months[appDate.getMonth()];
-        }
-
-        if (dataByPeriod[periodKey]) {
-          dataByPeriod[periodKey].applications += 1;
-          if (app.status === 'approved') {
-            dataByPeriod[periodKey].approved += 1;
-          } else if (app.status === 'rejected') {
-            dataByPeriod[periodKey].rejected += 1;
-          }
-        }
-      });
-
-      return Object.values(dataByPeriod);
-    };
-
-    const chartData = generateChartData();
-    const maxValue = Math.max(...chartData.map(d => d.applications), 10);
-
-    return (
-      <div className="chart-container">
-        <div className="chart-header">
-          <h3>Application History Diagram</h3>
-          <div className="chart-filters">
-            <select
-              className="time-filter"
-              value={timeRange}
-              onChange={(e) => setTimeRange(e.target.value)}
-            >
-              <option value="weekly">Weekly</option>
-              <option value="monthly">Monthly</option>
-            </select>
-          </div>
-        </div>
-        <div className="chart-area">
-          <div className="y-axis">
-            {[100, 80, 60, 40, 20, 0].map(value => (
-              <div key={value} className="y-axis-label">{value}</div>
-            ))}
-          </div>
-          <div className="chart-grid">
-            {chartData.map((data, index) => {
-              const applicationHeight = (data.applications / maxValue) * 80;
-              const approvedHeight = (data.approved / maxValue) * 80;
-              const rejectedHeight = (data.rejected / maxValue) * 80;
-
-              return (
-                <div key={data.date} className="chart-column">
-                  <div className="chart-bars">
-                    <div
-                      className="bar applications-bar"
-                      style={{ height: `${applicationHeight}%` }}
-                      title={`${data.applications} applications in ${data.date}`}
-                    ></div>
-                    <div
-                      className="bar approved-bar"
-                      style={{ height: `${approvedHeight}%` }}
-                      title={`${data.approved} approved in ${data.date}`}
-                    ></div>
-                    <div
-                      className="bar rejected-bar"
-                      style={{ height: `${rejectedHeight}%` }}
-                      title={`${data.rejected} rejected in ${data.date}`}
-                    ></div>
-                  </div>
-                  <div className="x-axis-label">{data.date}</div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   // Component for complete applications list
   const ApplicationsList = ({ applications = [] }) => {
     const getStatusIcon = (status) => {
@@ -551,7 +516,6 @@ const generateNotificationsFromApplications = (apps) => {
         default: return <Clock size={20} color="#6B7280" />;
       }
     };
-
     const getStatusText = (status) => {
       switch (status) {
         case 'sent': return 'Sent';
@@ -561,7 +525,6 @@ const generateNotificationsFromApplications = (apps) => {
         default: return 'Unknown Status';
       }
     };
-
     const getStatusColor = (status) => {
       switch (status) {
         case 'sent': return '#3B82F6';
@@ -571,7 +534,6 @@ const generateNotificationsFromApplications = (apps) => {
         default: return '#6B7280';
       }
     };
-
     if (applications.length === 0) {
       return (
         <div className="no-applications">
@@ -581,7 +543,6 @@ const generateNotificationsFromApplications = (apps) => {
         </div>
       );
     }
-
     return (
       <div className="applications-list">
         {applications.map((app) => (
@@ -601,7 +562,6 @@ const generateNotificationsFromApplications = (apps) => {
                   })}
                 </p>
               </div>
-
               <div className="status-badge" style={{
                 backgroundColor: `${getStatusColor(app.status)}20`,
                 color: getStatusColor(app.status)
@@ -610,7 +570,6 @@ const generateNotificationsFromApplications = (apps) => {
                 <span>{getStatusText(app.status)}</span>
               </div>
             </div>
-
             <div className="application-summary">
               <div className="summary-item">
                 <User size={16} />
@@ -629,7 +588,6 @@ const generateNotificationsFromApplications = (apps) => {
                 <span>{app.formData.country}</span>
               </div>
             </div>
-
             <div className="application-id">
               <span>ID: #{app.id}</span>
             </div>
@@ -639,106 +597,71 @@ const generateNotificationsFromApplications = (apps) => {
     );
   };
 
-  // Profile component
-  const ProfileSection = () => {
-    return (
-      <div className="profile-section">
-        <div className="profile-header">
-          <div className="profile-avatar">
-            <User size={40} />
-          </div>
-          <div className="profile-info">
-            <h2>{userInfo.prenom} {userInfo.nom}</h2>
-            <p>{userInfo.email}</p>
-            <span className="role-badge">{userInfo.role}</span>
-          </div>
-        </div>
-        <div className="profile-actions">
-          <button
-            className="action-btn edit-btn"
-            onClick={handleEditProfile}
-          >
-            Edit My Account
-          </button>
-          <button
-            className="action-btn delete-btn"
-            onClick={() => setShowDeleteModal(true)}
-          >
-            Delete My Account
-          </button>
-        </div>
-      </div>
-    );
-  };
-
   // Notifications component
   const NotificationsSection = () => {
     return (
-  <div className="notifications-content">
-    <div className="notifications-header">
-      <h1>Notifications</h1>
-      {notifications.length > 0 && (
-        <button
-          className="clear-notifications-btn"
-          onClick={() => {
-  const dismissed = notifications.map(n => `${n.applicationId}-${n.type}`);
-  localStorage.setItem('dismissedNotifications', JSON.stringify(dismissed));
-
-  setNotifications([]);
-  setUnreadCount(0);
-  localStorage.setItem('studentNotifications', JSON.stringify([]));
-}}
-        >
-          Effacer tout
-        </button>
-      )}
-    </div>
-
-    {notifications.length === 0 ? (
-      <div className="no-notifications">
-        <Bell size={48} color="#9CA3AF" />
-        <h3>Aucune Notification</h3>
-        <p>Vous n'avez aucune notification pour le moment.</p>
-      </div>
-    ) : (
-      <div className="notifications-list">
-        {notifications.map((notification) => (
-          <div
-            key={notification.id}
-            className={`notification-item ${!notification.read ? 'unread' : ''}`}
-          >
-            <div className="notification-icon">
-              {notification.type === 'approved' && <CheckCircle size={20} color="#10B981" />}
-              {notification.type === 'rejected' && <XCircle size={20} color="#EF4444" />}
-              {notification.type === 'reviewing' && <Eye size={20} color="#F59E0B" />}
-            </div>
-            <div className="notification-content">
-              <h4>{notification.title}</h4>
-              <p>{notification.message}</p>
-              <span className="notification-time">
-                {new Date(notification.created_at).toLocaleDateString('fr-FR', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit'
-                })}
-              </span>
-            </div>
+      <div className="notifications-content">
+        <div className="notifications-header">
+          <h1>Notifications</h1>
+          {notifications.length > 0 && (
+            <button
+              className="clear-notifications-btn"
+              onClick={() => {
+                const dismissed = notifications.map(n => `${n.applicationId}-${n.type}`);
+                localStorage.setItem('dismissedNotifications', JSON.stringify(dismissed));
+                setNotifications([]);
+                setUnreadCount(0);
+                localStorage.setItem('studentNotifications', JSON.stringify([]));
+              }}
+            >
+              Delete All
+            </button>
+          )}
+        </div>
+        {notifications.length === 0 ? (
+          <div className="no-notifications">
+            <Bell size={48} color="#9CA3AF" />
+            <h3>No Notifications</h3>
+            <p>You have no notifications at the moment.</p>
           </div>
-        ))}
+        ) : (
+          <div className="notifications-list">
+            {notifications.map((notification) => (
+              <div
+                key={notification.id}
+                className={`notification-item ${!notification.read ? 'unread' : ''}`}
+              >
+                <div className="notification-icon">
+                  {notification.type === 'approved' && <CheckCircle size={20} color="#10B981" />}
+                  {notification.type === 'rejected' && <XCircle size={20} color="#EF4444" />}
+                  {notification.type === 'reviewing' && <Eye size={20} color="#F59E0B" />}
+                </div>
+                <div className="notification-content">
+                  <h4>{notification.title}</h4>
+                  <p>{notification.message}</p>
+                  <span className="notification-time">
+                    {new Date(notification.created_at).toLocaleDateString('fr-FR', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-    )}
-  </div>
-  );
-    };
+    );
+  };
 
   useEffect(() => {
     const loadUserData = () => {
       const localAuthUser = localStorage.getItem("auth_user");
       const sessionAuthUser = sessionStorage.getItem("auth_user");
       let userData = null;
-
       if (localAuthUser) {
         try {
           userData = JSON.parse(localAuthUser);
@@ -752,61 +675,57 @@ const generateNotificationsFromApplications = (apps) => {
           console.error('Error parsing sessionStorage auth_user:', error);
         }
       }
-
       if (userData && userData.email) {
         const userRole = (userData.role || '').toLowerCase().trim();
-
         if (userRole === 'admin' || userRole === 'administrateur') {
           navigate('/welcome-admin');
           return;
         }
-
         const userInfo = {
           prenom: userData.prenom || userData.first_name || '',
           nom: userData.nom || userData.last_name || '',
           email: userData.email || '',
-          role: userData.role || 'student'
+          role: userData.role || 'student',
+          profilePhoto: userData.profilePhoto || ''
         };
-
         setUserInfo(userInfo);
         setEditForm({
           prenom: userInfo.prenom,
           nom: userInfo.nom,
           email: userInfo.email,
           currentPassword: '',
-          newPassword: ''
+          newPassword: '',
+          profilePhoto: userInfo.profilePhoto
         });
       } else {
         const prenom = localStorage.getItem('prenom') || sessionStorage.getItem('prenom') || '';
         const nom = localStorage.getItem('nom') || sessionStorage.getItem('nom') || '';
         const email = localStorage.getItem('email') || sessionStorage.getItem('email') || '';
         const role = localStorage.getItem('role') || sessionStorage.getItem('role') || '';
-
+        const profilePhoto = localStorage.getItem('profilePhoto') || sessionStorage.getItem('profilePhoto') || '';
         if (prenom || nom || email) {
           const userRole = (role || '').toLowerCase().trim();
           if (userRole === 'admin' || userRole === 'administrateur') {
             navigate('/welcome-admin');
             return;
           }
-
-          const userInfo = { prenom, nom, email, role: role || 'student' };
+          const userInfo = { prenom, nom, email, role: role || 'student', profilePhoto };
           setUserInfo(userInfo);
           setEditForm({
             prenom,
             nom,
             email,
             currentPassword: '',
-            newPassword: ''
+            newPassword: '',
+            profilePhoto
           });
         } else {
           navigate('/login');
           return;
         }
       }
-
       setIsLoading(false);
     };
-
     loadUserData();
     fetchProfile();
     fetchApplications();
@@ -830,20 +749,11 @@ const generateNotificationsFromApplications = (apps) => {
     return localStorage.getItem('token') || sessionStorage.getItem('token');
   };
 
-  const handleEditProfile = () => {
-    setEditForm({
-      prenom: userInfo.prenom,
-      nom: userInfo.nom,
-      email: userInfo.email,
-      currentPassword: '',
-      newPassword: ''
-    });
-    setShowEditModal(true);
-  };
-
+  // Soumission du formulaire avec gestion de photo optimisée
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+
     if (!editForm.prenom.trim() || !editForm.nom.trim() || !editForm.email.trim()) {
       showMessage('error', 'All required fields must be filled');
       setIsSubmitting(false);
@@ -854,6 +764,7 @@ const generateNotificationsFromApplications = (apps) => {
       setIsSubmitting(false);
       return;
     }
+
     try {
       const token = getAuthToken();
       const updateData = {
@@ -862,9 +773,11 @@ const generateNotificationsFromApplications = (apps) => {
         email: editForm.email.trim(),
         current_password: editForm.currentPassword
       };
+
       if (editForm.newPassword.trim()) {
         updateData.new_password = editForm.newPassword;
       }
+
       const response = await axios.put(
         'http://localhost:8000/api/profile/update/',
         updateData,
@@ -875,14 +788,18 @@ const generateNotificationsFromApplications = (apps) => {
           }
         }
       );
+
       if (response.data.user) {
         const updatedUserInfo = {
           prenom: response.data.user.prenom,
           nom: response.data.user.nom,
           email: response.data.user.email,
-          role: userInfo.role
+          role: userInfo.role,
+          profilePhoto: tempProfilePhoto || userInfo.profilePhoto
         };
+        
         setUserInfo(updatedUserInfo);
+        
         const storage = localStorage.getItem('token') ? localStorage : sessionStorage;
         const authUser = JSON.parse(storage.getItem('auth_user') || '{}');
         const updatedAuthUser = { ...authUser, ...updatedUserInfo };
@@ -890,8 +807,17 @@ const generateNotificationsFromApplications = (apps) => {
         storage.setItem('email', updatedUserInfo.email);
         storage.setItem('prenom', updatedUserInfo.prenom);
         storage.setItem('nom', updatedUserInfo.nom);
+        
+        // Sauvegarder la photo si modifiée
+        if (tempProfilePhoto) {
+          storage.setItem('profilePhoto', tempProfilePhoto);
+        }
+        
+        // Nettoyer l'état temporaire
+        setTempProfilePhoto(null);
+        setIsEditing(false);
+        
         showMessage('success', 'Profile updated successfully');
-        setShowEditModal(false);
       }
     } catch (error) {
       console.error('Error during update:', error);
@@ -915,12 +841,10 @@ const generateNotificationsFromApplications = (apps) => {
         }
       });
       showMessage('success', 'Account deleted successfully');
-
       setTimeout(() => {
         logout();
         navigate('/');
       }, 2000);
-
     } catch (error) {
       console.error('Error during deletion:', error);
       showMessage('error', 'Error deleting account');
@@ -981,7 +905,14 @@ const generateNotificationsFromApplications = (apps) => {
                 </div>
                 <div className="header-profile" onClick={() => setActiveTab('profile')}>
                   <div className="profile-avatar-small">
-                    {(userInfo.prenom || 'S').charAt(0)}
+                    {getCurrentPhoto() ? (
+                      <img src={getCurrentPhoto()} alt="Profile" style={{width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover'}} />
+                    ) : (
+                       <span>
+      {(userInfo.prenom ).charAt(0).toUpperCase()}
+      {(userInfo.nom).charAt(0).toUpperCase()}
+    </span>
+                    )}
                   </div>
                   <span className="brand-accent">{userInfo.prenom || 'Student'}</span>
                 </div>
@@ -989,8 +920,8 @@ const generateNotificationsFromApplications = (apps) => {
             </div>
             <div className="dashboard-grid">
               <div className="left-column">
-                <ApplicationChart applications={applications} />
                 <OrientationTestSection testData={orientationTest} isLoading={loadingTest} />
+                <ApplicationStatusDashboard applications={applications} />
               </div>
               <div className="right-column">
                 <div className="stats-panel">
@@ -1063,7 +994,6 @@ const generateNotificationsFromApplications = (apps) => {
                     </div>
                   </div>
                 </div>
-                <ApplicationStatusDashboard applications={applications} />
               </div>
             </div>
           </div>
@@ -1075,31 +1005,117 @@ const generateNotificationsFromApplications = (apps) => {
             <ApplicationsList applications={applications} />
           </div>
         );
-      case 'profile':
-        return (
-          <div className="profile-content">
-            <h1>My Profile</h1>
-            <ProfileSection />
-          </div>
-        );
+     case 'profile':   
+  return (     
+    <div className="profile-content">       
+      <div className="profile-card">
+        <div className="profile-header">         
+          <div className="profile-photo-container">           
+            <div className="profile-photo" onClick={() => document.getElementById('profile-photo-input').click()}>             
+              {editForm.profilePhoto ? (               
+                <img src={editForm.profilePhoto} alt="Profile" />             
+              ) : (               
+                <div className="profile-photo-placeholder">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </div>             
+              )}           
+            </div>           
+            <div className="profile-photo-upload" onClick={() => document.getElementById('profile-photo-input').click()}>             
+              <Plus size={12} color="white" />           
+            </div>           
+            <input             
+              type="file"             
+              id="profile-photo-input"             
+              className="hidden-file-input"             
+              accept="image/*"             
+              onChange={handlePhotoUpload}           
+            />         
+          </div>          
+          <div className="profile-info">           
+            <h1>{userInfo.prenom} {userInfo.nom}</h1>           
+            <p className="profile-email">{userInfo.email}</p>         
+          </div>       
+        </div>        
+        
+        <form onSubmit={handleEditSubmit} className="edit-form">           
+          <div className="form-group2 first-name">             
+            <label>First Name *</label>             
+            <input               
+              type="text"               
+              value={editForm.prenom}               
+              onChange={(e) => setEditForm({...editForm, prenom: e.target.value})}               
+              placeholder="Your first name"               
+              required               
+              disabled={isSubmitting}             
+            />           
+          </div>            
+          
+          <div className="form-group2 current-password">             
+            <label>Current Password *</label>             
+            <input               
+              type="password"               
+              value={editForm.currentPassword}               
+              onChange={(e) => setEditForm({...editForm, currentPassword: e.target.value})}               
+              placeholder="Required to confirm changes"               
+              required               
+              disabled={isSubmitting}             
+            />           
+          </div>            
+          
+          <div className="form-group2 last-name">             
+            <label>Last Name *</label>             
+            <input               
+              type="text"               
+              value={editForm.nom}               
+              onChange={(e) => setEditForm({...editForm, nom: e.target.value})}               
+              placeholder="Your last name"               
+              required               
+              disabled={isSubmitting}             
+            />           
+          </div>            
+          
+          <div className="form-group2 new-password">             
+            <label>New Password (optional)</label>             
+            <input               
+              type="password"               
+              value={editForm.newPassword}               
+              onChange={(e) => setEditForm({...editForm, newPassword: e.target.value})}               
+              placeholder="Leave blank to keep current password"               
+              disabled={isSubmitting}             
+            />           
+          </div>            
+          
+          <div className="form-group2 email-field">             
+            <label>Email *</label>             
+            <input               
+              type="email"               
+              value={editForm.email}               
+              onChange={(e) => setEditForm({...editForm, email: e.target.value})}               
+              placeholder="your.email@example.com"               
+              required               
+              disabled={isSubmitting}             
+            />           
+          </div>            
+          
+          <div className="modal-actions">             
+            <button               
+              type="submit"               
+              className="submit-btn"               
+              disabled={isSubmitting}             
+            >               
+              {isSubmitting ? 'Updating...' : 'Edit'}             
+            </button>           
+          </div>         
+        </form>
+      </div>       
+    </div>   
+  );
+  
       case 'notifications':
         return <NotificationsSection />;
-      case 'settings':
-        return (
-          <div className="settings-content">
-            <h1>Settings</h1>
-            <div className="settings-options">
-              <div className="setting-item">
-                <h4>Notifications</h4>
-                <p>Manage your notification preferences</p>
-              </div>
-              <div className="setting-item">
-                <h4>Privacy</h4>
-                <p>Privacy and security settings</p>
-              </div>
-            </div>
-          </div>
-        );
       default:
         return null;
     }
@@ -1126,7 +1142,6 @@ const generateNotificationsFromApplications = (apps) => {
           </div>
         </div>
       )}
-
       {/* Sidebar Navigation */}
       <div className="sidebar">
         <div className="sidebar-header">
@@ -1151,7 +1166,6 @@ const generateNotificationsFromApplications = (apps) => {
                   {item.id === 'notifications' && unreadCount > 0 && (
                   <span className="nav-badge">{unreadCount}</span>
                   )}
-
                 </button>
               );
             })}
@@ -1175,105 +1189,10 @@ const generateNotificationsFromApplications = (apps) => {
           </div>
         </nav>
       </div>
-
       {/* Main Content */}
       <div className="main-content">
         {renderContent()}
       </div>
-
-      {/* Edit modal */}
-      {showEditModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h3>Edit My Profile</h3>
-              <button
-                className="modal-close"
-                onClick={() => setShowEditModal(false)}
-              >
-                ×
-              </button>
-            </div>
-
-            <form onSubmit={handleEditSubmit} className="edit-form">
-              <div className="form-group">
-                <label>First Name *</label>
-                <input
-                  type="text"
-                  value={editForm.prenom}
-                  onChange={(e) => setEditForm({...editForm, prenom: e.target.value})}
-                  required
-                  disabled={isSubmitting}
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Last Name *</label>
-                <input
-                  type="text"
-                  value={editForm.nom}
-                  onChange={(e) => setEditForm({...editForm, nom: e.target.value})}
-                  required
-                  disabled={isSubmitting}
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Email *</label>
-                <input
-                  type="email"
-                  value={editForm.email}
-                  onChange={(e) => setEditForm({...editForm, email: e.target.value})}
-                  required
-                  disabled={isSubmitting}
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Current Password *</label>
-                <input
-                  type="password"
-                  value={editForm.currentPassword}
-                  onChange={(e) => setEditForm({...editForm, currentPassword: e.target.value})}
-                  placeholder="Required to confirm changes"
-                  required
-                  disabled={isSubmitting}
-                />
-              </div>
-
-              <div className="form-group">
-                <label>New Password (optional)</label>
-                <input
-                  type="password"
-                  value={editForm.newPassword}
-                  onChange={(e) => setEditForm({...editForm, newPassword: e.target.value})}
-                  placeholder="Leave blank to keep current password"
-                  disabled={isSubmitting}
-                />
-              </div>
-
-              <div className="modal-actions">
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={() => setShowEditModal(false)}
-                  disabled={isSubmitting}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="submit-btn"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? 'Updating...' : 'Update'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
       {/* Delete modal */}
       {showDeleteModal && (
         <div className="modal-overlay">
@@ -1287,7 +1206,6 @@ const generateNotificationsFromApplications = (apps) => {
                 ×
               </button>
             </div>
-
             <div className="delete-warning">
               <div className="warning-icon">⚠️</div>
               <p>
@@ -1296,7 +1214,6 @@ const generateNotificationsFromApplications = (apps) => {
               </p>
               <p>Are you sure you want to delete your account?</p>
             </div>
-
             <div className="modal-actions">
               <button
                 type="button"

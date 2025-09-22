@@ -128,7 +128,7 @@ html {
   align-items: center;
 }
 
-.login-btn, .register-btn, .logout-btn {
+.login-btn, .register-btn {
   padding: 8px 15px;
   border-radius: 10px;
   cursor: pointer;
@@ -148,13 +148,8 @@ html {
   color: white;
 }
 
-.logout-btn {
-  background: transparent;
-  border: 1px solid white;
-  color: white;
-}
 
-.login-btn:hover, .logout-btn:hover {
+.login-btn:hover {
   background: #F9C23C;
   color: white;
 }

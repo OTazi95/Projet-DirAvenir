@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 function Contact() {
   const { t } = useTranslation();
   
-  // 📝 NOUVEAU : État pour gérer les données du formulaire
+  //  État pour gérer les données du formulaire
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -16,11 +16,11 @@ function Contact() {
     message: ''
   });
   
-  // 📝 NOUVEAU : État pour gérer le statut d'envoi
+  // État pour gérer le statut d'envoi
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null); // 'success', 'error', ou null
 
-  // 📝 NOUVEAU : Gérer les changements dans les champs du formulaire
+  //  Gérer les changements dans les champs du formulaire
   const handleInputChange = (e) => {
     const { id, value } = e.target;
     setFormData(prevData => ({
@@ -29,7 +29,7 @@ function Contact() {
     }));
   };
 
-  // 📝 NOUVEAU : Fonction pour envoyer l'email via Formspree
+  // Fonction pour envoyer l'email via Formspree
   const sendEmail = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -61,7 +61,6 @@ function Contact() {
       });
 
       if (response.ok) {
-        // 🚀 NOUVEAU : Remonter en haut de page avec animation fluide
         window.scrollTo({
           top: 0,
           behavior: 'smooth'
@@ -88,17 +87,13 @@ function Contact() {
     }
   };
 
-  // 📝 NOUVEAU : Fonction pour aller au dashboard
   const goToDashboard = () => {
-    // Remplacez par votre route vers le dashboard
     window.location.href = '/dashboard';
-    // OU si vous utilisez React Router :
     // navigate('/dashboard');
   };
 
   return (
     <div className="contact-container">
-      {/* 🎨 VOTRE DESIGN RESTE IDENTIQUE */}
       <div className="body-animation">
         <div className="particle"></div>
         <div className="particle"></div>
@@ -114,7 +109,6 @@ function Contact() {
       <div className="form-wrapper">
         <div className="form-circle"></div> 
         
-        {/* 📝 NOUVEAU : Message de succès PLEIN ÉCRAN */}
         {submitStatus === 'success' && (
           <div className="success-fullscreen-overlay">
             <div className="success-fullscreen-content">
@@ -149,17 +143,15 @@ function Contact() {
           </div>
         )}
         
-        {/* 📝 NOUVEAU : Message d'erreur amélioré */}
         {submitStatus === 'error' && (
           <div className="status-message error-message">
             <p>❌ Une erreur s'est produite. Veuillez réessayer ou contacter Diravenir directement.</p>
             <button onClick={() => setSubmitStatus(null)} className="retry-btn">
-              🔄 Réessayer
+               Réessayer
             </button>
           </div>
         )}
 
-        {/* 🔄 MODIFIÉ : Ajout de onSubmit et des valeurs contrôlées */}
         <form className="contact-form" onSubmit={sendEmail}>
           <div className="form-row">
             <div className="form-group">
@@ -193,7 +185,7 @@ function Contact() {
               <label htmlFor="phone">{t('contact.phoneLabel')}</label>
               <input 
                 type="text" 
-                id="phone" 
+                id="con" 
                 value={formData.phone}
                 onChange={handleInputChange}
                 placeholder={t('contact.phonePlaceholder')} 
@@ -233,18 +225,18 @@ function Contact() {
           
 <p>
   {t('contact.termsPrefix')}{' '}
-  <a href="/terms" className="terms-link">
+  <a href="/terms" className="terms-link" id='fot'>
     {t('contact.termsLink')}
   </a>{' '}
   {t('contact.and')}{' '}
-  <a href="/privacy" className="privacy-link">
+  <a href="/privacy" className="privacy-link" id='fot'>
     {t('contact.privacyLink')}
   </a>
   .
 </p>
 
           
-          {/* 🔄 MODIFIÉ : Bouton avec état de chargement */}
+          {/* Bouton avec état de chargement */}
           <button 
             type="submit" 
             className={`send-btn ${isSubmitting ? 'sending' : ''}`}
@@ -262,7 +254,6 @@ function Contact() {
         </form>
       </div>
 
-      {/* 🎨 VOTRE SECTION RESTE 100% IDENTIQUE */}
       <div className="contact-content">
         <div className="contact-info">
           <h2>{t('contact.infoTitle')}</h2>

@@ -40,8 +40,6 @@ body {
   position: relative;
   z-index: 2;
   top: -140px;
-  
-   /* NOUVEAU : Application de l'animation */
   animation: slideInFromTop 0.8s ease-out forwards;
 }
 
@@ -52,8 +50,8 @@ body {
 }
 
 .contact-form label {
-  color: #4b014e; /* mauve */
-  font-family: 'Poppins', sans-serif; /* police personnalisée */
+  color: #4b014e; 
+  font-family: 'Poppins', sans-serif; 
   font-weight: 500;
   font-size: 15px;
   margin-bottom: 8px;
@@ -68,7 +66,7 @@ body {
   margin-bottom: 20px;
 }
 
-.form-group {
+.form-group { 
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -121,7 +119,7 @@ body {
   color: #666666; /* gris pour ne pas trop attirer l’œil */
   line-height: 1.8; /* espacement entre les lignes */
   margin-top: 10px; /* espace au-dessus du paragraphe */
-  text-align: justify; /* optionnel : justifie le texte */
+  text-align: justify; 
 }
 
 .send-btn {

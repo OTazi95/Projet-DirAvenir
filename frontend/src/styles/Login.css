@@ -1,17 +1,16 @@
 .login-container {
   display: flex;
     align-items: flex-start;
-  justify-content: flex-start; /* ✅ Aligne à gauche */
+  justify-content: flex-start; 
   height: 100vh;
   background-color: #f2f2f2;
-  padding-left: 60px; /* un peu d’espace à gauche */
-  gap: 60px; /* espace entre le form et l’image */
+  padding-left: 60px; 
+  gap: 60px; 
 }
 
-
 .login-form {
-  width: 350px; /* plus étroit */
-  height: auto; /* s’ajuste au contenu */
+  width: 350px; 
+  height: auto; 
   background-color: #FDFDFD;
   border-radius: 23px;
   box-shadow: 3px 4px 7px 6px rgba(0, 0, 0, 0.09);
@@ -20,15 +19,15 @@
   margin-left: 120px; 
   max-width: 100;
   padding-bottom: 20px;
-  margin-top: 30px;
+  margin-top: 52px;
 }
 
 h2 {
   margin-bottom: 25px;
   color: #541652;
   font-weight: 600;
-  text-align: center;      /* centre le texte */
-  font-family: 'Arial', sans-serif; /* change la police, exemple Arial */
+  text-align: center;     
+  font-family: 'Arial', sans-serif; 
 }
 
 
@@ -37,8 +36,8 @@ h2 {
   flex-direction: column;
   gap: 10px;
   margin-bottom: 25px;
-  width: 100%;          /* occupe toute la largeur dispo */
-  align-items: center;  /* centre les enfants */
+  width: 100%;          
+  align-items: center; 
 }
 
 .social-buttons button {
@@ -52,8 +51,7 @@ h2 {
   font-weight: 500;
   cursor: pointer;
   font-size: 14px;
-
-  width: 250px;        /* largeur fixe */
+  width: 250px;        
   margin: 0 auto;      
 }
 
@@ -68,16 +66,6 @@ h2 {
   color: #444;
 }
 
-.facebook {
-  background-color: #3575DC;
-  color: white;
-}
-
-.apple {
-  background-color: black;
-  color: white;
-}
-
 form {
   display: flex;
   flex-direction: column;
@@ -90,15 +78,15 @@ form {
   font-size: 16px;
   background: transparent;
   padding: 4px 0;
-  font-family: 'Poppins', sans-serif; /* <-- Ajouté ici */
-  color: #000; /* optionnel, pour la couleur du texte */
+  font-family: 'Poppins', sans-serif; 
+  color: #000; 
 }
 
 .input-group input::placeholder {
-  font-family:'Poppins', sans-serif; /* <-- placeholder aussi */
-  color: #B1B1B1; /* couleur placeholder, à ajuster si tu veux */
-  font-size: 15.4px; /* si tu veux respecter ta taille spécifique */
-  line-height: 31px;    /* idem */
+  font-family:'Poppins', sans-serif; 
+  color: #B1B1B1; 
+  font-size: 15.4px; 
+  line-height: 31px;   
   font-weight: 400;
   font-style: normal;
 }
@@ -125,7 +113,7 @@ form {
   height: 40px;
   left: 304px;
   top: 647px;
-  display: block;         /* pour que margin auto fonctionne */
+  display: block;        
   margin: 0 auto; 
 }
 
@@ -153,11 +141,11 @@ form {
 .login-image {
   margin-left: 600px;
   position: absolute;
-  top: 230px;
+  top: 220px;
 }
 
 .login-image img {
-  width: 780px;
+  width: 690px;
   height: auto;
   border-radius: 25px;
   margin-top: -55px;
@@ -167,17 +155,17 @@ form {
   font-size: 14px;
   color: gray;
   margin-bottom: 20px;
-  text-align: center;  /* CENTRAGE */
+  text-align: center;  
   margin-top: 15px;
 }
 
 .already-text a {
-  text-decoration: none; /* Enlève le soulignement */
-  color: #555; /* Tu peux garder la couleur que tu veux */
+  text-decoration: none; 
+  color: #555; 
 }
 
 .already-text a:hover {
-  text-decoration: underline; /* Optionnel : souligne au survol */
+  text-decoration: underline; 
 }
 
 .separator {
@@ -189,7 +177,7 @@ form {
 }
 
 .separator .line {
-  flex: 0 0 100px; /* réduit la taille, par exemple 60px au lieu de 100% */
+  flex: 0 0 100px; 
   height: 0.5px;
   background-color: #ccc;
   margin: 0 10px;
@@ -244,7 +232,7 @@ form {
 
 /* Fond gris clair si coché */
 .remember-me input:checked + span {
-  background-color: #541652; /* couleur violet par exemple */
+  background-color: #541652; 
   border-color: #541652;
 }
 
@@ -270,18 +258,18 @@ form {
   line-height: 138%;
   text-align: center;
   color: #B1B1B1;
-  margin-top: 15px;       /* espace au dessus */
-  max-width: 300px;       /* largeur max */
-  margin-left: auto;      /* centrage horizontal */
+  margin-top: 15px;       
+  max-width: 300px;       
+  margin-left: auto;      
   margin-right: auto;
 }
 
 .terms-yellow {
-  color: #FFD700; /* Jaune (or) */
+  color: #FFD700; 
 }
 
 .terms-orange {
-  color: #FFA500; /* Orange */
+  color: #FFA500; 
 }
 
 /* Message de redirection */
@@ -304,7 +292,6 @@ form {
   flex-shrink: 0;
 }
 
-/* Amélioration du message d'erreur pour le différencier */
 .error-message {
   background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
   color: #c62828;
@@ -379,4 +366,22 @@ form {
 .already-text a:hover {
   color: #e8850f;
   text-decoration: underline;
+}
+.password-group {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #555;
+  font-size: 18px;
+}
+.toggle-password:hover {
+  color: #000;
 }

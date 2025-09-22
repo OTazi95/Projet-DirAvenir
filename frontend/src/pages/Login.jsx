@@ -5,7 +5,7 @@ import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import '../styles/Login.css';
 import loginImage from '../assets/register-illustration.png';
-import { FaGoogle, FaFacebookF, FaApple } from 'react-icons/fa';
+import { FaGoogle, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 function Login() {
   const [credentials, setCredentials] = useState({ email: '', password: '' });
@@ -17,6 +17,7 @@ function Login() {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const [showPassword, setShowPassword] = useState(false);
 
   // Get redirect param
   const redirectPath = searchParams.get('redirect');
@@ -167,9 +168,9 @@ const handleSocialLogin = async (provider) => {
             <div className="line-input"></div>
           </div>
 
-          <div className="input-group">
+          <div className="input-group password-group">
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
               value={credentials.password}
               onChange={handleChange}
@@ -179,6 +180,14 @@ const handleSocialLogin = async (provider) => {
               autoComplete="new-password"
             />
             <div className="line-input"></div>
+            <button
+              type="button"
+              className="toggle-password"
+              onClick={() => setShowPassword(!showPassword)}
+              tabIndex={-1}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>            
           </div>
 
           <label className="remember-me">

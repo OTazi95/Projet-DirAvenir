@@ -2,32 +2,45 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {
-  Clock, CheckCircle, XCircle, Eye, Check, X, User, GraduationCap, FileText, Bell, LogOut, Search
+  LayoutDashboard,
+  User,
+  GraduationCap,
+  FileText,
+  Bell,
+  LogOut,
+  Search,
+  Clock,
+  CheckCircle,
+  XCircle,
+  Eye,
+  Check,
+  X
 } from 'lucide-react';
 import "../styles/WelcomeAdmin.css";
-import logo from '../assets/logo.png';
+import logo from '../assets/diravenir.png';
 
 const WelcomeAdmin = () => {
+  // States
   const [userInfo, setUserInfo] = useState({});
   const [students, setStudents] = useState([]);
   const [admins, setAdmins] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('students');
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [applications, setApplications] = useState([]);
   const [selectedApp, setSelectedApp] = useState(null);
   const [applicationFilter, setApplicationFilter] = useState('all');
-  const [searchTerm, setSearchTerm] = useState(''); 
+  const [searchTerm, setSearchTerm] = useState('');
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
-
   const navigate = useNavigate();
 
-  // Navigation items pour le sidebar
+  // Navigation items for the sidebar
   const navigationItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, color: '#541652' },
     { id: 'students', label: 'Students', icon: User, color: '#541652' },
     { id: 'admins', label: 'Admins', icon: User, color: '#541652' },
     { id: 'applications', label: 'Applications', icon: FileText, color: '#541652' },
-    { id: 'notifications', label: 'Notifications', icon: Bell, color: '#541652', badge: 0 },
+    { id: 'notifications', label: 'Notifications', icon: Bell, color: '#541652', badge: unreadCount },
   ];
 
   // Bottom navigation items
@@ -35,7 +48,7 @@ const WelcomeAdmin = () => {
     { id: 'logout', label: 'Log Out', icon: LogOut, color: '#ef4444' },
   ];
 
-  // Charger les applications
+  // Fetch applications
   const fetchApplications = async () => {
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -44,35 +57,34 @@ const WelcomeAdmin = () => {
       setApplications(response.data);
       generateNotificationsFromApplications(response.data);
     } catch (error) {
-      console.error('Erreur lors du chargement des candidatures:', error);
+      console.error('Error loading applications:', error);
     }
   };
 
+  // Generate notifications from applications
   const generateNotificationsFromApplications = (apps) => {
     const savedNotifications = JSON.parse(localStorage.getItem('adminNotifications')) || [];
     const dismissed = JSON.parse(localStorage.getItem('adminDismissedNotifications')) || [];
     const newNotifications = [...savedNotifications];
-
     apps.forEach(app => {
-      // si la candidature est nouvelle
       const notifKey = `app-${app.id}-sent`;
       if (app.status === "sent" && !savedNotifications.find(n => n.key === notifKey) && !dismissed.includes(notifKey)) {
         newNotifications.push({
           key: notifKey,
           applicationId: app.id,
-          message: `Nouvelle candidature envoyée par ${app.userName || app.userEmail}`,
-          date: new Date().toLocaleDateString("fr-FR"),
-          time: new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
+          message: `New application submitted by ${app.userName || app.userEmail}`,
+          date: new Date().toLocaleDateString("en-US"),
+          time: new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
           read: false,
         });
       }
     });
-
     localStorage.setItem('adminNotifications', JSON.stringify(newNotifications));
     setNotifications(newNotifications);
     setUnreadCount(newNotifications.filter(n => !n.read).length);
   };
 
+  // Mark notifications as read
   const markNotificationsAsRead = () => {
     const updated = notifications.map(n => ({ ...n, read: true }));
     setNotifications(updated);
@@ -80,6 +92,7 @@ const WelcomeAdmin = () => {
     localStorage.setItem('adminNotifications', JSON.stringify(updated));
   };
 
+  // Clear all notifications
   const clearAllNotifications = () => {
     const dismissed = notifications.map(n => n.key);
     localStorage.setItem('adminDismissedNotifications', JSON.stringify(dismissed));
@@ -88,7 +101,17 @@ const WelcomeAdmin = () => {
     localStorage.setItem('adminNotifications', JSON.stringify([]));
   };
 
-  // Charger les données (étudiants et admins)
+  // Mark single notification as read
+  const markSingleNotificationAsRead = (key) => {
+    const updated = notifications.map(n =>
+      n.key === key ? { ...n, read: true } : n
+    );
+    setNotifications(updated);
+    setUnreadCount(updated.filter(n => !n.read).length);
+    localStorage.setItem('adminNotifications', JSON.stringify(updated));
+  };
+
+  // Fetch data (students and admins)
   const fetchData = async () => {
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -99,26 +122,32 @@ const WelcomeAdmin = () => {
       setAdmins(adminsRes.data);
       setIsLoading(false);
     } catch (error) {
-      console.error('Erreur lors du chargement des données:', error);
+      console.error('Error loading data:', error);
       setIsLoading(false);
     }
   };
 
-  // Fonction pour filtrer les étudiants selon le terme de recherche
+  // Filter students based on search term
   const filteredStudents = students.filter(student =>
     student.user__first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     student.user__last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     student.user__email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Fonction pour filtrer les administrateurs selon le terme de recherche
+  // Filter admins based on search term
   const filteredAdmins = admins.filter(admin =>
     admin.user__first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     admin.user__last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     admin.user__email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Mettre à jour le statut d'une candidature
+  // Filter applications based on selected filter
+  const filteredApplications = applications.filter(app => {
+    if (applicationFilter === 'all') return true;
+    return app.status === applicationFilter;
+  });
+
+  // Update application status
   const handleApplicationStatusChange = async (appId, newStatus) => {
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -132,42 +161,42 @@ const WelcomeAdmin = () => {
         )
       );
     } catch (error) {
-      console.error('Erreur lors de la mise à jour du statut:', error);
-      alert('Erreur lors de la mise à jour du statut');
+      console.error('Error updating status:', error);
+      alert('Error updating status');
     }
   };
 
-  // Supprimer un étudiant
+  // Delete a student
   const handleDeleteStudent = async (id) => {
-    if (!window.confirm("Voulez-vous vraiment supprimer cet étudiant ?")) return;
+    if (!window.confirm("Do you really want to delete this student?")) return;
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       const headers = token ? { 'Authorization': `Token ${token}` } : {};
       await axios.delete(`http://localhost:8000/api/students/${id}/delete/`, { headers });
       fetchData();
-      alert('Étudiant supprimé avec succès');
+      alert('Student deleted successfully');
     } catch (error) {
-      console.error('Erreur lors de la suppression:', error);
-      alert('Erreur lors de la suppression');
+      console.error('Error deleting:', error);
+      alert('Error deleting student');
     }
   };
 
-  // Supprimer un administrateur
+  // Delete an admin
   const handleDeleteAdmin = async (id) => {
-    if (!window.confirm("Voulez-vous vraiment supprimer cet administrateur ?")) return;
+    if (!window.confirm("Do you really want to delete this admin?")) return;
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       const headers = token ? { 'Authorization': `Token ${token}` } : {};
       await axios.delete(`http://localhost:8000/api/admins/${id}/delete/`, { headers });
       fetchData();
-      alert('Administrateur supprimé avec succès');
+      alert('Admin deleted successfully');
     } catch (error) {
-      console.error('Erreur lors de la suppression:', error);
-      alert('Erreur lors de la suppression');
+      console.error('Error deleting:', error);
+      alert('Error deleting admin');
     }
   };
 
-  // Ajouter un administrateur
+  // Add an admin
   const handleAddAdmin = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -180,521 +209,578 @@ const WelcomeAdmin = () => {
         email: formData.get("email"),
         password: formData.get("password"),
       }, { headers });
-      alert("Nouvel admin ajouté !");
+      alert("New admin added!");
       e.target.reset();
       fetchData();
     } catch (error) {
-      console.error('Erreur lors de l\'ajout:', error);
-      alert('Erreur lors de l\'ajout de l\'admin');
+      console.error('Error adding:', error);
+      alert('Error adding admin');
     }
   };
 
-  // Déconnexion
+  // Logout
   const handleLogout = () => {
     localStorage.clear();
     sessionStorage.clear();
     navigate('/login');
   };
 
-  // Gestion de la navigation
+  // Navigation handling
   const handleNavigation = (itemId) => {
     if (itemId === 'logout') {
       handleLogout();
     } else {
       setActiveTab(itemId);
-      setSearchTerm(''); 
+      setSearchTerm('');
       if (itemId === 'notifications') {
         markNotificationsAsRead();
       }
     }
   };
 
-  // Chargement initial des données
+  // Initial data loading
   useEffect(() => {
     const authUserLocal = localStorage.getItem("auth_user");
     const authUserSession = sessionStorage.getItem("auth_user");
     let authUser = null;
-
     if (authUserLocal) {
       try {
         authUser = JSON.parse(authUserLocal);
       } catch (error) {
-        console.error('Erreur parsing localStorage:', error);
+        console.error('Error parsing localStorage:', error);
       }
     } else if (authUserSession) {
       try {
         authUser = JSON.parse(authUserSession);
       } catch (error) {
-        console.error('Erreur parsing sessionStorage:', error);
+        console.error('Error parsing sessionStorage:', error);
       }
     }
-
     if (!authUser || !authUser.email) {
       navigate('/login');
       return;
     }
-
     const userRole = (authUser.role || '').toLowerCase().trim();
     if (userRole !== 'admin' && userRole !== 'administrateur') {
-      navigate('/welcome-etudiant');
+      navigate('/welcome-student');
       return;
     }
-
     setUserInfo(authUser);
     fetchData();
     fetchApplications();
   }, [navigate]);
 
-  // Composant ApplicationDetail avec vue complète
-  const ApplicationDetail = ({ application, onClose, onStatusChange }) => {
-    const formData = application.formData || {};
-    
-    return (
-      <div className="modal-overlay" onClick={onClose}>
-        <div className="application-detail-modal" onClick={e => e.stopPropagation()}>
-          <div className="modal-header">
-            <h3>Candidature #{application.applicationId} - Détails Complets</h3>
-            <button className="modal-close" onClick={onClose}>
-              <X size={24} />
-            </button>
+// Enhanced ApplicationDetail component avec affichage réorganisé
+const ApplicationDetail = ({ application, onClose, onStatusChange }) => {
+  const formData = application.formData || {};
+  
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="application-detail-modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <h3>📋 Application #{application.id} - Full Details</h3>
+          <button className="modal-close" onClick={onClose}>
+            <X size={24} />
+          </button>
+        </div>
+        
+        <div className="modal-content">
+          {/* Section 1: Informations Générales */}
+          <div className="detail-section">
+            <h4><User size={18} />General Information</h4>
+            <div className="detail-section-content">
+              <div className="detail-grid-enhanced">
+                <div className="detail-card">
+                  <span className="detail-label">ID Application</span>
+                  <span className="detail-value">{application.id}</span>
+                </div>
+                <div className="detail-card">
+                  <span className="detail-label">Program</span>
+                  <span className="detail-value">{application.program}</span>
+                </div>
+                <div className="detail-card">
+                  <span className="detail-label">University</span>
+                  <span className="detail-value">{application.university}</span>
+                </div>
+                <div className="detail-card status-card">
+                  <span className="detail-label">Status</span>
+                  <span className={`detail-value status-badge-large status-${application.status}`}>
+                    {application.status === 'sent' ? 'Sent' :
+                     application.status === 'reviewing' ? 'Reviewing' :
+                     application.status === 'approved' ? 'Approuved' : 'Rejected'}
+                  </span>
+                </div>
+                <div className="detail-card full-width">
+                  <span className="detail-label">Submission date</span>
+                  <span className="detail-value">
+                    {new Date(application.submissionDate).toLocaleDateString('en')} at {' '}
+                    {new Date(application.submissionDate).toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
-          
-          <div className="modal-content">
-            {/* Informations Générales */}
-            <div className="detail-section">
-              <h4><User size={18} /> Informations Générales</h4>
-              <div className="detail-grid">
-                <div className="detail-item">
-                  <span className="label">ID Candidature:</span>
-                  <span className="value">{application.applicationId}</span>
+
+          {/* Section 2: Informations Personnelles */}
+          <div className="detail-section">
+            <h4><User size={18} /> Personal Information</h4>
+            <div className="detail-section-content">
+              <div className="detail-grid-enhanced">
+                <div className="detail-card">
+                  <span className="detail-label">First name</span>
+                  <span className="detail-value">{formData.firstName || 'Not provided'}</span>
                 </div>
-                <div className="detail-item">
-                  <span className="label">Programme:</span>
-                  <span className="value">{application.program}</span>
+                <div className="detail-card">
+                  <span className="detail-label">Last name</span>
+                  <span className="detail-value">{formData.lastName || 'Not provided'}</span>
                 </div>
-                <div className="detail-item">
-                  <span className="label">Université:</span>
-                  <span className="value">{application.university}</span>
+                <div className="detail-card">
+                  <span className="detail-label">Birth date</span>
+                  <span className="detail-value">{formData.dob || 'Not provided'}</span>
                 </div>
-                <div className="detail-item">
-                  <span className="label">Statut:</span>
-                  <span className={`value status-${application.status}`}>
-                    {application.status === 'sent' ? 'Envoyée' :
-                     application.status === 'reviewing' ? 'En examen' :
-                     application.status === 'approved' ? 'Approuvée' : 'Rejetée'}
-                  </span>
+                <div className="detail-card">
+                  <span className="detail-label">Place of birth</span>
+                  <span className="detail-value">{formData.placeOfBirth || 'Not provided'}</span>
                 </div>
-                <div className="detail-item">
-                  <span className="label">Date de soumission:</span>
-                  <span className="value">
-                    {new Date(application.submissionDate).toLocaleDateString('fr-FR')} à {' '}
-                    {new Date(application.submissionDate).toLocaleTimeString('fr-FR')}
-                  </span>
+                <div className="detail-card">
+                  <span className="detail-label">Gender</span>
+                  <span className="detail-value">{formData.gender || 'Not provided'}</span>
+                </div>
+                <div className="detail-card">
+                  <span className="detail-label">Statut matrimonial</span>
+                  <span className="detail-value">{formData.maritalStatus || 'Not provided'}</span>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Contact Details */}
-            <div className="detail-section">
-              <h4><User size={18} /> Coordonnées</h4>
-              <div className="detail-grid">
-                <div className="detail-item">
-                  <span className="label">Email:</span>
-                  <span className="value">{formData.email}</span>
+          {/* Section 3: Informations de Contact */}
+          <div className="detail-section">
+            <h4>📞 Contact Information</h4>
+            <div className="detail-section-content">
+              <div className="detail-grid-enhanced">
+                <div className="detail-card">
+                  <span className="detail-label">Email adress</span>
+                  <span className="detail-value">{formData.email || 'Not provided'}</span>
                 </div>
-                <div className="detail-item">
-                  <span className="label">Téléphone:</span>
-                  <span className="value">{formData.phone}</span>
+                <div className="detail-card">
+                  <span className="detail-label">phone number</span>
+                  <span className="detail-value">{formData.phone || 'Not provided'}</span>
                 </div>
-                <div className="detail-item">
-                  <span className="label">WhatsApp:</span>
-                  <span className="value">{formData.whatsapp || 'Non fourni'}</span>
+                <div className="detail-card">
+                  <span className="detail-label">WhatsApp number</span>
+                  <span className="detail-value">{formData.whatsapp || 'Not provided'}</span>
+                </div>
+                <div className="detail-card">
+                  <span className="detail-label">country</span>
+                  <span className="detail-value">{formData.country || 'Not provided'}</span>
+                </div>
+                <div className="detail-card full-width">
+                  <span className="detail-label">full address</span>
+                  <span className="detail-value">{formData.fullAddress || 'Not provided'}</span>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Informations Personnelles */}
-            <div className="detail-section">
-              <h4><User size={18} /> Informations Personnelles</h4>
-              <div className="detail-grid">
-                <div className="detail-item">
-                  <span className="label">Nom complet:</span>
-                  <span className="value">{formData.firstName} {formData.lastName}</span>
+          {/* Section 4: Informations Passeport */}
+          <div className="detail-section">
+            <h4>🛂 Passeport information</h4>
+            <div className="detail-section-content">
+              <div className="detail-grid-enhanced">
+                <div className="detail-card">
+                  <span className="detail-label">passeport number</span>
+                  <span className="detail-value">{formData.passportNumber || 'Not provided'}</span>
                 </div>
-                <div className="detail-item">
-                  <span className="label">Date de naissance:</span>
-                  <span className="value">{formData.dob}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="label">Lieu de naissance:</span>
-                  <span className="value">{formData.placeOfBirth}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="label">Genre:</span>
-                  <span className="value">{formData.gender}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="label">État civil:</span>
-                  <span className="value">{formData.maritalStatus}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="label">N° Passeport:</span>
-                  <span className="value">{formData.passportNumber}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="label">Expiration passeport:</span>
-                  <span className="value">{formData.passportExpiry}</span>
+                <div className="detail-card">
+                  <span className="detail-label">passeport expiry date</span>
+                  <span className="detail-value">{formData.passportExpiry || 'Not provided'}</span>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Compétences Linguistiques */}
-            <div className="detail-section">
-              <h4><GraduationCap size={18} /> Compétences Linguistiques</h4>
-              <div className="detail-grid">
-                <div className="detail-item">
-                  <span className="label">Niveau d'anglais:</span>
-                  <span className="value">{formData.englishLevel}</span>
+          {/* Section 5: Compétences Linguistiques */}
+          <div className="detail-section">
+            <h4><GraduationCap size={18} /> Language Skills</h4>
+            <div className="detail-section-content">
+              <div className="detail-grid-enhanced">
+                <div className="detail-card">
+                  <span className="detail-label">English level</span>
+                  <span className="detail-value">{formData.englishLevel || 'Not specified'}</span>
                 </div>
-                <div className="detail-item">
-                  <span className="label">Certificat d'anglais:</span>
-                  <span className="value">{formData.englishCertificate}</span>
+                <div className="detail-card">
+                  <span className="detail-label">English Certificate</span>
+                  <span className="detail-value">{formData.englishCertificate || 'Not specified'}</span>
                 </div>
                 {formData.certificateScore && (
-                  <div className="detail-item">
-                    <span className="label">Score:</span>
-                    <span className="value">{formData.certificateScore}</span>
+                  <div className="detail-card">
+                    <span className="detail-label">Score</span>
+                    <span className="detail-value">{formData.certificateScore}</span>
                   </div>
                 )}
               </div>
             </div>
+          </div>
 
-            {/* Adresse */}
-            <div className="detail-section">
-              <h4>📍 Adresse</h4>
-              <div className="detail-grid">
-                <div className="detail-item">
-                  <span className="label">Pays:</span>
-                  <span className="value">{formData.country}</span>
+          {/* Section 6: Formation Académique */}
+          <div className="detail-section">
+            <h4><GraduationCap size={18} /> Educational Background</h4>
+            <div className="detail-section-content">
+              {formData.educationalBackground?.length > 0 ? (
+                <div className="education-list">
+                  {formData.educationalBackground.map((edu, index) => (
+                    <div key={index} className="education-card">
+                      <div className="education-header">
+                        <h5>Formation #{index + 1}</h5>
+                      </div>
+                      <div className="detail-grid-enhanced">
+                        <div className="detail-card">
+                          <span className="detail-label">School/Institution</span>
+                          <span className="detail-value">{edu.school || 'Not specified'}</span>
+                        </div>
+                        <div className="detail-card">
+                          <span className="detail-label">Major/Field of Study</span>
+                          <span className="detail-value">{edu.major || 'Not specified'}</span>
+                        </div>
+                        <div className="detail-card">
+                          <span className="detail-label">Start Date</span>
+                          <span className="detail-value">{edu.startDate || 'Not specified'}</span>
+                        </div>
+                        <div className="detail-card">
+                          <span className="detail-label">Finish Date</span>
+                          <span className="detail-value">{edu.finishDate || 'Not specified'}</span>
+                        </div>
+                        <div className="detail-card">
+                          <span className="detail-label">Grade/GPA</span>
+                          <span className="detail-value">{edu.grade || 'Not provided'}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <div className="detail-item full-width">
-                  <span className="label">Adresse complète:</span>
-                  <span className="value">{formData.fullAddress}</span>
+              ) : (
+                <div className="no-data-message">
+                  <p>No academic background information provided</p>
                 </div>
-              </div>
+              )}
             </div>
+          </div>
 
-            {/* Formation */}
-            <div className="detail-section">
-              <h4><GraduationCap size={18} /> Formation</h4>
-              {formData.educationalBackground?.map((edu, index) => (
-                <div key={index} className="education-item">
-                  <h5>Formation #{index + 1}</h5>
-                  <div className="detail-grid">
-                    <div className="detail-item">
-                      <span className="label">École/Université:</span>
-                      <span className="value">{edu.school}</span>
+          {/* Section 7: Expérience Professionnelle */}
+          <div className="detail-section">
+            <h4>💼 Work Experience</h4>
+            <div className="detail-section-content">
+              {formData.workExperience?.length > 0 ? (
+                <div className="work-list">
+                  {formData.workExperience.map((work, index) => (
+                    <div key={index} className="work-card">
+                      <div className="work-header">
+                        <h5>Experience #{index + 1}</h5>
+                      </div>
+                      <div className="detail-grid-enhanced">
+                        <div className="detail-card">
+                          <span className="detail-label">Employer/Company</span>
+                          <span className="detail-value">{work.employer || 'Not specified'}</span>
+                        </div>
+                        <div className="detail-card">
+                          <span className="detail-label">Job Title/Position</span>
+                          <span className="detail-value">{work.jobTitle || 'Not specified'}</span>
+                        </div>
+                        <div className="detail-card">
+                          <span className="detail-label">Start Date</span>
+                          <span className="detail-value">{work.startDate || 'Not specified'}</span>
+                        </div>
+                        <div className="detail-card">
+                          <span className="detail-label">end Date</span>
+                          <span className="detail-value">{work.endDate || 'In progress'}</span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="detail-item">
-                      <span className="label">Spécialité:</span>
-                      <span className="value">{edu.major || 'Non spécifiée'}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="label">Date de début:</span>
-                      <span className="value">{edu.startDate}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="label">Date de fin:</span>
-                      <span className="value">{edu.finishDate}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="label">Note/Mention:</span>
-                      <span className="value">{edu.grade || 'Non fournie'}</span>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-              )) || <p>Aucune formation renseignée</p>}
+              ) : (
+                <div className="no-data-message">
+                  <p>No professional experience provided</p>
+                </div>
+              )}
             </div>
+          </div>
 
-            {/* Expérience Professionnelle */}
-            <div className="detail-section">
-              <h4>💼 Expérience Professionnelle</h4>
-              {formData.workExperience?.map((work, index) => (
-                <div key={index} className="work-item">
-                  <h5>Expérience #{index + 1}</h5>
-                  <div className="detail-grid">
-                    <div className="detail-item">
-                      <span className="label">Employeur:</span>
-                      <span className="value">{work.employer}</span>
+
+
+           {/* Section 8: Contacts Familiaux */}
+          <div className="detail-section">
+            <h4>👨‍👩‍👧‍👦 Family Contacts</h4>
+            <div className="detail-section-content">
+              {formData.familyContacts?.length > 0 ? (
+                <div className="family-list">
+                  {formData.familyContacts.map((contact, index) => (
+                    <div key={index} className="family-card">
+                      <div className="family-header">
+                        <h5>Contact #{index + 1}</h5>
+                      </div>
+                      <div className="detail-grid-enhanced">
+                        <div className="detail-card">
+                          <span className="detail-label">full name</span>
+                          <span className="detail-value">{contact.name || 'Not provided'}</span>
+                        </div>
+                        <div className="detail-card">
+                          <span className="detail-label">Nationality</span>
+                          <span className="detail-value">{contact.nationality || 'Not provided'}</span>
+                        </div>
+                        <div className="detail-card">
+                          <span className="detail-label">Relationship</span>
+                          <span className="detail-value">{contact.relationship || 'Not specified'}</span>
+                        </div>
+                        <div className="detail-card">
+                          <span className="detail-label">Email address</span>
+                          <span className="detail-value">{contact.email || 'Not provided'}</span>
+                        </div>
+                        <div className="detail-card">
+                          <span className="detail-label">Workplace</span>
+                          <span className="detail-value">{contact.workplace || 'Not provided'}</span>
+                        </div>
+                        <div className="detail-card">
+                          <span className="detail-label">Job Title/Position</span>
+                          <span className="detail-value">{contact.position || 'Not provided'}</span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="detail-item">
-                      <span className="label">Poste:</span>
-                      <span className="value">{work.jobTitle}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="label">Date de début:</span>
-                      <span className="value">{work.startDate}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="label">Date de fin:</span>
-                      <span className="value">{work.endDate || 'En cours'}</span>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-              )) || <p>Aucune expérience professionnelle renseignée</p>}
+              ) : (
+                <div className="no-data-message">
+                  <p>No family contact provided</p>
+                </div>
+              )}
             </div>
+          </div>
 
-            {/* Contacts Familiaux */}
-            <div className="detail-section">
-              <h4>👨‍👩‍👧‍👦 Contacts Familiaux</h4>
-              {formData.familyContacts?.map((contact, index) => (
-                <div key={index} className="family-item">
-                  <h5>Contact #{index + 1}</h5>
-                  <div className="detail-grid">
-                    <div className="detail-item">
-                      <span className="label">Nom:</span>
-                      <span className="value">{contact.name}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="label">Nationalité:</span>
-                      <span className="value">{contact.nationality}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="label">Email:</span>
-                      <span className="value">{contact.email || 'Non fourni'}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="label">Lieu de travail:</span>
-                      <span className="value">{contact.workplace || 'Non fourni'}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="label">Poste:</span>
-                      <span className="value">{contact.position || 'Non fourni'}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="label">Relation:</span>
-                      <span className="value">{contact.relationship}</span>
-                    </div>
-                  </div>
+          {/* Section 9: Garant Financier */}
+          <div className="detail-section">
+            <h4>💰 Financial Guarantor</h4>
+            <div className="detail-section-content">
+              <div className="detail-grid-enhanced">
+                <div className="detail-card">
+                  <span className="detail-label">Relationship</span>
+                  <span className="detail-value">{formData.guarantorRelationship || 'Not specified'}</span>
                 </div>
-              )) || <p>Aucun contact familial renseigné</p>}
-            </div>
-
-            {/* Garant Financier */}
-            <div className="detail-section">
-              <h4>💰 Garant Financier</h4>
-              <div className="detail-grid">
-                <div className="detail-item">
-                  <span className="label">Relation:</span>
-                  <span className="value">{formData.guarantorRelationship}</span>
+                <div className="detail-card">
+                  <span className="detail-label">full name</span>
+                  <span className="detail-value">{formData.guarantorName || 'Not provided'}</span>
                 </div>
-                <div className="detail-item">
-                  <span className="label">Nom:</span>
-                  <span className="value">{formData.guarantorName}</span>
+                <div className="detail-card">
+                  <span className="detail-label">country</span>
+                  <span className="detail-value">{formData.guarantorCountry || 'Not provided'}</span>
                 </div>
-                <div className="detail-item">
-                  <span className="label">Pays:</span>
-                  <span className="value">{formData.guarantorCountry}</span>
+                <div className="detail-card">
+                  <span className="detail-label">Email address</span>
+                  <span className="detail-value">{formData.guarantorEmail || 'Not provided'}</span>
                 </div>
-                <div className="detail-item full-width">
-                  <span className="label">Adresse:</span>
-                  <span className="value">{formData.guarantorAddress}</span>
+                <div className="detail-card full-width">
+                  <span className="detail-label">full Address</span>
+                  <span className="detail-value">{formData.guarantorAddress || 'Not provided'}</span>
                 </div>
-                <div className="detail-item">
-                  <span className="label">Email:</span>
-                  <span className="value">{formData.guarantorEmail || 'Non fourni'}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="label">Lieu de travail:</span>
-                  <span className="value">{formData.guarantorWorkplace || 'Non fourni'}</span>
+                <div className="detail-card">
+                  <span className="detail-label">Workplace</span>
+                  <span className="detail-value">{formData.guarantorWorkplace || 'Not provided'}</span>
                 </div>
                 {formData.guarantorWorkplaceAddress && (
-                  <div className="detail-item full-width">
-                    <span className="label">Adresse du travail:</span>
-                    <span className="value">{formData.guarantorWorkplaceAddress}</span>
+                  <div className="detail-card full-width">
+                    <span className="detail-label">Workplace address</span>
+                    <span className="detail-value">{formData.guarantorWorkplaceAddress}</span>
                   </div>
                 )}
               </div>
             </div>
+          </div>
 
-            {/* Contact d'Urgence en Chine */}
-            <div className="detail-section">
-              <h4>🚨 Contact d'Urgence en Chine</h4>
-              <div className="detail-grid">
-                <div className="detail-item">
-                  <span className="label">Nom:</span>
-                  <span className="value">{formData.emergencyName || 'Non fourni'}</span>
+          {/* Section 10: Contact d'Urgence en Chine */}
+          <div className="detail-section">
+            <h4>🚨 Emergency Contact in China</h4>
+            <div className="detail-section-content">
+              <div className="detail-grid-enhanced">
+                <div className="detail-card">
+                  <span className="detail-label">full name</span>
+                  <span className="detail-value">{formData.emergencyName || 'Not provided'}</span>
                 </div>
-                <div className="detail-item">
-                  <span className="label">Pays:</span>
-                  <span className="value">{formData.emergencyCountry}</span>
+                <div className="detail-card">
+                  <span className="detail-label">Country</span>
+                  <span className="detail-value">{formData.emergencyCountry || 'Not provided'}</span>
                 </div>
-                <div className="detail-item">
-                  <span className="label">Email:</span>
-                  <span className="value">{formData.emergencyEmail || 'Non fourni'}</span>
+                <div className="detail-card">
+                  <span className="detail-label">Email address</span>
+                  <span className="detail-value">{formData.emergencyEmail || 'Not provided'}</span>
                 </div>
                 {formData.emergencyAddress && (
-                  <div className="detail-item full-width">
-                    <span className="label">Adresse:</span>
-                    <span className="value">{formData.emergencyAddress}</span>
+                  <div className="detail-card full-width">
+                    <span className="detail-label">full Address</span>
+                    <span className="detail-value">{formData.emergencyAddress}</span>
                   </div>
                 )}
               </div>
             </div>
+          </div>
 
-            {/* Déclarations et Accords */}
-            <div className="detail-section">
-              <h4>✅ Déclarations et Accords</h4>
-              <div className="agreements-list">
-                <div className="agreement-item">
-                  <span className="agreement-label">Conditions générales:</span>
+          {/* Section 11: Documents Fournis */}
+          <div className="detail-section">
+            <h4><FileText size={18} /> Documents Provided</h4>
+            <div className="detail-section-content">
+              <div className="documents-grid">
+                {Object.entries(application.formData.documents || {}).map(([docType, file]) => {
+                  const docLabels = {
+                    passportPages: 'Passport Pages',
+                    academicCertificate: 'Academic Certificate',
+                    academicTranscript: 'Academic Transcript',
+                    languageCertificate: 'Language Certificate',
+                    medicalExam: 'Medical Exam',
+                    criminalRecord: 'Criminal Record',
+                    bankStatement: 'Bank Statement',
+                    personalPhoto: 'Personal Photo',
+                    resume: 'Resume',
+                    awards: 'Awards',
+                    parentsId: 'Parents Id'
+                  };
+
+                  const isFileEmpty = !file || (typeof file === 'object' && Object.keys(file).length === 0);
+                  const fileUrl = typeof file === "string" && file.trim() !== ""
+                    ? `http://localhost:8000/media/${file.startsWith('uploads/') ? file : `uploads/${file}`}`
+                    : null;
+
+                  return (
+                    <div key={docType} className="document-card">
+                      <div className="document-header">
+                        <span className="document-name">{docLabels[docType] || docType}</span>
+                        <span className={`document-status ${!isFileEmpty ? 'provided' : 'missing'}`}>
+                          {!isFileEmpty ? '✓ Provided' : '✗ Missing'}
+                        </span>
+                      </div>
+                      {fileUrl && (
+                        <a
+                          href={fileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="document-link"
+                        >
+                          📄 See the Document
+                        </a>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Section 12: Déclarations et Accords */}
+          <div className="detail-section">
+            <h4>✅ declaration and agreement</h4>
+            <div className="detail-section-content">
+              <div className="agreements-grid">
+                <div className="agreement-card">
+                  <span className="agreement-name">General Conditions</span>
                   <span className={`agreement-status ${formData.acknowledgment ? 'accepted' : 'declined'}`}>
-                    {formData.acknowledgment ? '✓ Accepté' : '✗ Non accepté'}
+                    {formData.acknowledgment ? '✓ Accepted' : '✗ Not accepted'}
                   </span>
                 </div>
-                <div className="agreement-item">
-                  <span className="agreement-label">Consentement données:</span>
+                <div className="agreement-card">
+                  <span className="agreement-name">Data Consent</span>
                   <span className={`agreement-status ${formData.consent ? 'accepted' : 'declined'}`}>
-                    {formData.consent ? '✓ Accepté' : '✗ Non accepté'}
+                    {formData.consent ? '✓ Accepted' : '✗ Not accepted'}
                   </span>
                 </div>
-                <div className="agreement-item">
-                  <span className="agreement-label">Exactitude des informations:</span>
+                <div className="agreement-card">
+                  <span className="agreement-name">Accuracy of Information</span>
                   <span className={`agreement-status ${formData.accuracy ? 'accepted' : 'declined'}`}>
-                    {formData.accuracy ? '✓ Accepté' : '✗ Non accepté'}
+                    {formData.accuracy ? '✓ Accepted' : '✗ Not accepted'}
                   </span>
                 </div>
-                <div className="agreement-item">
-                  <span className="agreement-label">Politique de paiement:</span>
+                <div className="agreement-card">
+                  <span className="agreement-name">Payment Policy</span>
                   <span className={`agreement-status ${formData.paymentPolicy ? 'accepted' : 'declined'}`}>
-                    {formData.paymentPolicy ? '✓ Accepté' : '✗ Non accepté'}
+                    {formData.paymentPolicy ? '✓ Accepted' : '✗ Not accepted'}
                   </span>
                 </div>
-                <div className="agreement-item">
-                  <span className="agreement-label">Politique de remboursement:</span>
+                <div className="agreement-card">
+                  <span className="agreement-name">Refund Policy</span>
                   <span className={`agreement-status ${formData.refundPolicy ? 'accepted' : 'declined'}`}>
-                    {formData.refundPolicy ? '✓ Accepté' : '✗ Non accepté'}
+                    {formData.refundPolicy ? '✓ Accepted' : '✗ Not accepted'}
                   </span>
                 </div>
-                <div className="agreement-item">
-                  <span className="agreement-label">Conformité:</span>
+                <div className="agreement-card">
+                  <span className="agreement-name">Compliance</span>
                   <span className={`agreement-status ${formData.compliance ? 'accepted' : 'declined'}`}>
-                    {formData.compliance ? '✓ Accepté' : '✗ Non accepté'}
+                    {formData.compliance ? '✓ Accepted' : '✗ Not accepted'}
                   </span>
                 </div>
               </div>
             </div>
+          </div>
 
-{/* Documents */}
-<div className="detail-section">
-  <h4><FileText size={18} /> Documents Fournis</h4>
-  <div className="documents-list">
-    {Object.entries(application.formData.documents || {}).map(([docType, file]) => {
-      const docLabels = {
-        passportPages: 'Pages de passeport',
-        academicCertificate: 'Certificat académique',
-        academicTranscript: 'Relevé de notes',
-        languageCertificate: 'Certificat de langue',
-        medicalExam: 'Examen médical',
-        criminalRecord: 'Casier judiciaire',
-        bankStatement: 'Relevé bancaire',
-        personalPhoto: 'Photo personnelle',
-        resume: 'CV',
-        awards: 'Certificats de prix',
-        parentsId: 'ID des parents'
-      };
-
-      // Vérifier si le fichier est un objet vide ou null
-      const isFileEmpty = !file || (typeof file === 'object' && Object.keys(file).length === 0);
-
-      // Si c'est un chemin de fichier (string), construire l'URL
-      const fileUrl = typeof file === "string" && file.trim() !== ""
-        ? `http://localhost:8000/media/${file.startsWith('uploads/') ? file : `uploads/${file}`}`
-        : null;
-
-      return (
-        <div key={docType} className="document-status-item">
-          <span className="doc-label">{docLabels[docType] || docType}:</span>
-          <span className={`doc-status ${!isFileEmpty ? 'provided' : 'missing'}`}>
-            {!isFileEmpty ? '✓ Fourni' : '✗ Manquant'}
-          </span>
-          {fileUrl && (
-            <a
-              href={fileUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="file-link"
-            >
-              Voir le document
-            </a>
-          )}
-        </div>
-      );
-    })}
-  </div>
-</div>
-
-
-
-            {/* Informations de révision (si disponibles) */}
-            {application.reviewedBy && (
-              <div className="detail-section">
-                <h4>📝 Informations de Révision</h4>
-                <div className="detail-grid">
-                  <div className="detail-item">
-                    <span className="label">Révisé par:</span>
-                    <span className="value">{application.reviewedBy}</span>
+          {/* Section 13: Informations de Révision (si disponible) */}
+          {application.reviewedBy && (
+            <div className="detail-section">
+              <h4>📝 Review Information</h4>
+              <div className="detail-section-content">
+                <div className="detail-grid-enhanced">
+                  <div className="detail-card">
+                    <span className="detail-label">Reviewed by</span>
+                    <span className="detail-value">{application.reviewedBy}</span>
                   </div>
-                  <div className="detail-item">
-                    <span className="label">Date de révision:</span>
-                    <span className="value">
-                      {new Date(application.reviewedDate).toLocaleDateString('fr-FR')} à {' '}
-                      {new Date(application.reviewedDate).toLocaleTimeString('fr-FR')}
+                  <div className="detail-card">
+                    <span className="detail-label">Revision date</span>
+                    <span className="detail-value">
+                      {new Date(application.reviewedDate).toLocaleDateString('en')} at {' '}
+                      {new Date(application.reviewedDate).toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
                   {application.notes && (
-                    <div className="detail-item full-width">
-                      <span className="label">Notes:</span>
-                      <span className="value">{application.notes}</span>
+                    <div className="detail-card full-width">
+                      <span className="detail-label">Notes</span>
+                      <span className="detail-value">{application.notes}</span>
                     </div>
                   )}
                 </div>
               </div>
-            )}
-          </div>
-
-          {/* Actions */}
-          <div className="modal-actions">
-            {application.status === 'reviewing' && (
-              <>
-                <button
-                  className="action-btn approve-btn"
-                  onClick={() => {
-                    onStatusChange(application.id, 'approved');
-                    onClose();
-                  }}
-                >
-                  <Check size={16} /> Approuver
-                </button>
-                <button
-                  className="action-btn reject-btn"
-                  onClick={() => {
-                    onStatusChange(application.id, 'rejected');
-                    onClose();
-                  }}
-                >
-                  <X size={16} /> Rejeter
-                </button>
-              </>
-            )}
-            <button className="cancel-btn" onClick={onClose}>Fermer</button>
-          </div>
+            </div>
+          )}
+                  {/* Actions */}
+        <div className="modal-actions">
+          {application.status === 'reviewing' && (
+            <>
+              <button
+                className="action-btn approve-btn"
+                onClick={() => {
+                  onStatusChange(application.id, 'approved');
+                  onClose();
+                }}
+              >
+                <Check size={16} /> Approve
+              </button>
+              <button
+                className="action-btn reject-btn"
+                onClick={() => {
+                  onStatusChange(application.id, 'rejected');
+                  onClose();
+                }}
+              >
+                <X size={16} /> Dismiss
+              </button>
+            </>
+          )}
+          <button className="cancel-btn" onClick={onClose}>Close</button>
         </div>
-      </div>
-    );
-  };
+        </div>
 
-// Composant pour gérer les candidatures
+
+
+      </div>
+    </div>
+  );
+};
+
+  // Enhanced Application Manager Component
   const AdminApplicationManager = ({ applications, onStatusChange, selectedApp, setSelectedApp }) => {
     const filteredApplications = applications.filter(app => {
       if (applicationFilter === 'all') return true;
@@ -721,53 +807,53 @@ const WelcomeAdmin = () => {
     return (
       <>
         <div className="section-header">
-          <h2>Gestion des Candidatures</h2>
+          <h2>Applications Management</h2>
           <div className="filter-tabs">
             <button
               className={`filter-tab ${applicationFilter === 'all' ? 'active' : ''}`}
               onClick={() => setApplicationFilter('all')}
             >
-              Toutes ({applications.length})
+              All ({applications.length})
             </button>
             <button
               className={`filter-tab ${applicationFilter === 'sent' ? 'active' : ''}`}
               onClick={() => setApplicationFilter('sent')}
             >
-              Envoyées ({applications.filter(a => a.status === 'sent').length})
+              Sent ({applications.filter(a => a.status === 'sent').length})
             </button>
             <button
               className={`filter-tab ${applicationFilter === 'reviewing' ? 'active' : ''}`}
               onClick={() => setApplicationFilter('reviewing')}
             >
-              En examen ({applications.filter(a => a.status === 'reviewing').length})
+              Under Review ({applications.filter(a => a.status === 'reviewing').length})
             </button>
             <button
               className={`filter-tab ${applicationFilter === 'approved' ? 'active' : ''}`}
               onClick={() => setApplicationFilter('approved')}
             >
-              Approuvées ({applications.filter(a => a.status === 'approved').length})
+              Approved ({applications.filter(a => a.status === 'approved').length})
             </button>
             <button
               className={`filter-tab ${applicationFilter === 'rejected' ? 'active' : ''}`}
               onClick={() => setApplicationFilter('rejected')}
             >
-              Rejetées ({applications.filter(a => a.status === 'rejected').length})
+              Rejected ({applications.filter(a => a.status === 'rejected').length})
             </button>
           </div>
         </div>
         {filteredApplications.length === 0 ? (
           <div className="empty-state">
             <FileText size={48} color="#9CA3AF" />
-            <h3>Aucune candidature</h3>
-            <p>Aucune candidature trouvée pour ce filtre.</p>
+            <h3>No applications</h3>
+            <p>No applications found for this filter.</p>
           </div>
         ) : (
           <div className="applications-table">
             <div className="table-header">
-              <div className="header-cell">Étudiant</div>
-              <div className="header-cell">Programme</div>
+              <div className="header-cell">Student</div>
+              <div className="header-cell">Program</div>
               <div className="header-cell">Date</div>
-              <div className="header-cell">Statut</div>
+              <div className="header-cell">Status</div>
               <div className="header-cell">Actions</div>
             </div>
             {filteredApplications.map((app) => (
@@ -789,9 +875,9 @@ const WelcomeAdmin = () => {
                 </div>
                 <div className="table-cell">
                   <div className="date-info">
-                    {new Date(app.submissionDate).toLocaleDateString('fr-FR')}
+                    {new Date(app.submissionDate).toLocaleDateString('en-US')}
                     <div className="time-info">
-                      {new Date(app.submissionDate).toLocaleTimeString('fr-FR', {
+                      {new Date(app.submissionDate).toLocaleTimeString('en-US', {
                         hour: '2-digit',
                         minute: '2-digit'
                       })}
@@ -809,9 +895,9 @@ const WelcomeAdmin = () => {
                   }}>
                     {getStatusIcon(app.status)}
                     <span>
-                      {app.status === 'sent' ? 'Envoyée' :
-                       app.status === 'reviewing' ? 'En examen' :
-                       app.status === 'approved' ? 'Approuvée' : 'Rejetée'}
+                      {app.status === 'sent' ? 'Sent' :
+                       app.status === 'reviewing' ? 'Under Review' :
+                       app.status === 'approved' ? 'Approved' : 'Rejected'}
                     </span>
                   </div>
                 </div>
@@ -857,7 +943,7 @@ const WelcomeAdmin = () => {
     return (
       <div className="loading-container">
         <div className="loading-spinner"></div>
-        <p>Chargement du dashboard...</p>
+        <p>Loading dashboard...</p>
       </div>
     );
   }
@@ -914,56 +1000,37 @@ const WelcomeAdmin = () => {
 
       {/* Main Content */}
       <div className="main-content">
-        {/* Header */}
-        <header className="admin-header">
-          <div className="header-content">
-            <div className="header-left">
-              <h1 className="dashboard-title">
-                Dashboard Admin
-              </h1>
-              <p className="welcome-text">
-                Bienvenue <strong>{userInfo.firstName} {userInfo.lastName}</strong>
-              </p>
-            </div>
-            <div className="header-right">
-              <div className="user-avatar">
-                {userInfo.prenom?.charAt(0)}{userInfo.nom?.charAt(0)}
+        {/* Header only for the Dashboard tab */}
+        {activeTab === 'dashboard' && (
+          <header className="admin-header">
+            <div className="header-content">
+              <div className="header-left">
+                <h1 className="dashboard-title">Admin Dashboard</h1>
+                <p className="welcome-text">
+                  Welcome <strong>{userInfo.firstName} {userInfo.lastName}</strong>
+                </p>
+              </div>
+              <div className="header-right">
+                <div className="user-avatar">
+                  {userInfo.firstName?.charAt(0)}{userInfo.lastName?.charAt(0)}
+                </div>
               </div>
             </div>
-          </div>
-        </header>
+          </header>
+        )}
 
-        {/* Stats Cards */}
-        <div className="stats-section">
-          <div className="stat-card primary">
-            <div className="stat-icon">👥</div>
-            <div className="stat-content">
-              <h3>Étudiants</h3>
-              <p className="stat-number">{students.length}</p>
-              <span className="stat-label">Total inscrits</span>
-            </div>
-          </div>
-          <div className="stat-card secondary">
-            <div className="stat-content">
-              <h3>Administrateurs</h3>
-              <p className="stat-number">{admins.length}</p>
-              <span className="stat-label">Membres de l'équipe</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Content Area */}
-        <div className="content-area">
-          {activeTab === 'students' && (
-            <div className="students-section">
+        {/* Content rendering based on active tab */}
+        {activeTab === 'admins' ? (
+          <div className="admins-container">
+            <div className="card admins-list-card">
               <div className="section-header">
-                <h2>Liste des Étudiants</h2>
+                <h2>Admins List</h2>
                 <div className="search-bar">
                   <div className="search-input-container">
                     <Search className="search-icon" size={20} />
                     <input
                       type="text"
-                      placeholder="Search a student..."
+                      placeholder="Search for an admin..."
                       className="search-input"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -971,87 +1038,17 @@ const WelcomeAdmin = () => {
                   </div>
                 </div>
               </div>
-
-              {filteredStudents.length === 0 ? (
-                <div className="empty-state">
-                  <h3>No Student Found</h3>
-                  <p>{searchTerm ? "Aucun résultat pour cette recherche" : "Les nouveaux étudiants apparaîtront ici"}</p>
-                </div>
-              ) : (
-                <div className="table-container">
-                  <table className="modern-table">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Nom complet</th>
-                        <th>Email</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredStudents.map((student) => (
-                        <tr key={student.user__id}>
-                          <td>
-                            <span className="id-badge">#{student.user__id}</span>
-                          </td>
-                          <td>
-                            <div className="user-cell">
-                              <div className="user-avatar-small">
-                                {student.user__first_name?.charAt(0)}{student.user__last_name?.charAt(0)}
-                              </div>
-                              <div>
-                                <strong>{student.user__first_name} {student.user__last_name}</strong>
-                              </div>
-                            </div>
-                          </td>
-                          <td>{student.user__email}</td>
-                          <td>
-                            <button
-                              onClick={() => handleDeleteStudent(student.user__id)}
-                              className="action-btn delete"
-                            >
-                              Supprimer
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          )}
-
-          {activeTab === 'admins' && (
-            <div className="admins-section">
-              <div className="section-header">
-                <h2>Liste des Administrateurs</h2>
-                <div className="search-bar">
-                  <div className="search-input-container">
-                    <Search className="search-icon" size={20} />
-                    <input
-                      type="text"
-                      placeholder="Rechercher un administrateur..."
-                      className="search-input"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                  </div>
-                </div>
-              </div>
-
               {filteredAdmins.length === 0 ? (
                 <div className="empty-state">
-                  <h3>Aucun administrateur trouvé</h3>
-                  <p>{searchTerm ? "Aucun résultat pour cette recherche" : "Les nouveaux administrateurs apparaîtront ici"}</p>
+                  <h3>No admins found</h3>
+                  <p>{searchTerm ? "No results for this search" : "New admins will appear here"}</p>
                 </div>
               ) : (
                 <div className="table-container">
                   <table className="modern-table">
                     <thead>
                       <tr>
-                        <th>ID</th>
-                        <th>Nom complet</th>
+                        <th>Full Name</th>
                         <th>Email</th>
                         <th>Actions</th>
                       </tr>
@@ -1060,25 +1057,14 @@ const WelcomeAdmin = () => {
                       {filteredAdmins.map((admin) => (
                         <tr key={admin.user__id}>
                           <td>
-                            <span className="id-badge">#{admin.user__id}</span>
-                          </td>
-                          <td>
-                            <div className="user-cell">
-                              <div className="user-avatar-small">
-                                {admin.user__first_name?.charAt(0)}{admin.user__last_name?.charAt(0)}
-                              </div>
-                              <div>
-                                <strong>{admin.user__first_name} {admin.user__last_name}</strong>
-                              </div>
+                            <div>
+                              <strong>{admin.user__first_name} {admin.user__last_name}</strong>
                             </div>
                           </td>
                           <td>{admin.user__email}</td>
                           <td>
-                            <button
-                              onClick={() => handleDeleteAdmin(admin.user__id)}
-                              className="action-btn delete"
-                            >
-                              Supprimer
+                            <button onClick={() => handleDeleteAdmin(admin.user__id)} className="action-btn delete">
+                              Delete
                             </button>
                           </td>
                         </tr>
@@ -1087,99 +1073,242 @@ const WelcomeAdmin = () => {
                   </table>
                 </div>
               )}
-
-              <div className="add-admin-section" style={{ marginTop: '2rem' }}>
-                <div className="section-header">
-                  <h2>Créer un nouvel administrateur</h2>
-                  <p>Ajoutez un membre à votre équipe d'administration</p>
-                </div>
-                <form onSubmit={handleAddAdmin} className="modern-form">
-                  <div className="form-grid">
-                    <div className="form-group">
-                      <label htmlFor="prenom">Prénom</label>
-                      <input
-                        type="text"
-                        id="prenom"
-                        name="prenom"
-                        placeholder="Entrez le prénom"
-                        required
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label htmlFor="nom">Nom</label>
-                      <input
-                        type="text"
-                        id="nom"
-                        name="nom"
-                        placeholder="Entrez le nom"
-                        required
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label htmlFor="email">Email</label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        placeholder="admin@example.com"
-                        required
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label htmlFor="password">Mot de passe</label>
-                      <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        placeholder="Mot de passe sécurisé"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <button type="submit" className="submit-btn">
-                    Créer l'administrateur
-                  </button>
-                </form>
-              </div>
             </div>
-          )}
-
-          {activeTab === 'applications' && (
-            <div className="applications-section">
-              <AdminApplicationManager
-                applications={applications}
-                onStatusChange={handleApplicationStatusChange}
-                selectedApp={selectedApp}
-                setSelectedApp={setSelectedApp}
-              />
-            </div>
-          )}
-
-          {activeTab === 'notifications' && (
-            <div className="notifications-section">
+            <div className="card create-admin-card">
               <div className="section-header">
-                <h2>Notifications</h2>
-                {notifications.length > 0 && (
-                  <button className="clear-btn" onClick={clearAllNotifications}>
-                    Effacer tout
-                  </button>
-                )}
+                <h2>Create a New Admin</h2>
+                <p>Add a member to your admin team</p>
               </div>
+              <form onSubmit={handleAddAdmin} className="modern-form">
+                <div className="form-grid">
+                  <div className="form-group1">
+                    <label htmlFor="prenom">First Name</label>
+                    <input type="text" id="prenom" name="prenom" placeholder="Enter first name" required />
+                  </div>
+                  <div className="form-group1">
+                    <label htmlFor="nom">Last Name</label>
+                    <input type="text" id="nom" name="nom" placeholder="Enter last name" required />
+                  </div>
+                  <div className="form-group1">
+                    <label htmlFor="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="admin@example.com" required />
+                  </div>
+                  <div className="form-group1">
+                    <label htmlFor="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Secure password" required />
+                  </div>
+                </div>
+                <button type="submit" className="submit-btn">Create Admin</button>
+              </form>
+            </div>
+          </div>
+        ) : activeTab === 'notifications' ? (
+          <div className="notifications-section">
+            <div className="notifications-header">
+              <h2>Notifications</h2>
+              {notifications.length > 0 && (
+                <button className="clear-btn" onClick={clearAllNotifications}>
+                  Clear All
+                </button>
+              )}
+            </div>
+            <div className="notifications-card">
               {notifications.length === 0 ? (
-                <p>Aucune notification</p>
+                <div className="empty-notifications">
+                  You have no new notifications
+                </div>
               ) : (
                 <ul className="notifications-list">
                   {notifications.map((n, i) => (
                     <li key={i} className={`notification-item ${n.read ? 'read' : 'unread'}`}>
-                      <div className="notif-message">{n.message}</div>
-                      <div className="notif-time">{n.date} {n.time}</div>
+                      <div className="notification-icon">
+                        {n.read ? "📬" : "🔔"}
+                      </div>
+                      <div className="notification-content">
+                        <div className="notif-message">{n.message}</div>
+                        <div className="notif-time">{n.time} • {n.date}</div>
+                      </div>
+                      {!n.read && (
+                        <div className="notification-actions">
+                          <button
+                            className="mark-read-btn"
+                            onClick={() => markSingleNotificationAsRead(n.key)}
+                          >
+                            Mark as read
+                          </button>
+                        </div>
+                      )}
                     </li>
                   ))}
                 </ul>
               )}
             </div>
-          )}
-        </div>
+          </div>
+        ) : activeTab === 'dashboard' ? (
+          <div className="dashboard-overview">
+            <div className="stats-section">
+              <div className="stat-card primary">
+                <div className="stat-icon">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </div>
+                <div className="stat-content">
+                  <h3>Students</h3>
+                  <p className="stat-numbers">{students.length}</p>
+                  <span className="stat-label">Total registered</span>
+                </div>
+              </div>
+              <div className="stat-card secondary">
+                <div className="stat-icon">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </div>
+                <div className="stat-content">
+                  <h3>Admins</h3>
+                  <p className="stat-numbers">{admins.length}</p>
+                  <span className="stat-label">Team members</span>
+                </div>
+              </div>
+              <div className="stat-card primary">
+                <div className="stat-icon">
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>                </div>
+                <div className="stat-content">
+                  <h3>Total Applications</h3>
+                  <p className="stat-numbers">{applications.length}</p>
+                  <span className="stat-label">All applications</span>
+                </div>
+              </div>
+            <div className="stat-card primary">
+                <div className="stat-icon">
+<svg width="32" height="32" viewBox="0 0 24 24" fill="none"
+     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <path d="M20 6L9 17l-5-5" />
+</svg>
+                </div>
+                <div className="stat-content">
+                  <h3>Approved</h3>
+                  <p className="stat-numbers">{applications.filter(app => app.status === 'approved').length}</p>
+                  <span className="stat-label">Applications approved</span>
+                </div>
+              </div>                            <div className="stat-card primary">
+                <div className="stat-icon">
+ <svg width="32" height="32" viewBox="0 0 24 24" fill="none"
+     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+  <circle cx="12" cy="12" r="3"/>
+</svg>
+
+                </div>
+                <div className="stat-content">
+                  <h3>Under Review</h3>
+                  <p className="stat-numbers">{applications.filter(app => app.status === 'reviewing').length}</p>
+                  <span className="stat-label">Currently under review</span>
+                </div>
+              </div>
+              <div className="stat-card primary">
+                <div className="stat-icon">
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="none"
+     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <line x1="18" y1="6" x2="6" y2="18" />
+  <line x1="6" y1="6" x2="18" y2="18" />
+</svg>
+
+                </div>
+                <div className="stat-content">
+                  <h3>Rejected</h3>
+                  <p className="stat-numbers">{applications.filter(app => app.status === 'rejected').length}</p>
+                  <span className="stat-label">Applications rejected</span>
+                </div>
+              </div>
+            <div className="stat-card primary">
+                <div className="stat-icon">
+<svg width="32" height="32" viewBox="0 0 24 24" fill="none"
+     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
+  <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+</svg>
+
+                </div>
+                <div className="stat-content">
+                  <h3>Received</h3>
+                  <p className="stat-numbers">{applications.filter(app => app.status === 'sent').length}</p>
+                  <span className="stat-label">Applications received</span>
+                </div>
+              </div>
+            </div>              
+          </div>
+        ) : (
+          <div className="content-area">
+            {activeTab === 'students' && (
+              <div className="students-section">
+                <div className="section-header">
+                  <h2>Students List</h2>
+                  <div className="search-bar">
+                    <div className="search-input-container">
+                      <Search className="search-icon" size={20} />
+                      <input
+                        type="text"
+                        placeholder="Search for a student..."
+                        className="search-input"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+                {filteredStudents.length === 0 ? (
+                  <div className="empty-state">
+                    <h3>No students found</h3>
+                    <p>{searchTerm ? "No results for this search" : "New students will appear here"}</p>
+                  </div>
+                ) : (
+                  <div className="table-container">
+                    <table className="modern-table">
+                      <thead>
+                        <tr>
+                          <th>Full Name</th>
+                          <th>Email</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredStudents.map((student) => (
+                          <tr key={student.user__id}>
+                            <td>
+                              <div>
+                                <strong>{student.user__first_name} {student.user__last_name}</strong>
+                              </div>
+                            </td>
+                            <td>{student.user__email}</td>
+                            <td>
+                              <button onClick={() => handleDeleteStudent(student.user__id)} className="action-btn delete">
+                                Delete
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
+            {activeTab === 'applications' && (
+              <div className="applications-section">
+                <AdminApplicationManager
+                  applications={applications}
+                  onStatusChange={handleApplicationStatusChange}
+                  selectedApp={selectedApp}
+                  setSelectedApp={setSelectedApp}
+                />
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
