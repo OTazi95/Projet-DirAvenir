@@ -16,7 +16,7 @@ Il s’agit d’une plateforme web qui accompagne les étudiants dans leur parco
 
 
 ## ⚙️ Fonctionnalités principales  
-- ✅ **Inscription & authentification** (classique + via Google, Facebook, Apple).  
+- ✅ **Inscription & authentification** (classique + via Google).  
 - ✅ Passage du **test d’orientation** et affichage des résultats.  
 - ✅ Génération de **recommandations de filiére personnalisées**.  
 - ✅ Consultation des **programmes & établissements partenaires**.  
