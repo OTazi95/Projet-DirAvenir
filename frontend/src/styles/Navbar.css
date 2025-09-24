@@ -1,7 +1,9 @@
+/* Styles globaux */
 html {
   scroll-behavior: smooth;
 }
 
+/* Navbar principale */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -10,11 +12,12 @@ html {
   backdrop-filter: blur(6px);
   padding: 10px 20px;
   color: #f2f2f2;
-  flex-wrap: wrap;
-  position: relative;
-  z-index: 1000;
+  flex-wrap: nowrap;
+  width: 100%;
+  box-sizing: border-box;
 }
 
+/* Variantes de la navbar */
 .navbar.navbar-mauve {
   background-color: #4b014e !important;
   backdrop-filter: none !important;
@@ -33,6 +36,7 @@ html {
   color: white;
 }
 
+/* Liens dans la navbar jaune */
 .navbar.navbar-yellow a,
 .navbar.navbar-yellow .nav-link,
 .navbar.navbar-yellow .navbar-brand {
@@ -45,6 +49,7 @@ html {
   color: #f4f4f4 !important;
 }
 
+/* Boutons dans la navbar jaune */
 .navbar.navbar-yellow .login-btn {
   background: transparent;
   border: 1px solid #fff !important;
@@ -67,6 +72,7 @@ html {
   color: #000 !important;
 }
 
+/* Logo et titre de la navbar */
 .navbar-logo {
   height: 70px;
   margin-right: 10px;
@@ -77,13 +83,27 @@ html {
   font-weight: bold;
 }
 
+/* Conteneur principal des éléments centraux */
+.navbar-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+}
+
+/* Conteneur des liens de navigation */
 .navbar-links {
   list-style: none;
   display: flex;
-  gap: 15px;
+  gap: 20px;
   margin: 0;
   padding: 0;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  justify-content: center;
+}
+
+.navbar-links li {
+  flex-shrink: 0;
 }
 
 .navbar-links li a {
@@ -93,7 +113,8 @@ html {
   padding: 6px 10px;
   transition: background-color 0.2s ease, color 0.2s ease;
   background-color: transparent;
-  font-family:'Poppins', sans-serif;
+  font-family: 'Poppins', sans-serif;
+  white-space: nowrap;
 }
 
 .navbar-links li a:hover {
@@ -117,24 +138,26 @@ html {
   left: 0;
 }
 
+/* Conteneur des boutons */
 .navbar-right {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
-.navbar-left {
-  display: flex;
-  align-items: center;
-}
-
-.login-btn, .register-btn {
-  padding: 8px 15px;
+/* Boutons */
+.login-btn, .register-btn, .logout-btn {
+  padding: 8px 12px;
   border-radius: 10px;
   cursor: pointer;
   font-weight: 600;
   border: 1px solid transparent;
   transition: all 0.3s ease;
+  white-space: nowrap;
+  min-width: fit-content;
+  font-size: 14px;
 }
 
 .login-btn {
@@ -148,8 +171,13 @@ html {
   color: white;
 }
 
+.logout-btn {
+  background: transparent;
+  border: 1px solid white;
+  color: white;
+}
 
-.login-btn:hover {
+.login-btn:hover, .logout-btn:hover {
   background: #F9C23C;
   color: white;
 }
@@ -158,13 +186,60 @@ html {
   background: #D9A000;
 }
 
+/* Adaptation pour les petits écrans */
+@media (max-width: 1200px) {
+  .navbar-links {
+    gap: 15px;
+  }
+
+  .navbar-links li a {
+    font-size: 14px;
+    padding: 6px 8px;
+  }
+}
+
+@media (max-width: 992px) {
+  .navbar-links {
+    gap: 10px;
+  }
+
+  .navbar-links li a {
+    font-size: 13px;
+    padding: 6px 6px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-links {
+    gap: 8px;
+    overflow-x: auto;
+    max-width: 60vw;
+    justify-content: flex-start;
+  }
+
+  .navbar-links li a {
+    font-size: 12px;
+    padding: 6px 4px;
+  }
+
+  .navbar-right {
+    gap: 5px;
+  }
+
+  .login-btn, .register-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}
+
+/* Icônes de la navbar */
 .nav-icon {
   font-size: 22px;
   color: white;
   cursor: pointer;
 }
 
-/* Styles pour le sélecteur de langue en dropdown */
+/* Sélecteur de langue */
 .language-selector {
   position: relative;
   display: inline-block;
@@ -297,7 +372,7 @@ html {
   background-color: #ccc;
 }
 
-/* Spécifique : bouton actif sur pages mauves */
+/* Bouton actif sur pages mauves */
 .language-option.active.mauve-page {
   background-color: #4b014e !important;
   color: white !important;
@@ -309,4 +384,16 @@ html {
 
 .navbar.navbar-mauve .nav-icon.user-icon {
   color: #FCBE1C !important;
+}
+.navbar.navbar-yellow .navbar-links .active-link::after {
+  background-color: #4b014e !important;
+}
+.navbar.navbar-yellow .navbar-links .active-link {
+  color: #4b014e !important;
+}
+.navbar.navbar-yellow .navbar-links .active-link::after {
+  background-color: #4b014e !important;
+}
+.navbar.navbar-yellow .navbar-links li a:hover {
+  color: #4b014e !important;
 }

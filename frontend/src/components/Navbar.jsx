@@ -12,8 +12,6 @@ function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { t, i18n } = useTranslation();
-  const [userInfo, setUserInfo] = useState({});
-
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
 
   const handleLogout = () => {
@@ -21,9 +19,9 @@ function Navbar() {
     navigate('/');
   };
 
-   const handleNavigateToDashboard = () => {
+  const handleNavigateToDashboard = () => {
     navigate('/welcome-etudiant');
-  }; 
+  };
 
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
@@ -33,11 +31,11 @@ function Navbar() {
   // Définir les types de pages
   const pagesMauve = ['/about', '/program-detail'];
   const pagesYellow = ['/faq', '/contact'];
-  const pagesDefault = ['/dashboard', '/Orientation', '/programs'];
+  const pagesDefault = ['/dashboard', '/orientation', '/programs'];
 
-const isMauvePage = pagesMauve.some(path => location.pathname.startsWith(path));
-const isYellowPage = pagesYellow.some(path => location.pathname.startsWith(path));
-const isDefaultPage = pagesDefault.some(path => location.pathname.startsWith(path));
+  const isMauvePage = pagesMauve.some(path => location.pathname.startsWith(path));
+  const isYellowPage = pagesYellow.some(path => location.pathname.startsWith(path));
+  const isDefaultPage = pagesDefault.some(path => location.pathname.startsWith(path));
 
   // Déterminer la classe CSS de la navbar
   let navbarClass = '';
@@ -59,19 +57,21 @@ const isDefaultPage = pagesDefault.some(path => location.pathname.startsWith(pat
           <img src={logoSrc} alt="DirAvenir Logo" className="navbar-logo" />
         </div>
 
-        <ul className="navbar-links">
-          <li><NavLink to="/dashboard">{t('navbar.home')}</NavLink></li>
-          <li><NavLink to="/Orientation">{t('navbar.orientation')}</NavLink></li>
-          <li><NavLink to="/programs">{t('navbar.programs')}</NavLink></li>
-          <li><NavLink to="/about">{t('navbar.about')}</NavLink></li>
-          <li><NavLink to="/faq">{t('navbar.faq')}</NavLink></li>
-          <li><NavLink to="/contact">{t('navbar.contact')}</NavLink></li>
-        </ul>
+        <div className="navbar-center">
+          <ul className="navbar-links">
+            <li><NavLink to="/dashboard" className={({ isActive }) => isActive ? 'active-link' : ''}>{t('navbar.home')}</NavLink></li>
+            <li><NavLink to="/orientation" className={({ isActive }) => isActive ? 'active-link' : ''}>{t('navbar.orientation')}</NavLink></li>
+            <li><NavLink to="/programs" className={({ isActive }) => isActive ? 'active-link' : ''}>{t('navbar.programs')}</NavLink></li>
+            <li><NavLink to="/about" className={({ isActive }) => isActive ? 'active-link' : ''}>{t('navbar.about')}</NavLink></li>
+            <li><NavLink to="/faq" className={({ isActive }) => isActive ? 'active-link' : ''}>{t('navbar.faq')}</NavLink></li>
+            <li><NavLink to="/contact" className={({ isActive }) => isActive ? 'active-link' : ''}>{t('navbar.contact')}</NavLink></li>
+          </ul>
+        </div>
 
         <div className="navbar-right">
           {/* Menu langue en dropdown */}
           <div className="language-selector">
-            <button 
+            <button
               className="language-dropdown-btn"
               onClick={() => setShowLanguageMenu(!showLanguageMenu)}
             >
@@ -79,16 +79,16 @@ const isDefaultPage = pagesDefault.some(path => location.pathname.startsWith(pat
               <span>{i18n.language === 'fr' ? 'Français' : 'Anglais'}</span>
               <FaChevronDown className={`chevron ${showLanguageMenu ? 'rotated' : ''}`} />
             </button>
-            
+
             {showLanguageMenu && (
               <div className="language-dropdown-menu">
-                <button 
+                <button
                   className={`language-option ${i18n.language === 'en' ? 'active' : ''} ${isMauvePage ? 'mauve-page' : ''}`}
                   onClick={() => changeLanguage('en')}
                 >
                   Anglais
                 </button>
-                <button 
+                <button
                   className={`language-option ${i18n.language === 'fr' ? 'active' : ''} ${isMauvePage ? 'mauve-page' : ''}`}
                   onClick={() => changeLanguage('fr')}
                 >
@@ -97,11 +97,10 @@ const isDefaultPage = pagesDefault.some(path => location.pathname.startsWith(pat
               </div>
             )}
           </div>
-
           {isLoggedIn ? (
             <>
               <FaUserCircle className="nav-icon user-icon" onClick={() => handleNavigateToDashboard()} />
-              <button className="login-btn" onClick={handleLogout}>{t('navbar.logout')}</button>
+              <button className="logout-btn" onClick={handleLogout}>{t('navbar.logout')}</button>
             </>
           ) : (
             <>
@@ -111,8 +110,6 @@ const isDefaultPage = pagesDefault.some(path => location.pathname.startsWith(pat
           )}
         </div>
       </nav>
-
- 
     </>
   );
 }
