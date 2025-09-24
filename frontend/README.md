@@ -61,7 +61,7 @@ Il s’agit d’une plateforme web qui accompagne les étudiants dans leur parco
 
 #### 🖥️ Guide d’utilisation rapide
 
-🔑 Créer un compte ou se connecter (classique ou via Google/Facebook/Apple).
+🔑 Créer un compte ou se connecter (classique ou via Google).
 
 📝 Passer le test d’orientation → obtenir résultats et recommandations.
 
